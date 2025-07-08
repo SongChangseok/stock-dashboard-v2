@@ -29,12 +29,15 @@ This is a **Korean stock portfolio dashboard** built with React 19, TypeScript, 
 - **Layout**: Mobile-first responsive design
 
 ### Design Philosophy (Spotify-Inspired)
+Reference: [Spotify Design System](https://spotify.design/stories/design/design-systems) and [Spotify GitHub](https://github.com/spotify)
+
 - **Minimal & Clean**: Spotify's aesthetic with subtle animations and generous whitespace
-- **Trendy Simplicity**: Modern component design with fluid interactions
+- **Trendy Simplicity**: Modern component design with fluid interactions inspired by Spotify's design patterns
 - **Typography Hierarchy**: Bold weights for emphasis, responsive scaling
 - **Smooth Transitions**: 150ms fast, 350ms standard, 650ms slow animations
 - **Modular Components**: Flexible, reusable UI elements with consistent spacing
-- **Unique Identity**: Distinctive visual language while maintaining simplicity
+- **Unique Identity**: Create a distinctive visual language while maintaining simplicity - not copying Spotify but drawing inspiration for trendy, modern design
+- **Design Innovation**: Develop original design patterns that feel contemporary and unique while being simple and intuitive
 
 ### Directory Structure
 ```
