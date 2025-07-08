@@ -9,7 +9,7 @@ export function useSupabaseConnection() {
     async function testConnection() {
       try {
         // Simple query to test database connection
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('profiles')
           .select('count')
           .limit(1)

@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase'
 import type { Database } from '../types/database'
+import type { Session } from '@supabase/supabase-js'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -95,7 +96,7 @@ export const authService = {
   },
 
   // Subscribe to auth changes
-  onAuthStateChange(callback: (event: string, session: any) => void) {
+  onAuthStateChange(callback: (event: string, session: Session | null) => void) {
     return supabase.auth.onAuthStateChange(callback)
   },
 }
