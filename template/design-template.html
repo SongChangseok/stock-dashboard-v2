@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주식 대시보드 - 디자인 템플릿</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);
+            color: #FFFFFF;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 16px 32px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #6366F1, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-item {
+            color: #B3B3B3;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            color: #6366F1;
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            color: #6366F1;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #6366F1, #8B5CF6);
+            border-radius: 2px;
+        }
+
+        /* Main Container */
+        .main-container {
+            margin-top: 80px;
+            padding: 32px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #B3B3B3;
+            margin-top: 4px;
+        }
+
+        /* Stock Price Card */
+        .stock-price {
+            grid-column: 1 / 3;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.05));
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .price-display {
+            font-size: 48px;
+            font-weight: 700;
+            color: #6366F1;
+            margin: 16px 0;
+        }
+
+        .price-change {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .price-change.positive {
+            color: #10B981;
+        }
+
+        .price-change.negative {
+            color: #EF4444;
+        }
+
+        /* Chart Card */
+        .chart-card {
+            grid-column: 3;
+            grid-row: 1 / 3;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        /* Portfolio Cards */
+        .portfolio-card {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .portfolio-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 8px 0;
+        }
+
+        .portfolio-change {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Watchlist */
+        .watchlist {
+            grid-column: 1 / 4;
+            margin-top: 16px;
+        }
+
+        .watchlist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .watchlist-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            margin: 0 -24px;
+            padding: 16px 24px;
+            border-radius: 8px;
+            border-bottom: 1px solid transparent;
+        }
+
+        .stock-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stock-symbol {
+            font-weight: 700;
+            color: #ffffff;
+            min-width: 60px;
+        }
+
+        .stock-name {
+            color: #B3B3B3;
+            font-size: 14px;
+        }
+
+        .stock-price-small {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .stock-change-small {
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .stock-change-small.positive {
+            color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .stock-change-small.negative {
+            color: #EF4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #6366F1, #8B5CF6);
+            color: #FFFFFF;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 16px;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .main-container {
+                padding: 16px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .stock-price {
+                grid-column: 1;
+            }
+
+            .chart-card {
+                grid-column: 1;
+                grid-row: auto;
+            }
+
+            .price-display {
+                font-size: 36px;
+            }
+
+            .watchlist {
+                grid-column: 1;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Micro-interactions */
+        .card-title {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .card-title {
+            color: #6366F1;
+        }
+
+        /* Loading states */
+        .loading {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">StockDash</div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active">대시보드</a>
+                <a href="#" class="nav-item">포트폴리오</a>
+                <a href="#" class="nav-item">관심종목</a>
+                <a href="#" class="nav-item">뉴스</a>
+                <a href="#" class="nav-item">분석</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="dashboard-grid">
+            <!-- 주가 정보 카드 -->
+            <div class="card stock-price">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">AAPL - Apple Inc.</div>
+                        <div class="card-subtitle">나스닥 · 실시간</div>
+                    </div>
+                </div>
+                <div class="price-display">$175.43</div>
+                <div class="price-change positive">
+                    <span>+$2.34 (+1.35%)</span>
+                    <span>오늘</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary">매수</button>
+                    <button class="btn btn-secondary">매도</button>
+                </div>
+            </div>
+
+            <!-- 차트 카드 -->
+            <div class="card chart-card">
+                <div class="card-header">
+                    <div class="card-title">차트</div>
+                </div>
+                <div class="chart-placeholder">
+                    실시간 차트가 여기에 표시됩니다
+                </div>
+            </div>
+
+            <!-- 포트폴리오 카드들 -->
+            <div class="card portfolio-card">
+                <div class="card-header">
+                    <div class="card-title">총 자산</div>
+                </div>
+                <div class="portfolio-value">$125,840</div>
+                <div class="portfolio-change positive">+$1,240 (+0.99%)</div>
+            </div>
+
+            <div class="card portfolio-card">
+                <div class="card-header">
+                    <div class="card-title">일일 수익</div>
+                </div>
+                <div class="portfolio-value">+$840</div>
+                <div class="portfolio-change positive">+0.67%</div>
+            </div>
+
+            <div class="card portfolio-card">
+                <div class="card-header">
+                    <div class="card-title">현금</div>
+                </div>
+                <div class="portfolio-value">$12,500</div>
+                <div class="portfolio-change">가용 자금</div>
+            </div>
+
+            <!-- 관심종목 카드 -->
+            <div class="card watchlist">
+                <div class="card-header">
+                    <div class="card-title">관심종목</div>
+                </div>
+                
+                <div class="watchlist-item">
+                    <div class="stock-info">
+                        <div class="stock-symbol">TSLA</div>
+                        <div class="stock-name">Tesla Inc.</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div class="stock-price-small">$248.50</div>
+                        <div class="stock-change-small positive">+2.34%</div>
+                    </div>
+                </div>
+
+                <div class="watchlist-item">
+                    <div class="stock-info">
+                        <div class="stock-symbol">NVDA</div>
+                        <div class="stock-name">NVIDIA Corp.</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div class="stock-price-small">$456.78</div>
+                        <div class="stock-change-small positive">+1.23%</div>
+                    </div>
+                </div>
+
+                <div class="watchlist-item">
+                    <div class="stock-info">
+                        <div class="stock-symbol">MSFT</div>
+                        <div class="stock-name">Microsoft Corp.</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div class="stock-price-small">$378.90</div>
+                        <div class="stock-change-small negative">-0.45%</div>
+                    </div>
+                </div>
+
+                <div class="watchlist-item">
+                    <div class="stock-info">
+                        <div class="stock-symbol">GOOGL</div>
+                        <div class="stock-name">Alphabet Inc.</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div class="stock-price-small">$134.56</div>
+                        <div class="stock-change-small positive">+0.89%</div>
+                    </div>
+                </div>
+
+                <div class="watchlist-item">
+                    <div class="stock-info">
+                        <div class="stock-symbol">AMZN</div>
+                        <div class="stock-name">Amazon.com Inc.</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div class="stock-price-small">$145.23</div>
+                        <div class="stock-change-small negative">-1.12%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 간단한 인터랙션 추가
+        document.querySelectorAll('.watchlist-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // 클릭된 아이템 하이라이트
+                document.querySelectorAll('.watchlist-item').forEach(i => {
+                    i.style.background = '';
+                    i.style.borderColor = '';
+                });
+                this.style.background = 'rgba(99, 102, 241, 0.1)';
+                this.style.borderColor = 'rgba(99, 102, 241, 0.3)';
+            });
+        });
+
+        // 네비게이션 메뉴 활성화
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-item').forEach(i => {
+                    i.classList.remove('active', 'text-primary');
+                    i.classList.add('text-text-secondary');
+                });
+                this.classList.remove('text-text-secondary');
+                this.classList.add('active', 'text-primary');
+            });
+        });
+
+        // 실시간 업데이트 시뮬레이션
+        setInterval(() => {
+            const priceElement = document.querySelector('.text-5xl.font-bold.text-primary');
+            if (priceElement) {
+                const currentPrice = parseFloat(priceElement.textContent.replace('$', ''));
+                const change = (Math.random() - 0.5) * 2;
+                const newPrice = (currentPrice + change).toFixed(2);
+                priceElement.textContent = `$${newPrice}`;
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

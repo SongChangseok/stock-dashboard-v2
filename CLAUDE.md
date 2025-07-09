@@ -39,6 +39,14 @@ Reference: [Spotify Design System](https://spotify.design/stories/design/design-
 - **Unique Identity**: Create a distinctive visual language while maintaining simplicity - not copying Spotify but drawing inspiration for trendy, modern design
 - **Design Innovation**: Develop original design patterns that feel contemporary and unique while being simple and intuitive
 
+### Design Template Reference
+**Base Template**: `template/design-template.html`
+- Use this HTML template as the visual reference for all components
+- Follow the established glassmorphism design patterns
+- Maintain consistent spacing, hover effects, and micro-interactions
+- Apply the same card structure, grid layout, and responsive behavior
+- Reference the template's color usage and gradient implementations
+
 ### Directory Structure
 ```
 src/
