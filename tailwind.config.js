@@ -8,6 +8,7 @@ export default {
     extend: {
       colors: {
         primary: '#6366F1', // 인디고 블루
+        'primary-light': '#8B5CF6', // 퍼플 (그라데이션용)
         background: {
           primary: '#0A0A0A',
           secondary: '#1A1A1A',
@@ -21,9 +22,32 @@ export default {
         },
         success: '#10B981',
         error: '#EF4444',
+        card: {
+          DEFAULT: 'rgba(255, 255, 255, 0.05)',
+          hover: 'rgba(255, 255, 255, 0.08)',
+          border: 'rgba(255, 255, 255, 0.1)',
+          'border-hover': 'rgba(255, 255, 255, 0.2)',
+        },
       },
       fontFamily: {
         pretendard: ['Pretendard', 'sans-serif'],
+      },
+      animation: {
+        'fade-in-up': 'fadeInUp 0.6s ease-out',
+        'shimmer': 'shimmer 2s infinite',
+      },
+      keyframes: {
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(30px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+      },
+      backdropBlur: {
+        'custom': '20px',
       },
     },
   },
