@@ -28,14 +28,15 @@ This is a **Korean stock portfolio dashboard** built with React 19, TypeScript, 
 - **Theme**: Dark mode with 4-tier background colors and semantic text colors
 - **Layout**: Mobile-first responsive design
 
-### Design Philosophy (Spotify-Inspired)
-Reference: [Spotify Design System](https://spotify.design/stories/design/design-systems) and [Spotify GitHub](https://github.com/spotify)
+### Design Philosophy (Spotify & Material Design Inspired)
+Reference: [Spotify Design System](https://spotify.design/) and [Material Design](https://material.io/design)
 
 - **Minimal & Clean**: Spotify's aesthetic with subtle animations and generous whitespace
 - **Trendy Simplicity**: Modern component design with fluid interactions inspired by Spotify's design patterns
 - **Typography Hierarchy**: Bold weights for emphasis, responsive scaling
 - **Smooth Transitions**: 150ms fast, 350ms standard, 650ms slow animations
-- **Modular Components**: Flexible, reusable UI elements with consistent spacing
+- **Modular Components**: Flexible, reusable UI components with consistent spacing
+- **Material Design Principles**: Leverage Material Design's elevation, motion, and interaction patterns
 - **Unique Identity**: Create a distinctive visual language while maintaining simplicity - not copying Spotify but drawing inspiration for trendy, modern design
 - **Design Innovation**: Develop original design patterns that feel contemporary and unique while being simple and intuitive
 
@@ -46,6 +47,11 @@ Reference: [Spotify Design System](https://spotify.design/stories/design/design-
 - Maintain consistent spacing, hover effects, and micro-interactions
 - Apply the same card structure, grid layout, and responsive behavior
 - Reference the template's color usage and gradient implementations
+
+**External Design References**:
+- **Spotify Design System**: https://spotify.design/ - Follow Spotify's modern, clean aesthetic principles
+- **Material Design**: https://material.io/design - Leverage Material Design's elevation, motion, and interaction patterns
+- **Template Integration**: Combine insights from both systems while maintaining the template's visual identity
 
 ### Directory Structure
 ```
