@@ -43,5 +43,5 @@ Use these for all CSS styling work:
 - Use TodoWrite for multi-step tasks
 - Read files before editing
 - Follow existing code patterns and conventions
-- Run lint/format before marking tasks complete
+- Run lint before marking tasks complete
 - Never commit unless explicitly requested
