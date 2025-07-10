@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-global stock portfolio dashboard built with React 19, TypeScript, and Vite.
+Global stock portfolio dashboard built with React 18, TypeScript, and Vite.
 
 ## Development Commands
 
@@ -9,6 +9,10 @@ global stock portfolio dashboard built with React 19, TypeScript, and Vite.
 - `npm run lint` - ESLint check
 - `npm run format` - Format with Prettier
 - `npm run preview` - Preview production build
+- `npm run supabase:start` - Start Supabase locally
+- `npm run supabase:stop` - Stop Supabase locally
+- `npm run supabase:reset` - Reset Supabase database
+- `npm run supabase:types` - Generate TypeScript types
 
 ## Design System
 
@@ -31,9 +35,9 @@ Use these for all CSS styling work:
 - Consistent spacing, hover effects, and responsive behavior
 
 ## Tech Stack
-- React 19, TypeScript, Vite
-- Tailwind CSS 4.x with dark mode
-- Supabase (planned)
+- React 18, TypeScript, Vite
+- Tailwind CSS 3.x with dark mode
+- Supabase (configured)
 - Recharts (planned)
 
 ## Claude Guidelines
