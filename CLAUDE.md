@@ -49,3 +49,9 @@ Use these for all CSS styling work:
 - Follow existing code patterns and conventions
 - Run lint before marking tasks complete
 - Never commit unless explicitly requested
+
+## GitHub Issue Handling
+- When referencing GitHub issues, always check issue content for specific requirements
+- Adhere strictly to issue descriptions, acceptance criteria, and specifications
+- Use issue requirements as primary source of truth for implementation
+- Reference issue numbers in commit messages when implementing fixes

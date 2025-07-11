@@ -1,689 +1,777 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StockDash - 로그인</title>
-    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
+      rel="stylesheet"
+    />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);
-            color: #FFFFFF;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow-x: hidden;
-        }
+      body {
+        font-family:
+          'Pretendard',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          Arial,
+          sans-serif;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        color: #ffffff;
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-x: hidden;
+      }
 
-        /* Background Pattern */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-            z-index: -1;
-        }
+      /* Background Pattern */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+          radial-gradient(
+            circle at 20% 20%,
+            rgba(99, 102, 241, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(139, 92, 246, 0.1) 0%,
+            transparent 50%
+          );
+        z-index: -1;
+      }
 
-        /* Auth Container */
+      /* Auth Container */
+      .auth-container {
+        width: 100%;
+        max-width: 400px;
+        padding: 0 24px;
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      /* Logo */
+      .logo {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+
+      .logo h1 {
+        font-size: 32px;
+        font-weight: 700;
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+      }
+
+      .logo p {
+        color: #b3b3b3;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      /* Auth Card */
+      .auth-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px;
+        backdrop-filter: blur(20px);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .auth-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+      }
+
+      /* Tab Navigation */
+      .tab-nav {
+        display: flex;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 4px;
+        margin-bottom: 32px;
+        position: relative;
+      }
+
+      .tab-button {
+        flex: 1;
+        padding: 12px 0;
+        text-align: center;
+        background: none;
+        border: none;
+        color: #b3b3b3;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .tab-button.active {
+        color: #ffffff;
+        background: rgba(99, 102, 241, 0.2);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+      }
+
+      .tab-button:hover:not(.active) {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      /* Form Styles */
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #ffffff;
+        font-size: 14px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 16px 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: #ffffff;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .form-input::placeholder {
+        color: #b3b3b3;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #6366f1;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      .form-input:hover {
+        background: rgba(255, 255, 255, 0.07);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Button Styles */
+      .btn {
+        width: 100%;
+        padding: 16px 24px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        color: #ffffff;
+        border: 1px solid transparent;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+      }
+
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+      }
+
+      /* Loading State */
+      .loading {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top: 2px solid #ffffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Error Message */
+      .error-message {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        color: #fca5a5;
+        font-size: 14px;
+        display: none;
+      }
+
+      .error-message.show {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+
+      /* Success Message */
+      .success-message {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        color: #6ee7b7;
+        font-size: 14px;
+        display: none;
+      }
+
+      .success-message.show {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+
+      /* Divider */
+      .divider {
+        display: flex;
+        align-items: center;
+        margin: 24px 0;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+      }
+
+      .divider span {
+        padding: 0 16px;
+        color: #b3b3b3;
+        font-size: 14px;
+      }
+
+      /* Footer */
+      .auth-footer {
+        text-align: center;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .auth-footer p {
+        color: #b3b3b3;
+        font-size: 14px;
+      }
+
+      .auth-footer a {
+        color: #6366f1;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .auth-footer a:hover {
+        color: #8b5cf6;
+        text-decoration: underline;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 480px) {
         .auth-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 0 24px;
-            animation: fadeInUp 0.8s ease-out;
+          padding: 0 16px;
         }
 
-        /* Logo */
-        .logo {
-            text-align: center;
-            margin-bottom: 48px;
+        .auth-card {
+          padding: 32px 24px;
         }
 
         .logo h1 {
-            font-size: 32px;
-            font-weight: 700;
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
+          font-size: 28px;
         }
+      }
 
-        .logo p {
-            color: #B3B3B3;
-            font-size: 14px;
-            font-weight: 500;
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
         }
-
-        /* Auth Card */
-        .auth-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 40px;
-            backdrop-filter: blur(20px);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
 
-        .auth-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
         }
-
-        /* Tab Navigation */
-        .tab-nav {
-            display: flex;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 32px;
-            position: relative;
+        to {
+          opacity: 1;
         }
+      }
 
-        .tab-button {
-            flex: 1;
-            padding: 12px 0;
-            text-align: center;
-            background: none;
-            border: none;
-            color: #B3B3B3;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-radius: 8px;
-            position: relative;
-            z-index: 2;
-        }
+      /* Hide signup form initially */
+      .signup-form {
+        display: none;
+      }
 
-        .tab-button.active {
-            color: #FFFFFF;
-            background: rgba(99, 102, 241, 0.2);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-        }
+      .signup-form.active {
+        display: block;
+      }
 
-        .tab-button:hover:not(.active) {
-            color: #FFFFFF;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        /* Form Styles */
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #FFFFFF;
-            font-size: 14px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 16px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #FFFFFF;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .form-input::placeholder {
-            color: #B3B3B3;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #6366F1;
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .form-input:hover {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Button Styles */
-        .btn {
-            width: 100%;
-            padding: 16px 24px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            color: #FFFFFF;
-            border: 1px solid transparent;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: #FFFFFF;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        /* Loading State */
-        .loading {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid #FFFFFF;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Error Message */
-        .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            color: #FCA5A5;
-            font-size: 14px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        /* Success Message */
-        .success-message {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
-            color: #6EE7B7;
-            font-size: 14px;
-            display: none;
-        }
-
-        .success-message.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        /* Divider */
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 24px 0;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-        }
-
-        .divider span {
-            padding: 0 16px;
-            color: #B3B3B3;
-            font-size: 14px;
-        }
-
-        /* Footer */
-        .auth-footer {
-            text-align: center;
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .auth-footer p {
-            color: #B3B3B3;
-            font-size: 14px;
-        }
-
-        .auth-footer a {
-            color: #6366F1;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .auth-footer a:hover {
-            color: #8B5CF6;
-            text-decoration: underline;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 480px) {
-            .auth-container {
-                padding: 0 16px;
-            }
-
-            .auth-card {
-                padding: 32px 24px;
-            }
-
-            .logo h1 {
-                font-size: 28px;
-            }
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Hide signup form initially */
-        .signup-form {
-            display: none;
-        }
-
-        .signup-form.active {
-            display: block;
-        }
-
-        .login-form.active {
-            display: block;
-        }
+      .login-form.active {
+        display: block;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="auth-container">
-        <!-- Logo -->
-        <div class="logo">
-            <h1>StockDash</h1>
-            <p>한국 주식 포트폴리오 관리 플랫폼</p>
+      <!-- Logo -->
+      <div class="logo">
+        <h1>StockDash</h1>
+        <p>한국 주식 포트폴리오 관리 플랫폼</p>
+      </div>
+
+      <!-- Auth Card -->
+      <div class="auth-card">
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+          <button class="tab-button active" data-tab="login">로그인</button>
+          <button class="tab-button" data-tab="signup">회원가입</button>
         </div>
 
-        <!-- Auth Card -->
-        <div class="auth-card">
-            <!-- Tab Navigation -->
-            <div class="tab-nav">
-                <button class="tab-button active" data-tab="login">로그인</button>
-                <button class="tab-button" data-tab="signup">회원가입</button>
-            </div>
+        <!-- Error/Success Messages -->
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
 
-            <!-- Error/Success Messages -->
-            <div class="error-message" id="errorMessage"></div>
-            <div class="success-message" id="successMessage"></div>
+        <!-- Login Form -->
+        <form class="login-form active" id="loginForm">
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">이메일</label>
+            <input
+              type="email"
+              id="loginEmail"
+              class="form-input"
+              placeholder="example@email.com"
+              required
+            />
+          </div>
 
-            <!-- Login Form -->
-            <form class="login-form active" id="loginForm">
-                <div class="form-group">
-                    <label class="form-label" for="loginEmail">이메일</label>
-                    <input 
-                        type="email" 
-                        id="loginEmail" 
-                        class="form-input" 
-                        placeholder="example@email.com"
-                        required
-                    >
-                </div>
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">비밀번호</label>
+            <input
+              type="password"
+              id="loginPassword"
+              class="form-input"
+              placeholder="••••••••"
+              required
+            />
+          </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="loginPassword">비밀번호</label>
-                    <input 
-                        type="password" 
-                        id="loginPassword" 
-                        class="form-input" 
-                        placeholder="••••••••"
-                        required
-                    >
-                </div>
+          <button type="submit" class="btn btn-primary" id="loginButton">
+            <span id="loginButtonText">로그인</span>
+            <div class="loading" id="loginLoading" style="display: none"></div>
+          </button>
 
-                <button type="submit" class="btn btn-primary" id="loginButton">
-                    <span id="loginButtonText">로그인</span>
-                    <div class="loading" id="loginLoading" style="display: none;"></div>
-                </button>
+          <div class="divider">
+            <span>또는</span>
+          </div>
 
-                <div class="divider">
-                    <span>또는</span>
-                </div>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="googleLoginButton"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
+            </svg>
+            Google로 계속하기
+          </button>
+        </form>
 
-                <button type="button" class="btn btn-secondary" id="googleLoginButton">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                    </svg>
-                    Google로 계속하기
-                </button>
-            </form>
+        <!-- Signup Form -->
+        <form class="signup-form" id="signupForm">
+          <div class="form-group">
+            <label class="form-label" for="signupEmail">이메일</label>
+            <input
+              type="email"
+              id="signupEmail"
+              class="form-input"
+              placeholder="example@email.com"
+              required
+            />
+          </div>
 
-            <!-- Signup Form -->
-            <form class="signup-form" id="signupForm">
-                <div class="form-group">
-                    <label class="form-label" for="signupEmail">이메일</label>
-                    <input 
-                        type="email" 
-                        id="signupEmail" 
-                        class="form-input" 
-                        placeholder="example@email.com"
-                        required
-                    >
-                </div>
+          <div class="form-group">
+            <label class="form-label" for="signupPassword">비밀번호</label>
+            <input
+              type="password"
+              id="signupPassword"
+              class="form-input"
+              placeholder="최소 8자 이상"
+              minlength="8"
+              required
+            />
+          </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="signupPassword">비밀번호</label>
-                    <input 
-                        type="password" 
-                        id="signupPassword" 
-                        class="form-input" 
-                        placeholder="최소 8자 이상"
-                        minlength="8"
-                        required
-                    >
-                </div>
+          <div class="form-group">
+            <label class="form-label" for="confirmPassword"
+              >비밀번호 확인</label
+            >
+            <input
+              type="password"
+              id="confirmPassword"
+              class="form-input"
+              placeholder="비밀번호를 다시 입력하세요"
+              required
+            />
+          </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="confirmPassword">비밀번호 확인</label>
-                    <input 
-                        type="password" 
-                        id="confirmPassword" 
-                        class="form-input" 
-                        placeholder="비밀번호를 다시 입력하세요"
-                        required
-                    >
-                </div>
+          <button type="submit" class="btn btn-primary" id="signupButton">
+            <span id="signupButtonText">회원가입</span>
+            <div class="loading" id="signupLoading" style="display: none"></div>
+          </button>
 
-                <button type="submit" class="btn btn-primary" id="signupButton">
-                    <span id="signupButtonText">회원가입</span>
-                    <div class="loading" id="signupLoading" style="display: none;"></div>
-                </button>
+          <div class="divider">
+            <span>또는</span>
+          </div>
 
-                <div class="divider">
-                    <span>또는</span>
-                </div>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="googleSignupButton"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
+            </svg>
+            Google로 가입하기
+          </button>
+        </form>
+      </div>
 
-                <button type="button" class="btn btn-secondary" id="googleSignupButton">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                    </svg>
-                    Google로 가입하기
-                </button>
-            </form>
-        </div>
-
-        <!-- Footer -->
-        <div class="auth-footer">
-            <p>
-                계정이 있으신가요? 
-                <a href="#" id="switchToLogin">로그인</a> | 
-                <a href="#" id="switchToSignup">회원가입</a>
-            </p>
-        </div>
+      <!-- Footer -->
+      <div class="auth-footer">
+        <p>
+          계정이 있으신가요?
+          <a href="#" id="switchToLogin">로그인</a> |
+          <a href="#" id="switchToSignup">회원가입</a>
+        </p>
+      </div>
     </div>
 
     <script>
-        // Tab switching functionality
-        const tabButtons = document.querySelectorAll('.tab-button');
-        const loginForm = document.querySelector('.login-form');
-        const signupForm = document.querySelector('.signup-form');
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
+      // Tab switching functionality
+      const tabButtons = document.querySelectorAll('.tab-button')
+      const loginForm = document.querySelector('.login-form')
+      const signupForm = document.querySelector('.signup-form')
+      const errorMessage = document.getElementById('errorMessage')
+      const successMessage = document.getElementById('successMessage')
 
-        // Tab switching
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const tabName = button.dataset.tab;
-                
-                // Update tab buttons
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                
-                // Update forms
-                loginForm.classList.remove('active');
-                signupForm.classList.remove('active');
-                
-                if (tabName === 'login') {
-                    loginForm.classList.add('active');
-                    loginForm.style.display = 'block';
-                    signupForm.style.display = 'none';
-                } else {
-                    signupForm.classList.add('active');
-                    signupForm.style.display = 'block';
-                    loginForm.style.display = 'none';
-                }
-                
-                // Clear messages
-                hideMessages();
-            });
-        });
+      // Tab switching
+      tabButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const tabName = button.dataset.tab
 
-        // Footer links
-        document.getElementById('switchToLogin').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.querySelector('[data-tab="login"]').click();
-        });
+          // Update tab buttons
+          tabButtons.forEach((btn) => btn.classList.remove('active'))
+          button.classList.add('active')
 
-        document.getElementById('switchToSignup').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.querySelector('[data-tab="signup"]').click();
-        });
+          // Update forms
+          loginForm.classList.remove('active')
+          signupForm.classList.remove('active')
 
-        // Form submissions
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            setLoadingState('login', true);
-            hideMessages();
-            
-            try {
-                // Simulate API call
-                await simulateAuth('login', { email, password });
-                showMessage('success', '로그인이 완료되었습니다!');
-                
-                // Redirect to dashboard after 2 seconds
-                setTimeout(() => {
-                    window.location.href = '/dashboard';
-                }, 2000);
-                
-            } catch (error) {
-                showMessage('error', error.message);
-            } finally {
-                setLoadingState('login', false);
-            }
-        });
+          if (tabName === 'login') {
+            loginForm.classList.add('active')
+            loginForm.style.display = 'block'
+            signupForm.style.display = 'none'
+          } else {
+            signupForm.classList.add('active')
+            signupForm.style.display = 'block'
+            loginForm.style.display = 'none'
+          }
 
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            // Password validation
-            if (password !== confirmPassword) {
-                showMessage('error', '비밀번호가 일치하지 않습니다.');
-                return;
-            }
-            
-            setLoadingState('signup', true);
-            hideMessages();
-            
-            try {
-                // Simulate API call
-                await simulateAuth('signup', { email, password });
-                showMessage('success', '회원가입이 완료되었습니다! 이메일을 확인해주세요.');
-                
-                // Switch to login tab after 3 seconds
-                setTimeout(() => {
-                    document.querySelector('[data-tab="login"]').click();
-                }, 3000);
-                
-            } catch (error) {
-                showMessage('error', error.message);
-            } finally {
-                setLoadingState('signup', false);
-            }
-        });
+          // Clear messages
+          hideMessages()
+        })
+      })
 
-        // Google Auth buttons
-        document.getElementById('googleLoginButton').addEventListener('click', async () => {
-            showMessage('success', 'Google 로그인 기능은 곧 구현 예정입니다.');
-        });
+      // Footer links
+      document
+        .getElementById('switchToLogin')
+        .addEventListener('click', (e) => {
+          e.preventDefault()
+          document.querySelector('[data-tab="login"]').click()
+        })
 
-        document.getElementById('googleSignupButton').addEventListener('click', async () => {
-            showMessage('success', 'Google 회원가입 기능은 곧 구현 예정입니다.');
-        });
+      document
+        .getElementById('switchToSignup')
+        .addEventListener('click', (e) => {
+          e.preventDefault()
+          document.querySelector('[data-tab="signup"]').click()
+        })
 
-        // Helper functions
-        function setLoadingState(type, isLoading) {
-            const button = document.getElementById(`${type}Button`);
-            const buttonText = document.getElementById(`${type}ButtonText`);
-            const loading = document.getElementById(`${type}Loading`);
-            
-            if (isLoading) {
-                button.disabled = true;
-                buttonText.style.display = 'none';
-                loading.style.display = 'block';
-            } else {
-                button.disabled = false;
-                buttonText.style.display = 'block';
-                loading.style.display = 'none';
-            }
-        }
+      // Form submissions
+      document
+        .getElementById('loginForm')
+        .addEventListener('submit', async (e) => {
+          e.preventDefault()
 
-        function showMessage(type, message) {
-            const messageEl = document.getElementById(`${type}Message`);
-            messageEl.textContent = message;
-            messageEl.classList.add('show');
-            
-            // Hide after 5 seconds
+          const email = document.getElementById('loginEmail').value
+          const password = document.getElementById('loginPassword').value
+
+          setLoadingState('login', true)
+          hideMessages()
+
+          try {
+            // Simulate API call
+            await simulateAuth('login', { email, password })
+            showMessage('success', '로그인이 완료되었습니다!')
+
+            // Redirect to dashboard after 2 seconds
             setTimeout(() => {
-                messageEl.classList.remove('show');
-            }, 5000);
+              window.location.href = '/dashboard'
+            }, 2000)
+          } catch (error) {
+            showMessage('error', error.message)
+          } finally {
+            setLoadingState('login', false)
+          }
+        })
+
+      document
+        .getElementById('signupForm')
+        .addEventListener('submit', async (e) => {
+          e.preventDefault()
+
+          const email = document.getElementById('signupEmail').value
+          const password = document.getElementById('signupPassword').value
+          const confirmPassword =
+            document.getElementById('confirmPassword').value
+
+          // Password validation
+          if (password !== confirmPassword) {
+            showMessage('error', '비밀번호가 일치하지 않습니다.')
+            return
+          }
+
+          setLoadingState('signup', true)
+          hideMessages()
+
+          try {
+            // Simulate API call
+            await simulateAuth('signup', { email, password })
+            showMessage(
+              'success',
+              '회원가입이 완료되었습니다! 이메일을 확인해주세요.',
+            )
+
+            // Switch to login tab after 3 seconds
+            setTimeout(() => {
+              document.querySelector('[data-tab="login"]').click()
+            }, 3000)
+          } catch (error) {
+            showMessage('error', error.message)
+          } finally {
+            setLoadingState('signup', false)
+          }
+        })
+
+      // Google Auth buttons
+      document
+        .getElementById('googleLoginButton')
+        .addEventListener('click', async () => {
+          showMessage('success', 'Google 로그인 기능은 곧 구현 예정입니다.')
+        })
+
+      document
+        .getElementById('googleSignupButton')
+        .addEventListener('click', async () => {
+          showMessage('success', 'Google 회원가입 기능은 곧 구현 예정입니다.')
+        })
+
+      // Helper functions
+      function setLoadingState(type, isLoading) {
+        const button = document.getElementById(`${type}Button`)
+        const buttonText = document.getElementById(`${type}ButtonText`)
+        const loading = document.getElementById(`${type}Loading`)
+
+        if (isLoading) {
+          button.disabled = true
+          buttonText.style.display = 'none'
+          loading.style.display = 'block'
+        } else {
+          button.disabled = false
+          buttonText.style.display = 'block'
+          loading.style.display = 'none'
         }
+      }
 
-        function hideMessages() {
-            errorMessage.classList.remove('show');
-            successMessage.classList.remove('show');
+      function showMessage(type, message) {
+        const messageEl = document.getElementById(`${type}Message`)
+        messageEl.textContent = message
+        messageEl.classList.add('show')
+
+        // Hide after 5 seconds
+        setTimeout(() => {
+          messageEl.classList.remove('show')
+        }, 5000)
+      }
+
+      function hideMessages() {
+        errorMessage.classList.remove('show')
+        successMessage.classList.remove('show')
+      }
+
+      // Simulate auth API calls
+      async function simulateAuth(type, data) {
+        // Simulate network delay
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+
+        // Simulate validation
+        if (type === 'login') {
+          if (
+            data.email === 'test@example.com' &&
+            data.password === 'password'
+          ) {
+            return { success: true }
+          } else {
+            throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.')
+          }
+        } else {
+          if (data.email.includes('@') && data.password.length >= 8) {
+            return { success: true }
+          } else {
+            throw new Error(
+              '올바른 이메일과 8자 이상의 비밀번호를 입력해주세요.',
+            )
+          }
         }
+      }
 
-        // Simulate auth API calls
-        async function simulateAuth(type, data) {
-            // Simulate network delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Simulate validation
-            if (type === 'login') {
-                if (data.email === 'test@example.com' && data.password === 'password') {
-                    return { success: true };
-                } else {
-                    throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.');
-                }
-            } else {
-                if (data.email.includes('@') && data.password.length >= 8) {
-                    return { success: true };
-                } else {
-                    throw new Error('올바른 이메일과 8자 이상의 비밀번호를 입력해주세요.');
-                }
-            }
-        }
+      // Input validation and UX improvements
+      document.querySelectorAll('.form-input').forEach((input) => {
+        input.addEventListener('input', function () {
+          if (this.validity.valid) {
+            this.style.borderColor = 'rgba(16, 185, 129, 0.3)'
+          } else {
+            this.style.borderColor = 'rgba(239, 68, 68, 0.3)'
+          }
+        })
+      })
 
-        // Input validation and UX improvements
-        document.querySelectorAll('.form-input').forEach(input => {
-            input.addEventListener('input', function() {
-                if (this.validity.valid) {
-                    this.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-                } else {
-                    this.style.borderColor = 'rgba(239, 68, 68, 0.3)';
-                }
-            });
-        });
+      // Real-time password confirmation
+      document
+        .getElementById('confirmPassword')
+        .addEventListener('input', function () {
+          const password = document.getElementById('signupPassword').value
+          const confirmPassword = this.value
 
-        // Real-time password confirmation
-        document.getElementById('confirmPassword').addEventListener('input', function() {
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = this.value;
-            
-            if (confirmPassword && password !== confirmPassword) {
-                this.style.borderColor = 'rgba(239, 68, 68, 0.3)';
-            } else if (confirmPassword && password === confirmPassword) {
-                this.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-            }
-        });
+          if (confirmPassword && password !== confirmPassword) {
+            this.style.borderColor = 'rgba(239, 68, 68, 0.3)'
+          } else if (confirmPassword && password === confirmPassword) {
+            this.style.borderColor = 'rgba(16, 185, 129, 0.3)'
+          }
+        })
     </script>
-</body>
+  </body>
 </html>

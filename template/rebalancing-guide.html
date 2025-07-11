@@ -1,1309 +1,1530 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StockDash - 리밸런싱 가이드</title>
-    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
+      rel="stylesheet"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);
-            color: #FFFFFF;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+      body {
+        font-family:
+          'Pretendard',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          Arial,
+          sans-serif;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        color: #ffffff;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
 
-        /* Header */
-        .header {
-            background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 16px 32px;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
+      /* Header */
+      .header {
+        background: rgba(26, 26, 26, 0.95);
+        backdrop-filter: blur(20px);
+        padding: 16px 32px;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
 
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+      .logo {
+        font-size: 24px;
+        font-weight: 700;
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
 
-        .nav-menu {
-            display: flex;
-            gap: 32px;
-        }
+      .nav-menu {
+        display: flex;
+        gap: 32px;
+      }
 
-        .nav-item {
-            color: #B3B3B3;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.15s ease;
-            position: relative;
-        }
+      .nav-item {
+        color: #b3b3b3;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.15s ease;
+        position: relative;
+      }
 
-        .nav-item:hover {
-            color: #6366F1;
-        }
+      .nav-item:hover {
+        color: #6366f1;
+      }
 
-        .nav-item.active {
-            color: #6366F1;
-        }
+      .nav-item.active {
+        color: #6366f1;
+      }
 
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, #6366F1, #8B5CF6);
-            border-radius: 2px;
-        }
+      .nav-item.active::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        border-radius: 2px;
+      }
 
-        /* Main Container */
-        .main-container {
-            margin-top: 80px;
-            padding: 32px;
-            max-width: 1400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+      /* Main Container */
+      .main-container {
+        margin-top: 80px;
+        padding: 32px;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
 
-        /* Page Header */
-        .page-header {
-            margin-bottom: 32px;
-            text-align: center;
-        }
+      /* Page Header */
+      .page-header {
+        margin-bottom: 32px;
+        text-align: center;
+      }
 
-        .page-title {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
+      .page-title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
 
-        .page-subtitle {
-            color: #B3B3B3;
-            font-size: 16px;
-        }
+      .page-subtitle {
+        color: #b3b3b3;
+        font-size: 16px;
+      }
 
-        /* Settings Panel */
-        .settings-panel {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            backdrop-filter: blur(20px);
-            margin-bottom: 32px;
-            position: relative;
-            overflow: hidden;
-        }
+      /* Settings Panel */
+      .settings-panel {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        backdrop-filter: blur(20px);
+        margin-bottom: 32px;
+        position: relative;
+        overflow: hidden;
+      }
 
-        .settings-panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        }
+      .settings-panel::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+      }
 
-        .settings-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
+      .settings-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
 
-        .settings-title {
-            font-size: 20px;
-            font-weight: 600;
-        }
+      .settings-title {
+        font-size: 20px;
+        font-weight: 600;
+      }
 
-        .settings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
-        }
+      .settings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+      }
 
-        .setting-item {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+      .setting-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
 
-        .setting-label {
-            font-size: 14px;
-            font-weight: 500;
-            color: #FFFFFF;
-        }
+      .setting-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #ffffff;
+      }
 
-        .setting-input {
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #FFFFFF;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
+      .setting-input {
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
 
-        .setting-input:focus {
-            outline: none;
-            border-color: #6366F1;
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
+      .setting-input:focus {
+        outline: none;
+        border-color: #6366f1;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
 
-        .setting-select {
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #FFFFFF;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
+      .setting-select {
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
 
-        .setting-select option {
-            background: #1A1A1A;
-            color: #FFFFFF;
-        }
+      .setting-select option {
+        background: #1a1a1a;
+        color: #ffffff;
+      }
 
-        .setting-description {
-            font-size: 12px;
-            color: #B3B3B3;
-        }
+      .setting-description {
+        font-size: 12px;
+        color: #b3b3b3;
+      }
 
-        .btn-calculate {
-            padding: 12px 24px;
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            border: none;
-            border-radius: 8px;
-            color: #FFFFFF;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            align-self: flex-end;
-        }
+      .btn-calculate {
+        padding: 12px 24px;
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        border: none;
+        border-radius: 8px;
+        color: #ffffff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        align-self: flex-end;
+      }
 
-        .btn-calculate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-        }
+      .btn-calculate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+      }
 
-        /* Summary Cards */
-        .summary-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
+      /* Summary Cards */
+      .summary-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+      }
 
-        .summary-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            backdrop-filter: blur(20px);
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-        }
+      .summary-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        backdrop-filter: blur(20px);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+      }
 
-        .summary-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        }
+      .summary-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+      }
 
-        .summary-card-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 16px;
-            padding: 12px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+      .summary-card-icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 16px;
+        padding: 12px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-        .icon-buy {
-            background: rgba(16, 185, 129, 0.2);
-            color: #6EE7B7;
-        }
+      .icon-buy {
+        background: rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+      }
 
-        .icon-sell {
-            background: rgba(239, 68, 68, 0.2);
-            color: #FCA5A5;
-        }
+      .icon-sell {
+        background: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+      }
 
-        .icon-fee {
-            background: rgba(245, 158, 11, 0.2);
-            color: #FCD34D;
-        }
+      .icon-fee {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fcd34d;
+      }
 
-        .icon-total {
-            background: rgba(99, 102, 241, 0.2);
-            color: #A5B4FC;
-        }
+      .icon-total {
+        background: rgba(99, 102, 241, 0.2);
+        color: #a5b4fc;
+      }
 
-        .summary-card-label {
-            font-size: 14px;
-            color: #B3B3B3;
-            margin-bottom: 8px;
-        }
+      .summary-card-label {
+        font-size: 14px;
+        color: #b3b3b3;
+        margin-bottom: 8px;
+      }
 
-        .summary-card-value {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
+      .summary-card-value {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
 
-        .summary-card-description {
-            font-size: 12px;
-            color: #B3B3B3;
-        }
+      .summary-card-description {
+        font-size: 12px;
+        color: #b3b3b3;
+      }
 
-        /* Trading Guide Cards */
-        .trading-guide {
-            display: grid;
-            gap: 16px;
-        }
+      /* Trading Guide Cards */
+      .trading-guide {
+        display: grid;
+        gap: 16px;
+      }
 
-        .guide-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            backdrop-filter: blur(20px);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+      .guide-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        backdrop-filter: blur(20px);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
 
-        .guide-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        }
+      .guide-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+      }
 
-        .guide-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
+      .guide-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
 
-        .guide-summary {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+      .guide-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-        .guide-details {
-            display: none;
-        }
+      .guide-details {
+        display: none;
+      }
 
-        .guide-card.expanded .guide-details {
-            display: block;
-            margin-top: 20px;
-        }
+      .guide-card.expanded .guide-details {
+        display: block;
+        margin-top: 20px;
+      }
 
-        .summary-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex: 1;
-        }
+      .summary-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex: 1;
+      }
 
-        .summary-action {
-            font-size: 18px;
-            font-weight: 600;
-            margin-left: 16px;
-        }
+      .summary-action {
+        font-size: 18px;
+        font-weight: 600;
+        margin-left: 16px;
+      }
 
-        .guide-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+      .guide-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
 
-        .stock-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex: 1;
-        }
+      .stock-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex: 1;
+      }
 
-        .stock-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 16px;
-            color: #FFFFFF;
-        }
+      .stock-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 16px;
+        color: #ffffff;
+      }
 
-        .stock-details h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
+      .stock-details h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
 
-        .stock-details p {
-            font-size: 14px;
-            color: #B3B3B3;
-        }
+      .stock-details p {
+        font-size: 14px;
+        color: #b3b3b3;
+      }
 
-        .action-badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+      .action-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
 
-        .badge-buy {
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #6EE7B7;
-        }
+      .badge-buy {
+        background: rgba(16, 185, 129, 0.2);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #6ee7b7;
+      }
 
-        .badge-sell {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #FCA5A5;
-        }
+      .badge-sell {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+      }
 
-        .badge-hold {
-            background: rgba(156, 163, 175, 0.2);
-            border: 1px solid rgba(156, 163, 175, 0.3);
-            color: #D1D5DB;
+      .badge-hold {
+        background: rgba(156, 163, 175, 0.2);
+        border: 1px solid rgba(156, 163, 175, 0.3);
+        color: #d1d5db;
+      }
+
+      .guide-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .metric-item {
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+      }
+
+      .metric-label {
+        font-size: 12px;
+        color: #b3b3b3;
+        margin-bottom: 4px;
+      }
+
+      .metric-value {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .metric-sub {
+        font-size: 11px;
+        color: #b3b3b3;
+        margin-top: 2px;
+      }
+
+      /* Detail Modal */
+      .detail-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 3000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .detail-modal.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .detail-modal-content {
+        background: rgba(26, 26, 26, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        width: 100%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        backdrop-filter: blur(20px);
+        animation: slideUp 0.3s ease;
+        position: relative;
+      }
+
+      .detail-modal-header {
+        padding: 24px 24px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 0;
+        padding-bottom: 20px;
+      }
+
+      .detail-modal-title {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .detail-stock-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 16px;
+        color: #ffffff;
+      }
+
+      .detail-stock-info h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .detail-stock-info p {
+        font-size: 14px;
+        color: #b3b3b3;
+      }
+
+      .detail-modal-close {
+        background: none;
+        border: none;
+        color: #b3b3b3;
+        font-size: 28px;
+        cursor: pointer;
+        padding: 4px;
+        transition: all 0.3s ease;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .detail-modal-close:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .detail-modal-body {
+        padding: 24px;
+      }
+
+      .detail-section {
+        margin-bottom: 32px;
+      }
+
+      .detail-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .detail-section-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .detail-metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .detail-metric-card {
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        text-align: center;
+      }
+
+      .detail-metric-label {
+        font-size: 14px;
+        color: #b3b3b3;
+        margin-bottom: 8px;
+      }
+
+      .detail-metric-value {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .detail-metric-sub {
+        font-size: 12px;
+        color: #b3b3b3;
+      }
+
+      .detail-steps {
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .detail-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .detail-step:last-child {
+        margin-bottom: 0;
+      }
+
+      .step-number {
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        color: #ffffff;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .step-content {
+        flex: 1;
+      }
+
+      .step-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 4px;
+      }
+
+      .step-description {
+        font-size: 13px;
+        color: #b3b3b3;
+        line-height: 1.5;
+      }
+
+      .detail-warning {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        border-radius: 8px;
+        padding: 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .detail-warning-icon {
+        color: #fcd34d;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .detail-warning-content {
+        flex: 1;
+      }
+
+      .detail-warning-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #fcd34d;
+        margin-bottom: 4px;
+      }
+
+      .detail-warning-text {
+        font-size: 13px;
+        color: #fcd34d;
+        line-height: 1.5;
+      }
+
+      /* Simulation Section */
+      .simulation-section {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        backdrop-filter: blur(20px);
+        overflow: hidden;
+        position: relative;
+        margin-top: 32px;
+      }
+
+      .simulation-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+      }
+
+      .simulation-header {
+        padding: 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .simulation-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .simulation-subtitle {
+        font-size: 14px;
+        color: #b3b3b3;
+      }
+
+      .simulation-content {
+        padding: 24px;
+      }
+
+      .simulation-chart {
+        height: 300px;
+        margin-bottom: 24px;
+      }
+
+      .before-after {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+
+      .before-after-item {
+        text-align: center;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+      }
+
+      .before-after-label {
+        font-size: 14px;
+        color: #b3b3b3;
+        margin-bottom: 16px;
+      }
+
+      .allocation-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .allocation-item {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+      }
+
+      .allocation-symbol {
+        font-weight: 600;
+        min-width: 50px;
+      }
+
+      .allocation-percentage {
+        font-size: 14px;
+        color: #b3b3b3;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-top: 32px;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        color: #ffffff;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+      }
+
+      /* Alert Messages */
+      .alert {
+        padding: 16px 20px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+      }
+
+      .alert-info {
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        color: #93c5fd;
+      }
+
+      .alert-warning {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        color: #fcd34d;
+      }
+
+      .alert-success {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        .before-after {
+          grid-template-columns: 1fr;
         }
 
         .guide-metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .main-container {
+          padding: 16px;
         }
 
-        .metric-item {
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
+        .header-content {
+          padding: 0 16px;
         }
 
-        .metric-label {
-            font-size: 12px;
-            color: #B3B3B3;
-            margin-bottom: 4px;
+        .nav-menu {
+          display: none;
         }
 
-        .metric-value {
-            font-size: 16px;
-            font-weight: 600;
+        .page-title {
+          font-size: 24px;
         }
 
-        .metric-sub {
-            font-size: 11px;
-            color: #B3B3B3;
-            margin-top: 2px;
+        .settings-grid {
+          grid-template-columns: 1fr;
         }
 
-        /* Detail Modal */
-        .detail-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 3000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+        .summary-section {
+          grid-template-columns: repeat(2, 1fr);
         }
 
-        .detail-modal.active {
-            display: flex;
-            animation: fadeIn 0.3s ease;
+        .guide-metrics {
+          grid-template-columns: 1fr;
         }
 
-        .detail-modal-content {
-            background: rgba(26, 26, 26, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            backdrop-filter: blur(20px);
-            animation: slideUp 0.3s ease;
-            position: relative;
-        }
-
-        .detail-modal-header {
-            padding: 24px 24px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 0;
-            padding-bottom: 20px;
-        }
-
-        .detail-modal-title {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .detail-stock-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 16px;
-            color: #FFFFFF;
-        }
-
-        .detail-stock-info h2 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .detail-stock-info p {
-            font-size: 14px;
-            color: #B3B3B3;
-        }
-
-        .detail-modal-close {
-            background: none;
-            border: none;
-            color: #B3B3B3;
-            font-size: 28px;
-            cursor: pointer;
-            padding: 4px;
-            transition: all 0.3s ease;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .detail-modal-close:hover {
-            color: #FFFFFF;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .detail-modal-body {
-            padding: 24px;
-        }
-
-        .detail-section {
-            margin-bottom: 32px;
-        }
-
-        .detail-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .detail-section-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #FFFFFF;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .detail-metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .detail-metric-card {
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .detail-metric-label {
-            font-size: 14px;
-            color: #B3B3B3;
-            margin-bottom: 8px;
-        }
-
-        .detail-metric-value {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .detail-metric-sub {
-            font-size: 12px;
-            color: #B3B3B3;
-        }
-
-        .detail-steps {
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .detail-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .detail-step:last-child {
-            margin-bottom: 0;
-        }
-
-        .step-number {
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            color: #FFFFFF;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: 600;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .step-content {
-            flex: 1;
-        }
-
-        .step-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #FFFFFF;
-            margin-bottom: 4px;
-        }
-
-        .step-description {
-            font-size: 13px;
-            color: #B3B3B3;
-            line-height: 1.5;
-        }
-
-        .detail-warning {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: 8px;
-            padding: 16px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .detail-warning-icon {
-            color: #FCD34D;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .detail-warning-content {
-            flex: 1;
-        }
-
-        .detail-warning-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #FCD34D;
-            margin-bottom: 4px;
-        }
-
-        .detail-warning-text {
-            font-size: 13px;
-            color: #FCD34D;
-            line-height: 1.5;
-        }
-
-        /* Simulation Section */
-        .simulation-section {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            backdrop-filter: blur(20px);
-            overflow: hidden;
-            position: relative;
-            margin-top: 32px;
-        }
-
-        .simulation-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        }
-
-        .simulation-header {
-            padding: 24px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .simulation-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .simulation-subtitle {
-            font-size: 14px;
-            color: #B3B3B3;
-        }
-
-        .simulation-content {
-            padding: 24px;
-        }
-
-        .simulation-chart {
-            height: 300px;
-            margin-bottom: 24px;
-        }
-
-        .before-after {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-
-        .before-after-item {
-            text-align: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-        }
-
-        .before-after-label {
-            font-size: 14px;
-            color: #B3B3B3;
-            margin-bottom: 16px;
-        }
-
-        .allocation-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .allocation-item {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 6px;
-        }
-
-        .allocation-symbol {
-            font-weight: 600;
-            min-width: 50px;
-        }
-
-        .allocation-percentage {
-            font-size: 14px;
-            color: #B3B3B3;
-        }
-
-        /* Action Buttons */
         .action-buttons {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            margin-top: 32px;
+          flex-direction: column;
         }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
+        .stock-info {
+          flex-direction: column;
+          text-align: center;
+          gap: 12px;
         }
 
-        .btn-primary {
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            color: #FFFFFF;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+        .guide-header {
+          flex-direction: column;
+          gap: 16px;
+          align-items: center;
         }
+      }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
         }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: #FFFFFF;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
 
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
+      .guide-card {
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      .guide-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .guide-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .guide-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .guide-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .guide-card:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+
+      /* Loading State */
+      .loading {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top: 2px solid #ffffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
         }
-
-        /* Alert Messages */
-        .alert {
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 14px;
+        100% {
+          transform: rotate(360deg);
         }
+      }
 
-        .alert-info {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            color: #93C5FD;
-        }
-
-        .alert-warning {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            color: #FCD34D;
-        }
-
-        .alert-success {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            color: #6EE7B7;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .before-after {
-                grid-template-columns: 1fr;
-            }
-
-            .guide-metrics {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                padding: 16px;
-            }
-
-            .header-content {
-                padding: 0 16px;
-            }
-
-            .nav-menu {
-                display: none;
-            }
-
-            .page-title {
-                font-size: 24px;
-            }
-
-            .settings-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .summary-section {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .guide-metrics {
-                grid-template-columns: 1fr;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .stock-info {
-                flex-direction: column;
-                text-align: center;
-                gap: 12px;
-            }
-
-            .guide-header {
-                flex-direction: column;
-                gap: 16px;
-                align-items: center;
-            }
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .guide-card {
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        .guide-card:nth-child(1) { animation-delay: 0.1s; }
-        .guide-card:nth-child(2) { animation-delay: 0.2s; }
-        .guide-card:nth-child(3) { animation-delay: 0.3s; }
-        .guide-card:nth-child(4) { animation-delay: 0.4s; }
-        .guide-card:nth-child(5) { animation-delay: 0.5s; }
-
-        /* Loading State */
-        .loading {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid #FFFFFF;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .btn-loading {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
+      .btn-loading {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Header -->
     <header class="header">
-        <div class="header-content">
-            <div class="logo">StockDash</div>
-            <nav class="nav-menu">
-                <a href="#" class="nav-item">대시보드</a>
-                <a href="#" class="nav-item">포트폴리오</a>
-                <a href="#" class="nav-item">분석</a>
-                <a href="#" class="nav-item">목표 설정</a>
-                <a href="#" class="nav-item">비교 분석</a>
-                <a href="#" class="nav-item active">리밸런싱</a>
-            </nav>
-        </div>
+      <div class="header-content">
+        <div class="logo">StockDash</div>
+        <nav class="nav-menu">
+          <a href="#" class="nav-item">대시보드</a>
+          <a href="#" class="nav-item">포트폴리오</a>
+          <a href="#" class="nav-item">분석</a>
+          <a href="#" class="nav-item">목표 설정</a>
+          <a href="#" class="nav-item">비교 분석</a>
+          <a href="#" class="nav-item active">리밸런싱</a>
+        </nav>
+      </div>
     </header>
 
     <!-- Main Container -->
     <main class="main-container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title">리밸런싱 가이드</h1>
-            <p class="page-subtitle">목표 포트폴리오 달성을 위한 매매 가이드와 시뮬레이션</p>
-        </div>
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">리밸런싱 가이드</h1>
+        <p class="page-subtitle">
+          목표 포트폴리오 달성을 위한 매매 가이드와 시뮬레이션
+        </p>
+      </div>
 
-        <!-- Settings Panel -->
-        <div class="settings-panel">
-            <div class="settings-header">
-                <h2 class="settings-title">리밸런싱 설정</h2>
-                <button class="btn-calculate" onclick="calculateRebalancing()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    계산하기
-                </button>
-            </div>
-            <div class="settings-grid">
-                <div class="setting-item">
-                    <label class="setting-label">총 투자 금액</label>
-                    <input type="number" class="setting-input" id="totalAmount" value="128640000" placeholder="투자할 총 금액">
-                    <span class="setting-description">리밸런싱에 사용할 총 금액</span>
-                </div>
-                <div class="setting-item">
-                    <label class="setting-label">목표 포트폴리오</label>
-                    <select class="setting-select" id="targetPortfolio">
-                        <option value="conservative">보수적 포트폴리오</option>
-                        <option value="growth">성장형 포트폴리오</option>
-                        <option value="dividend">배당형 포트폴리오</option>
-                    </select>
-                    <span class="setting-description">리밸런싱 목표가 될 포트폴리오</span>
-                </div>
-                <div class="setting-item">
-                    <label class="setting-label">리밸런싱 임계값</label>
-                    <input type="number" class="setting-input" id="threshold" value="2" step="0.1" placeholder="2.0">
-                    <span class="setting-description">매매를 실행할 최소 편차 (%)</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Alert -->
-        <div class="alert alert-info">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Settings Panel -->
+      <div class="settings-panel">
+        <div class="settings-header">
+          <h2 class="settings-title">리밸런싱 설정</h2>
+          <button class="btn-calculate" onclick="calculateRebalancing()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
-            <span>아래 가이드는 현재 시장가 기준으로 계산되었습니다. 실제 거래 시 가격 변동을 고려하세요.</span>
+            계산하기
+          </button>
         </div>
-
-        <!-- Summary Cards -->
-        <div class="summary-section">
-            <div class="summary-card">
-                <div class="summary-card-icon icon-buy">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M7 17l9.2-9.2M17 17V7H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <div class="summary-card-label">총 매수 금액</div>
-                <div class="summary-card-value" id="totalBuyAmount">₩15.2M</div>
-                <div class="summary-card-description">3개 종목</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-card-icon icon-sell">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M17 7l-9.2 9.2M7 7v10h10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <div class="summary-card-label">총 매도 금액</div>
-                <div class="summary-card-value" id="totalSellAmount">₩8.7M</div>
-                <div class="summary-card-description">2개 종목</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-card-icon icon-total">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </div>
-                <div class="summary-card-label">순 투입 자금</div>
-                <div class="summary-card-value" id="netCash">₩6.5M</div>
-                <div class="summary-card-description">추가 현금 필요</div>
-            </div>
+        <div class="settings-grid">
+          <div class="setting-item">
+            <label class="setting-label">총 투자 금액</label>
+            <input
+              type="number"
+              class="setting-input"
+              id="totalAmount"
+              value="128640000"
+              placeholder="투자할 총 금액"
+            />
+            <span class="setting-description">리밸런싱에 사용할 총 금액</span>
+          </div>
+          <div class="setting-item">
+            <label class="setting-label">목표 포트폴리오</label>
+            <select class="setting-select" id="targetPortfolio">
+              <option value="conservative">보수적 포트폴리오</option>
+              <option value="growth">성장형 포트폴리오</option>
+              <option value="dividend">배당형 포트폴리오</option>
+            </select>
+            <span class="setting-description"
+              >리밸런싱 목표가 될 포트폴리오</span
+            >
+          </div>
+          <div class="setting-item">
+            <label class="setting-label">리밸런싱 임계값</label>
+            <input
+              type="number"
+              class="setting-input"
+              id="threshold"
+              value="2"
+              step="0.1"
+              placeholder="2.0"
+            />
+            <span class="setting-description">매매를 실행할 최소 편차 (%)</span>
+          </div>
         </div>
+      </div>
 
-        <!-- Trading Guide Cards -->
-        <div class="trading-guide" id="tradingGuide">
-            <!-- Trading guide cards will be generated dynamically -->
+      <!-- Alert -->
+      <div class="alert alert-info">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span
+          >아래 가이드는 현재 시장가 기준으로 계산되었습니다. 실제 거래 시 가격
+          변동을 고려하세요.</span
+        >
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-section">
+        <div class="summary-card">
+          <div class="summary-card-icon icon-buy">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M7 17l9.2-9.2M17 17V7H7"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="summary-card-label">총 매수 금액</div>
+          <div class="summary-card-value" id="totalBuyAmount">₩15.2M</div>
+          <div class="summary-card-description">3개 종목</div>
         </div>
-
-        <!-- Detail Modal -->
-        <div class="detail-modal" id="detailModal">
-            <div class="detail-modal-content">
-                <div class="detail-modal-header">
-                    <div class="detail-modal-title">
-                        <div class="detail-stock-icon" id="detailStockIcon">NV</div>
-                        <div class="detail-stock-info">
-                            <h2 id="detailStockSymbol">NVDA</h2>
-                            <p id="detailStockName">NVIDIA Corp.</p>
-                        </div>
-                    </div>
-                    <button class="detail-modal-close" onclick="closeDetailModal()">&times;</button>
-                </div>
-                <div class="detail-modal-body">
-                    <div class="detail-section">
-                        <div class="detail-section-title">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M9 11H7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-2M9 11V9a2 2 0 1 1 4 0v2M9 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            거래 정보
-                        </div>
-                        <div class="detail-metrics-grid" id="detailMetricsGrid">
-                            <!-- Metrics will be populated dynamically -->
-                        </div>
-                    </div>
-
-                    <div class="detail-section">
-                        <div class="detail-section-title">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            매매 가이드
-                        </div>
-                        <div class="detail-steps" id="detailSteps">
-                            <!-- Steps will be populated dynamically -->
-                        </div>
-
-                        <div class="detail-warning">
-                            <svg class="detail-warning-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <div class="detail-warning-content">
-                                <div class="detail-warning-title">주의사항</div>
-                                <div class="detail-warning-text">실제 거래 시 시장 상황에 따라 가격이 변동될 수 있습니다. 지정가 주문을 통해 원하는 가격에서 거래하는 것을 권장합니다.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="summary-card">
+          <div class="summary-card-icon icon-sell">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M17 7l-9.2 9.2M7 7v10h10"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="summary-card-label">총 매도 금액</div>
+          <div class="summary-card-value" id="totalSellAmount">₩8.7M</div>
+          <div class="summary-card-description">2개 종목</div>
         </div>
-
-        <!-- Simulation Section -->
-        <div class="simulation-section">
-            <div class="simulation-header">
-                <h2 class="simulation-title">리밸런싱 시뮬레이션</h2>
-                <p class="simulation-subtitle">리밸런싱 전후 포트폴리오 비중 변화</p>
-            </div>
-            <div class="simulation-content">
-                <div class="simulation-chart">
-                    <canvas id="simulationChart"></canvas>
-                </div>
-                <div class="before-after">
-                    <div class="before-after-item">
-                        <div class="before-after-label">리밸런싱 전</div>
-                        <div class="allocation-list" id="beforeAllocation">
-                            <!-- Before allocation will be populated -->
-                        </div>
-                    </div>
-                    <div class="before-after-item">
-                        <div class="before-after-label">리밸런싱 후</div>
-                        <div class="allocation-list" id="afterAllocation">
-                            <!-- After allocation will be populated -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="summary-card">
+          <div class="summary-card-icon icon-total">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <rect
+                x="8"
+                y="2"
+                width="8"
+                height="4"
+                rx="1"
+                ry="1"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="summary-card-label">순 투입 자금</div>
+          <div class="summary-card-value" id="netCash">₩6.5M</div>
+          <div class="summary-card-description">추가 현금 필요</div>
         </div>
+      </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <button class="btn btn-secondary" onclick="exportTradingPlan()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                매매 계획 내보내기
+      <!-- Trading Guide Cards -->
+      <div class="trading-guide" id="tradingGuide">
+        <!-- Trading guide cards will be generated dynamically -->
+      </div>
+
+      <!-- Detail Modal -->
+      <div class="detail-modal" id="detailModal">
+        <div class="detail-modal-content">
+          <div class="detail-modal-header">
+            <div class="detail-modal-title">
+              <div class="detail-stock-icon" id="detailStockIcon">NV</div>
+              <div class="detail-stock-info">
+                <h2 id="detailStockSymbol">NVDA</h2>
+                <p id="detailStockName">NVIDIA Corp.</p>
+              </div>
+            </div>
+            <button class="detail-modal-close" onclick="closeDetailModal()">
+              &times;
             </button>
-            <button class="btn btn-primary" onclick="startRebalancing()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <polygon points="5,3 19,12 5,21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"/>
+          </div>
+          <div class="detail-modal-body">
+            <div class="detail-section">
+              <div class="detail-section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M9 11H7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-2M9 11V9a2 2 0 1 1 4 0v2M9 11h6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                 </svg>
-                리밸런싱 시작
-            </button>
+                거래 정보
+              </div>
+              <div class="detail-metrics-grid" id="detailMetricsGrid">
+                <!-- Metrics will be populated dynamically -->
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <div class="detail-section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                매매 가이드
+              </div>
+              <div class="detail-steps" id="detailSteps">
+                <!-- Steps will be populated dynamically -->
+              </div>
+
+              <div class="detail-warning">
+                <svg
+                  class="detail-warning-icon"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <div class="detail-warning-content">
+                  <div class="detail-warning-title">주의사항</div>
+                  <div class="detail-warning-text">
+                    실제 거래 시 시장 상황에 따라 가격이 변동될 수 있습니다.
+                    지정가 주문을 통해 원하는 가격에서 거래하는 것을 권장합니다.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Simulation Section -->
+      <div class="simulation-section">
+        <div class="simulation-header">
+          <h2 class="simulation-title">리밸런싱 시뮬레이션</h2>
+          <p class="simulation-subtitle">리밸런싱 전후 포트폴리오 비중 변화</p>
+        </div>
+        <div class="simulation-content">
+          <div class="simulation-chart">
+            <canvas id="simulationChart"></canvas>
+          </div>
+          <div class="before-after">
+            <div class="before-after-item">
+              <div class="before-after-label">리밸런싱 전</div>
+              <div class="allocation-list" id="beforeAllocation">
+                <!-- Before allocation will be populated -->
+              </div>
+            </div>
+            <div class="before-after-item">
+              <div class="before-after-label">리밸런싱 후</div>
+              <div class="allocation-list" id="afterAllocation">
+                <!-- After allocation will be populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn btn-secondary" onclick="exportTradingPlan()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-15"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <polyline
+              points="7,10 12,15 17,10"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <line
+              x1="12"
+              y1="15"
+              x2="12"
+              y2="3"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          매매 계획 내보내기
+        </button>
+        <button class="btn btn-primary" onclick="startRebalancing()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <polygon
+              points="5,3 19,12 5,21"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              fill="currentColor"
+            />
+          </svg>
+          리밸런싱 시작
+        </button>
+      </div>
     </main>
 
     <script>
-        // Sample data
-        const currentPortfolio = [
-            { symbol: 'AAPL', name: 'Apple Inc.', shares: 100, price: 175.43, allocation: 35, color: '#6366F1' },
-            { symbol: 'TSLA', name: 'Tesla Inc.', shares: 50, price: 248.50, allocation: 20, color: '#EF4444' },
-            { symbol: 'NVDA', name: 'NVIDIA Corp.', shares: 25, price: 456.78, allocation: 18, color: '#F59E0B' },
-            { symbol: 'MSFT', name: 'Microsoft Corp.', shares: 75, price: 378.90, allocation: 15, color: '#8B5CF6' },
-            { symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 60, price: 134.56, allocation: 12, color: '#10B981' }
-        ];
+      // Sample data
+      const currentPortfolio = [
+        {
+          symbol: 'AAPL',
+          name: 'Apple Inc.',
+          shares: 100,
+          price: 175.43,
+          allocation: 35,
+          color: '#6366F1',
+        },
+        {
+          symbol: 'TSLA',
+          name: 'Tesla Inc.',
+          shares: 50,
+          price: 248.5,
+          allocation: 20,
+          color: '#EF4444',
+        },
+        {
+          symbol: 'NVDA',
+          name: 'NVIDIA Corp.',
+          shares: 25,
+          price: 456.78,
+          allocation: 18,
+          color: '#F59E0B',
+        },
+        {
+          symbol: 'MSFT',
+          name: 'Microsoft Corp.',
+          shares: 75,
+          price: 378.9,
+          allocation: 15,
+          color: '#8B5CF6',
+        },
+        {
+          symbol: 'GOOGL',
+          name: 'Alphabet Inc.',
+          shares: 60,
+          price: 134.56,
+          allocation: 12,
+          color: '#10B981',
+        },
+      ]
 
-        const targetPortfolios = {
-            conservative: [
-                { symbol: 'AAPL', allocation: 25, color: '#6366F1' },
-                { symbol: 'MSFT', allocation: 20, color: '#8B5CF6' },
-                { symbol: 'GOOGL', allocation: 15, color: '#10B981' },
-                { symbol: 'NVDA', allocation: 25, color: '#F59E0B' },
-                { symbol: 'TSLA', allocation: 15, color: '#EF4444' }
-            ],
-            growth: [
-                { symbol: 'TSLA', allocation: 35, color: '#EF4444' },
-                { symbol: 'NVDA', allocation: 30, color: '#F59E0B' },
-                { symbol: 'AMZN', allocation: 20, color: '#8B5CF6' },
-                { symbol: 'META', allocation: 15, color: '#10B981' }
-            ],
-            dividend: [
-                { symbol: 'AAPL', allocation: 30, color: '#6366F1' },
-                { symbol: 'MSFT', allocation: 25, color: '#8B5CF6' },
-                { symbol: 'JNJ', allocation: 20, color: '#10B981' },
-                { symbol: 'PG', allocation: 15, color: '#F59E0B' },
-                { symbol: 'KO', allocation: 10, color: '#EF4444' }
-            ]
-        };
+      const targetPortfolios = {
+        conservative: [
+          { symbol: 'AAPL', allocation: 25, color: '#6366F1' },
+          { symbol: 'MSFT', allocation: 20, color: '#8B5CF6' },
+          { symbol: 'GOOGL', allocation: 15, color: '#10B981' },
+          { symbol: 'NVDA', allocation: 25, color: '#F59E0B' },
+          { symbol: 'TSLA', allocation: 15, color: '#EF4444' },
+        ],
+        growth: [
+          { symbol: 'TSLA', allocation: 35, color: '#EF4444' },
+          { symbol: 'NVDA', allocation: 30, color: '#F59E0B' },
+          { symbol: 'AMZN', allocation: 20, color: '#8B5CF6' },
+          { symbol: 'META', allocation: 15, color: '#10B981' },
+        ],
+        dividend: [
+          { symbol: 'AAPL', allocation: 30, color: '#6366F1' },
+          { symbol: 'MSFT', allocation: 25, color: '#8B5CF6' },
+          { symbol: 'JNJ', allocation: 20, color: '#10B981' },
+          { symbol: 'PG', allocation: 15, color: '#F59E0B' },
+          { symbol: 'KO', allocation: 10, color: '#EF4444' },
+        ],
+      }
 
-        let simulationChart = null;
-        let tradingPlan = [];
+      let simulationChart = null
+      let tradingPlan = []
 
-        // Calculate rebalancing
-        function calculateRebalancing() {
-            const totalAmount = parseFloat(document.getElementById('totalAmount').value);
-            const targetPortfolioType = document.getElementById('targetPortfolio').value;
-            const threshold = parseFloat(document.getElementById('threshold').value);
+      // Calculate rebalancing
+      function calculateRebalancing() {
+        const totalAmount = parseFloat(
+          document.getElementById('totalAmount').value,
+        )
+        const targetPortfolioType =
+          document.getElementById('targetPortfolio').value
+        const threshold = parseFloat(document.getElementById('threshold').value)
 
-            const targetPortfolio = targetPortfolios[targetPortfolioType];
-            
-            // Show loading state
-            const button = document.querySelector('.btn-calculate');
-            button.classList.add('btn-loading');
-            button.innerHTML = '<div class="loading"></div> 계산 중...';
+        const targetPortfolio = targetPortfolios[targetPortfolioType]
 
-            setTimeout(() => {
-                // Calculate current values
-                const currentTotalValue = currentPortfolio.reduce((sum, stock) => 
-                    sum + (stock.shares * stock.price), 0);
+        // Show loading state
+        const button = document.querySelector('.btn-calculate')
+        button.classList.add('btn-loading')
+        button.innerHTML = '<div class="loading"></div> 계산 중...'
 
-                // Generate trading plan (without fees)
-                tradingPlan = generateTradingPlan(totalAmount, targetPortfolio, threshold);
-                
-                // Update UI
-                updateSummaryCards();
-                updateTradingGuide();
-                updateSimulation();
-                
-                // Reset button
-                button.classList.remove('btn-loading');
-                button.innerHTML = `
+        setTimeout(() => {
+          // Calculate current values
+          const currentTotalValue = currentPortfolio.reduce(
+            (sum, stock) => sum + stock.shares * stock.price,
+            0,
+          )
+
+          // Generate trading plan (without fees)
+          tradingPlan = generateTradingPlan(
+            totalAmount,
+            targetPortfolio,
+            threshold,
+          )
+
+          // Update UI
+          updateSummaryCards()
+          updateTradingGuide()
+          updateSimulation()
+
+          // Reset button
+          button.classList.remove('btn-loading')
+          button.innerHTML = `
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     계산 완료
-                `;
-                
-                setTimeout(() => {
-                    button.innerHTML = `
+                `
+
+          setTimeout(() => {
+            button.innerHTML = `
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                             <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         계산하기
-                    `;
-                }, 2000);
-            }, 1500);
-        }
+                    `
+          }, 2000)
+        }, 1500)
+      }
 
-        // Generate trading plan
-        function generateTradingPlan(totalAmount, targetPortfolio, threshold) {
-            const plan = [];
-            
-            targetPortfolio.forEach(target => {
-                const current = currentPortfolio.find(stock => stock.symbol === target.symbol);
-                const targetValue = totalAmount * (target.allocation / 100);
-                const currentValue = current ? (current.shares * current.price) : 0;
-                const difference = targetValue - currentValue;
-                const percentDifference = Math.abs(difference / totalAmount * 100);
-                
-                if (percentDifference >= threshold) {
-                    const currentStock = current || { 
-                        symbol: target.symbol, 
-                        name: `${target.symbol} Corp.`, 
-                        shares: 0, 
-                        price: 150 + Math.random() * 300,
-                        allocation: 0,
-                        color: target.color
-                    };
-                    
-                    const action = difference > 0 ? 'buy' : 'sell';
-                    const amount = Math.abs(difference);
-                    const shares = Math.floor(amount / currentStock.price);
-                    
-                    plan.push({
-                        ...currentStock,
-                        action,
-                        targetAllocation: target.allocation,
-                        targetValue,
-                        currentValue,
-                        difference,
-                        amount,
-                        shares,
-                        priority: percentDifference
-                    });
-                }
-            });
-            
-            return plan.sort((a, b) => b.priority - a.priority);
-        }
+      // Generate trading plan
+      function generateTradingPlan(totalAmount, targetPortfolio, threshold) {
+        const plan = []
 
-        // Update summary cards
-        function updateSummaryCards() {
-            const totalBuy = tradingPlan.filter(item => item.action === 'buy')
-                .reduce((sum, item) => sum + item.amount, 0);
-            
-            const totalSell = tradingPlan.filter(item => item.action === 'sell')
-                .reduce((sum, item) => sum + item.amount, 0);
-            
-            const netCash = totalBuy - totalSell;
-            
-            const buyCount = tradingPlan.filter(item => item.action === 'buy').length;
-            const sellCount = tradingPlan.filter(item => item.action === 'sell').length;
-            
-            document.getElementById('totalBuyAmount').textContent = formatCurrency(totalBuy);
-            document.getElementById('totalSellAmount').textContent = formatCurrency(totalSell);
-            document.getElementById('netCash').textContent = formatCurrency(netCash);
-            
-            // Update descriptions
-            document.querySelector('#totalBuyAmount').nextElementSibling.textContent = `${buyCount}개 종목`;
-            document.querySelector('#totalSellAmount').nextElementSibling.textContent = `${sellCount}개 종목`;
-        }
+        targetPortfolio.forEach((target) => {
+          const current = currentPortfolio.find(
+            (stock) => stock.symbol === target.symbol,
+          )
+          const targetValue = totalAmount * (target.allocation / 100)
+          const currentValue = current ? current.shares * current.price : 0
+          const difference = targetValue - currentValue
+          const percentDifference = Math.abs((difference / totalAmount) * 100)
 
-        // Update trading guide
-        function updateTradingGuide() {
-            const container = document.getElementById('tradingGuide');
-            container.innerHTML = '';
-            
-            if (tradingPlan.length === 0) {
-                container.innerHTML = `
+          if (percentDifference >= threshold) {
+            const currentStock = current || {
+              symbol: target.symbol,
+              name: `${target.symbol} Corp.`,
+              shares: 0,
+              price: 150 + Math.random() * 300,
+              allocation: 0,
+              color: target.color,
+            }
+
+            const action = difference > 0 ? 'buy' : 'sell'
+            const amount = Math.abs(difference)
+            const shares = Math.floor(amount / currentStock.price)
+
+            plan.push({
+              ...currentStock,
+              action,
+              targetAllocation: target.allocation,
+              targetValue,
+              currentValue,
+              difference,
+              amount,
+              shares,
+              priority: percentDifference,
+            })
+          }
+        })
+
+        return plan.sort((a, b) => b.priority - a.priority)
+      }
+
+      // Update summary cards
+      function updateSummaryCards() {
+        const totalBuy = tradingPlan
+          .filter((item) => item.action === 'buy')
+          .reduce((sum, item) => sum + item.amount, 0)
+
+        const totalSell = tradingPlan
+          .filter((item) => item.action === 'sell')
+          .reduce((sum, item) => sum + item.amount, 0)
+
+        const netCash = totalBuy - totalSell
+
+        const buyCount = tradingPlan.filter(
+          (item) => item.action === 'buy',
+        ).length
+        const sellCount = tradingPlan.filter(
+          (item) => item.action === 'sell',
+        ).length
+
+        document.getElementById('totalBuyAmount').textContent =
+          formatCurrency(totalBuy)
+        document.getElementById('totalSellAmount').textContent =
+          formatCurrency(totalSell)
+        document.getElementById('netCash').textContent = formatCurrency(netCash)
+
+        // Update descriptions
+        document.querySelector(
+          '#totalBuyAmount',
+        ).nextElementSibling.textContent = `${buyCount}개 종목`
+        document.querySelector(
+          '#totalSellAmount',
+        ).nextElementSibling.textContent = `${sellCount}개 종목`
+      }
+
+      // Update trading guide
+      function updateTradingGuide() {
+        const container = document.getElementById('tradingGuide')
+        container.innerHTML = ''
+
+        if (tradingPlan.length === 0) {
+          container.innerHTML = `
                     <div class="guide-card">
                         <div style="text-align: center; padding: 40px;">
                             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" style="margin-bottom: 16px; opacity: 0.5;">
@@ -1313,23 +1534,24 @@
                             <p style="color: #B3B3B3;">현재 포트폴리오가 목표와 잘 균형을 이루고 있습니다.</p>
                         </div>
                     </div>
-                `;
-                return;
-            }
-            
-            tradingPlan.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'guide-card';
-                card.onclick = () => openDetailModal(item);
-                
-                const actionBadge = item.action === 'buy' ? 'badge-buy' : 'badge-sell';
-                const actionIcon = item.action === 'buy' ? 
-                    '<path d="M7 17l9.2-9.2M17 17V7H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' :
-                    '<path d="M17 7l-9.2 9.2M7 7v10h10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
-                
-                const actionText = item.action === 'buy' ? '매수' : '매도';
-                
-                card.innerHTML = `
+                `
+          return
+        }
+
+        tradingPlan.forEach((item, index) => {
+          const card = document.createElement('div')
+          card.className = 'guide-card'
+          card.onclick = () => openDetailModal(item)
+
+          const actionBadge = item.action === 'buy' ? 'badge-buy' : 'badge-sell'
+          const actionIcon =
+            item.action === 'buy'
+              ? '<path d="M7 17l9.2-9.2M17 17V7H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+              : '<path d="M17 7l-9.2 9.2M7 7v10h10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+
+          const actionText = item.action === 'buy' ? '매수' : '매도'
+
+          card.innerHTML = `
                     <div class="guide-summary">
                         <div class="summary-info">
                             <div class="stock-icon" style="background-color: ${item.color}">
@@ -1350,45 +1572,47 @@
                             ${item.shares}주 • ${formatCurrency(item.amount)}
                         </div>
                     </div>
-                `;
-                
-                container.appendChild(card);
-            });
-        }
+                `
 
-        // Open detail modal
-        function openDetailModal(item) {
-            const modal = document.getElementById('detailModal');
-            
-            // Update modal content
-            document.getElementById('detailStockIcon').textContent = item.symbol.slice(0, 2);
-            document.getElementById('detailStockIcon').style.backgroundColor = item.color;
-            document.getElementById('detailStockSymbol').textContent = item.symbol;
-            document.getElementById('detailStockName').textContent = item.name;
-            
-            // Update metrics
-            updateDetailMetrics(item);
-            
-            // Update steps
-            updateDetailSteps(item);
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+          container.appendChild(card)
+        })
+      }
 
-        // Close detail modal
-        function closeDetailModal() {
-            const modal = document.getElementById('detailModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
+      // Open detail modal
+      function openDetailModal(item) {
+        const modal = document.getElementById('detailModal')
 
-        // Update detail metrics
-        function updateDetailMetrics(item) {
-            const container = document.getElementById('detailMetricsGrid');
-            const actionText = item.action === 'buy' ? '매수' : '매도';
-            
-            container.innerHTML = `
+        // Update modal content
+        document.getElementById('detailStockIcon').textContent =
+          item.symbol.slice(0, 2)
+        document.getElementById('detailStockIcon').style.backgroundColor =
+          item.color
+        document.getElementById('detailStockSymbol').textContent = item.symbol
+        document.getElementById('detailStockName').textContent = item.name
+
+        // Update metrics
+        updateDetailMetrics(item)
+
+        // Update steps
+        updateDetailSteps(item)
+
+        modal.classList.add('active')
+        document.body.style.overflow = 'hidden'
+      }
+
+      // Close detail modal
+      function closeDetailModal() {
+        const modal = document.getElementById('detailModal')
+        modal.classList.remove('active')
+        document.body.style.overflow = ''
+      }
+
+      // Update detail metrics
+      function updateDetailMetrics(item) {
+        const container = document.getElementById('detailMetricsGrid')
+        const actionText = item.action === 'buy' ? '매수' : '매도'
+
+        container.innerHTML = `
                 <div class="detail-metric-card">
                     <div class="detail-metric-label">현재 보유</div>
                     <div class="detail-metric-value">${item.shares}주</div>
@@ -1409,43 +1633,52 @@
                     <div class="detail-metric-value">${formatCurrency(item.amount)}</div>
                     <div class="detail-metric-sub">총 거래금액</div>
                 </div>
-            `;
-        }
+            `
+      }
 
-        // Update detail steps
-        function updateDetailSteps(item) {
-            const container = document.getElementById('detailSteps');
-            const actionText = item.action === 'buy' ? '매수' : '매도';
-            
-            const steps = item.action === 'buy' ? [
+      // Update detail steps
+      function updateDetailSteps(item) {
+        const container = document.getElementById('detailSteps')
+        const actionText = item.action === 'buy' ? '매수' : '매도'
+
+        const steps =
+          item.action === 'buy'
+            ? [
                 {
-                    title: '매수 주문 입력',
-                    description: `증권사 앱에서 ${item.symbol} 종목을 검색하고 ${item.shares}주 시장가 매수 주문을 입력합니다.`
+                  title: '매수 주문 입력',
+                  description: `증권사 앱에서 ${item.symbol} 종목을 검색하고 ${item.shares}주 시장가 매수 주문을 입력합니다.`,
                 },
                 {
-                    title: '주문 체결 확인',
-                    description: '주문이 체결되면 체결 가격과 수량을 확인하고 거래 내역을 저장합니다.'
+                  title: '주문 체결 확인',
+                  description:
+                    '주문이 체결되면 체결 가격과 수량을 확인하고 거래 내역을 저장합니다.',
                 },
                 {
-                    title: '포트폴리오 업데이트',
-                    description: '매수 완료 후 포트폴리오에 반영하고 다음 거래를 진행합니다.'
-                }
-            ] : [
+                  title: '포트폴리오 업데이트',
+                  description:
+                    '매수 완료 후 포트폴리오에 반영하고 다음 거래를 진행합니다.',
+                },
+              ]
+            : [
                 {
-                    title: '매도 주문 입력',
-                    description: `보유 중인 ${item.symbol} 주식 ${item.shares}주를 시장가로 매도 주문을 입력합니다.`
+                  title: '매도 주문 입력',
+                  description: `보유 중인 ${item.symbol} 주식 ${item.shares}주를 시장가로 매도 주문을 입력합니다.`,
                 },
                 {
-                    title: '체결 확인 및 현금 확보',
-                    description: '매도 주문이 체결되면 체결 가격을 확인하고 현금이 계좌에 입금되었는지 확인합니다.'
+                  title: '체결 확인 및 현금 확보',
+                  description:
+                    '매도 주문이 체결되면 체결 가격을 확인하고 현금이 계좌에 입금되었는지 확인합니다.',
                 },
                 {
-                    title: '거래 완료 처리',
-                    description: '매도 완료 후 포트폴리오에서 해당 수량을 차감하고 다음 거래를 진행합니다.'
-                }
-            ];
-            
-            container.innerHTML = steps.map((step, index) => `
+                  title: '거래 완료 처리',
+                  description:
+                    '매도 완료 후 포트폴리오에서 해당 수량을 차감하고 다음 거래를 진행합니다.',
+                },
+              ]
+
+        container.innerHTML = steps
+          .map(
+            (step, index) => `
                 <div class="detail-step">
                     <div class="step-number">${index + 1}</div>
                     <div class="step-content">
@@ -1453,215 +1686,229 @@
                         <div class="step-description">${step.description}</div>
                     </div>
                 </div>
-            `).join('');
-        }
+            `,
+          )
+          .join('')
+      }
 
-        // Update simulation
-        function updateSimulation() {
-            const targetPortfolioType = document.getElementById('targetPortfolio').value;
-            const targetPortfolio = targetPortfolios[targetPortfolioType];
-            
-            // Update before/after allocation lists
-            updateAllocationList('beforeAllocation', currentPortfolio.map(stock => ({
-                symbol: stock.symbol,
-                allocation: stock.allocation,
-                color: stock.color
-            })));
-            
-            updateAllocationList('afterAllocation', targetPortfolio);
-            
-            // Update simulation chart
-            createSimulationChart();
-        }
+      // Update simulation
+      function updateSimulation() {
+        const targetPortfolioType =
+          document.getElementById('targetPortfolio').value
+        const targetPortfolio = targetPortfolios[targetPortfolioType]
 
-        // Update allocation list
-        function updateAllocationList(containerId, allocations) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            
-            allocations.forEach(item => {
-                const allocationItem = document.createElement('div');
-                allocationItem.className = 'allocation-item';
-                allocationItem.innerHTML = `
+        // Update before/after allocation lists
+        updateAllocationList(
+          'beforeAllocation',
+          currentPortfolio.map((stock) => ({
+            symbol: stock.symbol,
+            allocation: stock.allocation,
+            color: stock.color,
+          })),
+        )
+
+        updateAllocationList('afterAllocation', targetPortfolio)
+
+        // Update simulation chart
+        createSimulationChart()
+      }
+
+      // Update allocation list
+      function updateAllocationList(containerId, allocations) {
+        const container = document.getElementById(containerId)
+        container.innerHTML = ''
+
+        allocations.forEach((item) => {
+          const allocationItem = document.createElement('div')
+          allocationItem.className = 'allocation-item'
+          allocationItem.innerHTML = `
                     <div class="allocation-symbol" style="color: ${item.color}">${item.symbol}</div>
                     <div class="allocation-percentage">${item.allocation.toFixed(1)}%</div>
-                `;
-                container.appendChild(allocationItem);
-            });
+                `
+          container.appendChild(allocationItem)
+        })
+      }
+
+      // Create simulation chart
+      function createSimulationChart() {
+        const ctx = document.getElementById('simulationChart').getContext('2d')
+        const targetPortfolioType =
+          document.getElementById('targetPortfolio').value
+        const targetPortfolio = targetPortfolios[targetPortfolioType]
+
+        if (simulationChart) {
+          simulationChart.destroy()
         }
 
-        // Create simulation chart
-        function createSimulationChart() {
-            const ctx = document.getElementById('simulationChart').getContext('2d');
-            const targetPortfolioType = document.getElementById('targetPortfolio').value;
-            const targetPortfolio = targetPortfolios[targetPortfolioType];
-            
-            if (simulationChart) {
-                simulationChart.destroy();
-            }
-            
-            const currentData = currentPortfolio.map(stock => stock.allocation);
-            const targetData = targetPortfolio.map(target => target.allocation);
-            const labels = targetPortfolio.map(target => target.symbol);
-            const colors = targetPortfolio.map(target => target.color);
-            
-            simulationChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: '현재 비중',
-                            data: currentData,
-                            backgroundColor: colors.map(color => color + '80'),
-                            borderColor: colors,
-                            borderWidth: 2,
-                            borderRadius: 4
-                        },
-                        {
-                            label: '목표 비중',
-                            data: targetData,
-                            backgroundColor: colors.map(color => color + '40'),
-                            borderColor: colors,
-                            borderWidth: 2,
-                            borderDash: [5, 5],
-                            borderRadius: 4
-                        }
-                    ]
+        const currentData = currentPortfolio.map((stock) => stock.allocation)
+        const targetData = targetPortfolio.map((target) => target.allocation)
+        const labels = targetPortfolio.map((target) => target.symbol)
+        const colors = targetPortfolio.map((target) => target.color)
+
+        simulationChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: '현재 비중',
+                data: currentData,
+                backgroundColor: colors.map((color) => color + '80'),
+                borderColor: colors,
+                borderWidth: 2,
+                borderRadius: 4,
+              },
+              {
+                label: '목표 비중',
+                data: targetData,
+                backgroundColor: colors.map((color) => color + '40'),
+                borderColor: colors,
+                borderWidth: 2,
+                borderDash: [5, 5],
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                  color: '#B3B3B3',
+                  usePointStyle: true,
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                            labels: {
-                                color: '#B3B3B3',
-                                usePointStyle: true
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(26, 26, 26, 0.95)',
-                            titleColor: '#FFFFFF',
-                            bodyColor: '#B3B3B3',
-                            borderColor: 'rgba(255, 255, 255, 0.1)',
-                            borderWidth: 1,
-                            cornerRadius: 8,
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}%`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#B3B3B3'
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            max: 40,
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            },
-                            ticks: {
-                                color: '#B3B3B3',
-                                callback: function(value) {
-                                    return value + '%';
-                                }
-                            }
-                        }
-                    },
-                    animation: {
-                        duration: 1000,
-                        easing: 'easeInOutQuart'
-                    }
-                }
-            });
+              },
+              tooltip: {
+                backgroundColor: 'rgba(26, 26, 26, 0.95)',
+                titleColor: '#FFFFFF',
+                bodyColor: '#B3B3B3',
+                borderColor: 'rgba(255, 255, 255, 0.1)',
+                borderWidth: 1,
+                cornerRadius: 8,
+                callbacks: {
+                  label: function (context) {
+                    return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}%`
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)',
+                },
+                ticks: {
+                  color: '#B3B3B3',
+                },
+              },
+              y: {
+                beginAtZero: true,
+                max: 40,
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.1)',
+                },
+                ticks: {
+                  color: '#B3B3B3',
+                  callback: function (value) {
+                    return value + '%'
+                  },
+                },
+              },
+            },
+            animation: {
+              duration: 1000,
+              easing: 'easeInOutQuart',
+            },
+          },
+        })
+      }
+
+      // Export trading plan
+      function exportTradingPlan() {
+        const timestamp = new Date().toISOString().split('T')[0]
+        const targetPortfolioType =
+          document.getElementById('targetPortfolio').value
+
+        let csvContent = `리밸런싱 매매 계획,${timestamp}\n`
+        csvContent += `목표 포트폴리오,${targetPortfolioType}\n`
+        csvContent += `총 투자 금액,${document.getElementById('totalAmount').value}\n\n`
+        csvContent += `종목,액션,수량,금액,수수료,우선순위\n`
+
+        tradingPlan.forEach((item) => {
+          csvContent += `${item.symbol},${item.action === 'buy' ? '매수' : '매도'},${item.shares},${item.amount.toFixed(0)},${item.fees.toFixed(0)},${item.priority.toFixed(1)}\n`
+        })
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+        const link = document.createElement('a')
+        const url = URL.createObjectURL(blob)
+        link.setAttribute('href', url)
+        link.setAttribute('download', `rebalancing_plan_${timestamp}.csv`)
+        link.style.visibility = 'hidden'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      }
+
+      // Start rebalancing
+      function startRebalancing() {
+        if (tradingPlan.length === 0) {
+          alert('실행할 리밸런싱 계획이 없습니다.')
+          return
         }
 
-        // Export trading plan
-        function exportTradingPlan() {
-            const timestamp = new Date().toISOString().split('T')[0];
-            const targetPortfolioType = document.getElementById('targetPortfolio').value;
-            
-            let csvContent = `리밸런싱 매매 계획,${timestamp}\n`;
-            csvContent += `목표 포트폴리오,${targetPortfolioType}\n`;
-            csvContent += `총 투자 금액,${document.getElementById('totalAmount').value}\n\n`;
-            csvContent += `종목,액션,수량,금액,수수료,우선순위\n`;
+        const confirmed = confirm(
+          `총 ${tradingPlan.length}개 종목에 대한 리밸런싱을 시작하시겠습니까?\n\n이 작업은 실제 매매 주문을 실행합니다.`,
+        )
 
-            tradingPlan.forEach(item => {
-                csvContent += `${item.symbol},${item.action === 'buy' ? '매수' : '매도'},${item.shares},${item.amount.toFixed(0)},${item.fees.toFixed(0)},${item.priority.toFixed(1)}\n`;
-            });
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `rebalancing_plan_${timestamp}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        if (confirmed) {
+          // 실제 구현에서는 브로커 API 연동
+          alert(
+            '리밸런싱이 시작되었습니다. 매매 결과는 포트폴리오 페이지에서 확인하실 수 있습니다.',
+          )
         }
+      }
 
-        // Start rebalancing
-        function startRebalancing() {
-            if (tradingPlan.length === 0) {
-                alert('실행할 리밸런싱 계획이 없습니다.');
-                return;
+      // Format currency
+      function formatCurrency(amount) {
+        if (amount >= 1000000000) {
+          return `₩${(amount / 1000000000).toFixed(1)}B`
+        } else if (amount >= 1000000) {
+          return `₩${(amount / 1000000).toFixed(1)}M`
+        } else if (amount >= 1000) {
+          return `₩${(amount / 1000).toFixed(0)}K`
+        } else {
+          return `₩${Math.round(amount).toLocaleString()}`
+        }
+      }
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', function () {
+        calculateRebalancing()
+
+        // Close modal on overlay click
+        document
+          .getElementById('detailModal')
+          .addEventListener('click', function (e) {
+            if (e.target === this) {
+              closeDetailModal()
             }
-            
-            const confirmed = confirm(`총 ${tradingPlan.length}개 종목에 대한 리밸런싱을 시작하시겠습니까?\n\n이 작업은 실제 매매 주문을 실행합니다.`);
-            
-            if (confirmed) {
-                // 실제 구현에서는 브로커 API 연동
-                alert('리밸런싱이 시작되었습니다. 매매 결과는 포트폴리오 페이지에서 확인하실 수 있습니다.');
-            }
-        }
+          })
 
-        // Format currency
-        function formatCurrency(amount) {
-            if (amount >= 1000000000) {
-                return `₩${(amount / 1000000000).toFixed(1)}B`;
-            } else if (amount >= 1000000) {
-                return `₩${(amount / 1000000).toFixed(1)}M`;
-            } else if (amount >= 1000) {
-                return `₩${(amount / 1000).toFixed(0)}K`;
-            } else {
-                return `₩${Math.round(amount).toLocaleString()}`;
-            }
-        }
+        // Handle escape key
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') {
+            closeDetailModal()
+          }
+        })
+      })
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            calculateRebalancing();
-            
-            // Close modal on overlay click
-            document.getElementById('detailModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeDetailModal();
-                }
-            });
-            
-            // Handle escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeDetailModal();
-                }
-            });
-        });
-
-        // Chart.js dark mode defaults
-        Chart.defaults.color = '#B3B3B3';
-        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
-        Chart.defaults.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+      // Chart.js dark mode defaults
+      Chart.defaults.color = '#B3B3B3'
+      Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)'
+      Chart.defaults.backgroundColor = 'rgba(255, 255, 255, 0.05)'
     </script>
-</body>
+  </body>
 </html>

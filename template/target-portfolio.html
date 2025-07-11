@@ -1,1131 +1,1370 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StockDash - 목표 포트폴리오</title>
-    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
+      rel="stylesheet"
+    />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          'Pretendard',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          Arial,
+          sans-serif;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        color: #ffffff;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* Header */
+      .header {
+        background: rgba(26, 26, 26, 0.95);
+        backdrop-filter: blur(20px);
+        padding: 16px 32px;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: 700;
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .nav-menu {
+        display: flex;
+        gap: 32px;
+      }
+
+      .nav-item {
+        color: #b3b3b3;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.15s ease;
+        position: relative;
+      }
+
+      .nav-item:hover {
+        color: #6366f1;
+      }
+
+      .nav-item.active {
+        color: #6366f1;
+      }
+
+      .nav-item.active::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        border-radius: 2px;
+      }
+
+      /* Main Container */
+      .main-container {
+        margin-top: 80px;
+        padding: 32px;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* Page Header */
+      .page-header {
+        margin-bottom: 32px;
+      }
+
+      .page-title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .page-subtitle {
+        color: #b3b3b3;
+        font-size: 16px;
+      }
+
+      /* Portfolio Selector */
+      .portfolio-selector {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        backdrop-filter: blur(20px);
+        margin-bottom: 32px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .portfolio-selector::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+      }
+
+      .selector-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .selector-title {
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .btn-new {
+        padding: 12px 20px;
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        border: none;
+        border-radius: 8px;
+        color: #ffffff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-new:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+      }
+
+      .portfolio-tabs {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .portfolio-tab {
+        padding: 12px 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #b3b3b3;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .portfolio-tab:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .portfolio-tab.active {
+        background: rgba(99, 102, 241, 0.2);
+        border-color: rgba(99, 102, 241, 0.3);
+        color: #ffffff;
+      }
+
+      .tab-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .btn-tab-action {
+        padding: 4px 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 4px;
+        color: #b3b3b3;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-tab-action:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+      }
+
+      /* Main Grid */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 32px;
+      }
+
+      /* Card Styles */
+      .card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        backdrop-filter: blur(20px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .card-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #ffffff;
+      }
+
+      .card-subtitle {
+        font-size: 14px;
+        color: #b3b3b3;
+        margin-top: 4px;
+      }
+
+      /* Target Allocation Editor */
+      .allocation-editor {
+        grid-column: 1;
+      }
+
+      .allocation-item {
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .allocation-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .allocation-header {
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .stock-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+      }
+
+      .stock-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+      }
+
+      .stock-details {
+        flex: 1;
+      }
+
+      .stock-symbol {
+        font-weight: 700;
+        color: #ffffff;
+        font-size: 16px;
+      }
+
+      .stock-name {
+        color: #b3b3b3;
+        font-size: 14px;
+        margin-top: 2px;
+      }
+
+      .current-allocation {
+        text-align: right;
+        margin-left: auto;
+      }
+
+      .current-label {
+        font-size: 12px;
+        color: #b3b3b3;
+      }
+
+      .current-value {
+        font-size: 14px;
+        color: #ffffff;
+        font-weight: 500;
+      }
+
+      .btn-remove {
+        padding: 6px 8px;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 4px;
+        color: #f87171;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-left: 12px;
+      }
+
+      .btn-remove:hover {
+        background: rgba(239, 68, 68, 0.2);
+      }
+
+      /* Slider Styles */
+      .allocation-controls {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+
+      .slider-container {
+        flex: 1;
+        position: relative;
+      }
+
+      .allocation-slider {
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+      }
+
+      .allocation-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .allocation-slider::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.5);
+      }
+
+      .allocation-slider::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+      }
+
+      .slider-track {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        height: 6px;
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        border-radius: 3px;
+        transform: translateY(-50%);
+        pointer-events: none;
+        transition: width 0.3s ease;
+      }
+
+      .allocation-input {
+        width: 80px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        color: #ffffff;
+        text-align: center;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .allocation-input:focus {
+        outline: none;
+        border-color: #6366f1;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      /* Summary Panel */
+      .summary-panel {
+        grid-column: 2;
+      }
+
+      .summary-item {
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        margin-bottom: 16px;
+      }
+
+      .summary-label {
+        font-size: 14px;
+        color: #b3b3b3;
+        margin-bottom: 8px;
+      }
+
+      .summary-value {
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .summary-description {
+        font-size: 12px;
+        color: #b3b3b3;
+        margin-top: 4px;
+      }
+
+      .total-percentage {
+        font-size: 32px;
+        font-weight: 700;
+        text-align: center;
+        margin: 16px 0;
+      }
+
+      .percentage-valid {
+        color: #10b981;
+      }
+
+      .percentage-invalid {
+        color: #ef4444;
+      }
+
+      .percentage-warning {
+        color: #f59e0b;
+      }
+
+      .validation-message {
+        text-align: center;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 16px;
+      }
+
+      .validation-valid {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+      }
+
+      .validation-invalid {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+      }
+
+      .validation-warning {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        color: #fcd34d;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 14px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        color: #ffffff;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+      }
+
+      .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .btn-primary:disabled::before {
+        display: none;
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.1);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: rgba(239, 68, 68, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+      }
+
+      .btn-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: #6ee7b7;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-success:hover {
+        background: rgba(16, 185, 129, 0.2);
+        border-color: rgba(16, 185, 129, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+      }
+
+      .btn-warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: #fcd34d;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-warning:hover {
+        background: rgba(245, 158, 11, 0.2);
+        border-color: rgba(245, 158, 11, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+      }
+
+      /* Special button states */
+      .btn-saved {
+        background: linear-gradient(45deg, #10b981, #059669) !important;
+        color: #ffffff !important;
+        animation: saveSuccess 0.5s ease;
+      }
+
+      @keyframes saveSuccess {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* Button icons */
+      .btn-icon {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
+      }
+
+      /* Add Stock Modal */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 2000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal {
+        background: rgba(26, 26, 26, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        width: 100%;
+        max-width: 500px;
+        backdrop-filter: blur(20px);
+        animation: slideUp 0.3s ease;
+      }
+
+      .modal-header {
+        padding: 24px 24px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-title {
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .btn-close {
+        background: none;
+        border: none;
+        color: #b3b3b3;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 4px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-close:hover {
+        color: #ffffff;
+      }
+
+      .modal-body {
+        padding: 24px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #ffffff;
+        font-size: 14px;
+      }
+
+      .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .form-select:focus {
+        outline: none;
+        border-color: #6366f1;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      .form-select option {
+        background: #1a1a1a;
+        color: #ffffff;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+          gap: 24px;
         }
 
-        body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 100%);
-            color: #FFFFFF;
-            line-height: 1.6;
-            overflow-x: hidden;
+        .allocation-editor {
+          grid-column: 1;
         }
 
-        /* Header */
-        .header {
-            background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 16px 32px;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .summary-panel {
+          grid-column: 1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .main-container {
+          padding: 16px;
         }
 
         .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+          padding: 0 16px;
         }
 
         .nav-menu {
-            display: flex;
-            gap: 32px;
-        }
-
-        .nav-item {
-            color: #B3B3B3;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.15s ease;
-            position: relative;
-        }
-
-        .nav-item:hover {
-            color: #6366F1;
-        }
-
-        .nav-item.active {
-            color: #6366F1;
-        }
-
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, #6366F1, #8B5CF6);
-            border-radius: 2px;
-        }
-
-        /* Main Container */
-        .main-container {
-            margin-top: 80px;
-            padding: 32px;
-            max-width: 1400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Page Header */
-        .page-header {
-            margin-bottom: 32px;
+          display: none;
         }
 
         .page-title {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
+          font-size: 24px;
         }
 
-        .page-subtitle {
-            color: #B3B3B3;
-            font-size: 16px;
-        }
-
-        /* Portfolio Selector */
-        .portfolio-selector {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            backdrop-filter: blur(20px);
-            margin-bottom: 32px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .portfolio-selector::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        }
-
-        .selector-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .selector-title {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .btn-new {
-            padding: 12px 20px;
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            border: none;
-            border-radius: 8px;
-            color: #FFFFFF;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-new:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        .allocation-controls {
+          flex-direction: column;
+          gap: 12px;
+          align-items: stretch;
         }
 
         .portfolio-tabs {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
+          flex-direction: column;
         }
 
-        .portfolio-tab {
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #B3B3B3;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .portfolio-tab:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .portfolio-tab.active {
-            background: rgba(99, 102, 241, 0.2);
-            border-color: rgba(99, 102, 241, 0.3);
-            color: #FFFFFF;
-        }
-
-        .tab-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .btn-tab-action {
-            padding: 4px 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 4px;
-            color: #B3B3B3;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-tab-action:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #FFFFFF;
-        }
-
-        /* Main Grid */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 32px;
-        }
-
-        /* Card Styles */
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            backdrop-filter: blur(20px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #FFFFFF;
-        }
-
-        .card-subtitle {
-            font-size: 14px;
-            color: #B3B3B3;
-            margin-top: 4px;
-        }
-
-        /* Target Allocation Editor */
-        .allocation-editor {
-            grid-column: 1;
-        }
-
-        .allocation-item {
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            margin-bottom: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .allocation-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .allocation-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .stock-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-        }
-
-        .stock-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
-        }
-
-        .stock-details {
-            flex: 1;
-        }
-
-        .stock-symbol {
-            font-weight: 700;
-            color: #FFFFFF;
-            font-size: 16px;
-        }
-
-        .stock-name {
-            color: #B3B3B3;
-            font-size: 14px;
-            margin-top: 2px;
-        }
-
-        .current-allocation {
-            text-align: right;
-            margin-left: auto;
-        }
-
-        .current-label {
-            font-size: 12px;
-            color: #B3B3B3;
-        }
-
-        .current-value {
-            font-size: 14px;
-            color: #FFFFFF;
-            font-weight: 500;
-        }
-
-        .btn-remove {
-            padding: 6px 8px;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: 4px;
-            color: #F87171;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-left: 12px;
-        }
-
-        .btn-remove:hover {
-            background: rgba(239, 68, 68, 0.2);
-        }
-
-        /* Slider Styles */
-        .allocation-controls {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-
-        .slider-container {
-            flex: 1;
-            position: relative;
-        }
-
-        .allocation-slider {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-            cursor: pointer;
-        }
-
-        .allocation-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .allocation-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.5);
-        }
-
-        .allocation-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            border-radius: 50%;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
-        }
-
-        .slider-track {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            height: 6px;
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            border-radius: 3px;
-            transform: translateY(-50%);
-            pointer-events: none;
-            transition: width 0.3s ease;
-        }
-
-        .allocation-input {
-            width: 80px;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            color: #FFFFFF;
-            text-align: center;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .allocation-input:focus {
-            outline: none;
-            border-color: #6366F1;
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        /* Summary Panel */
-        .summary-panel {
-            grid-column: 2;
-        }
-
-        .summary-item {
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            margin-bottom: 16px;
-        }
-
-        .summary-label {
-            font-size: 14px;
-            color: #B3B3B3;
-            margin-bottom: 8px;
-        }
-
-        .summary-value {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .summary-description {
-            font-size: 12px;
-            color: #B3B3B3;
-            margin-top: 4px;
-        }
-
-        .total-percentage {
-            font-size: 32px;
-            font-weight: 700;
-            text-align: center;
-            margin: 16px 0;
-        }
-
-        .percentage-valid {
-            color: #10B981;
-        }
-
-        .percentage-invalid {
-            color: #EF4444;
-        }
-
-        .percentage-warning {
-            color: #F59E0B;
-        }
-
-        .validation-message {
-            text-align: center;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 16px;
-        }
-
-        .validation-valid {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            color: #6EE7B7;
-        }
-
-        .validation-invalid {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: #FCA5A5;
-        }
-
-        .validation-warning {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            color: #FCD34D;
-        }
-
-        /* Action Buttons */
         .action-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
+          flex-direction: column;
         }
+      }
 
-        .btn {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 14px;
-            position: relative;
-            overflow: hidden;
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
         }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s ease;
+        to {
+          opacity: 1;
         }
+      }
 
-        .btn:hover::before {
-            left: 100%;
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px) scale(0.95);
         }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #6366F1, #8B5CF6);
-            color: #FFFFFF;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
         }
+      }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
         }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
 
-        .btn-primary:disabled::before {
-            display: none;
-        }
+      .allocation-item {
+        animation: fadeInUp 0.6s ease-out;
+      }
 
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: #FFFFFF;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-        }
+      .allocation-item:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .allocation-item:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .allocation-item:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .allocation-item:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .allocation-item:nth-child(5) {
+        animation-delay: 0.5s;
+      }
 
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-        }
+      /* Auto-normalize styles */
+      .auto-normalize {
+        margin-top: 16px;
+        padding: 12px;
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        border-radius: 8px;
+        text-align: center;
+      }
 
-        .btn-danger {
-            background: rgba(239, 68, 68, 0.1);
-            color: #F87171;
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            backdrop-filter: blur(10px);
-        }
+      .btn-normalize {
+        padding: 8px 16px;
+        background: rgba(245, 158, 11, 0.2);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 6px;
+        color: #fcd34d;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 8px;
+      }
 
-        .btn-danger:hover {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: rgba(239, 68, 68, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-success {
-            background: rgba(16, 185, 129, 0.1);
-            color: #6EE7B7;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-success:hover {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: rgba(16, 185, 129, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: #FCD34D;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-warning:hover {
-            background: rgba(245, 158, 11, 0.2);
-            border-color: rgba(245, 158, 11, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
-        }
-
-        /* Special button states */
-        .btn-saved {
-            background: linear-gradient(45deg, #10B981, #059669) !important;
-            color: #FFFFFF !important;
-            animation: saveSuccess 0.5s ease;
-        }
-
-        @keyframes saveSuccess {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        /* Button icons */
-        .btn-icon {
-            width: 16px;
-            height: 16px;
-            stroke-width: 2;
-        }
-
-        /* Add Stock Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 2000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal {
-            background: rgba(26, 26, 26, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 500px;
-            backdrop-filter: blur(20px);
-            animation: slideUp 0.3s ease;
-        }
-
-        .modal-header {
-            padding: 24px 24px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .btn-close {
-            background: none;
-            border: none;
-            color: #B3B3B3;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-close:hover {
-            color: #FFFFFF;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #FFFFFF;
-            font-size: 14px;
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #FFFFFF;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .form-select:focus {
-            outline: none;
-            border-color: #6366F1;
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .form-select option {
-            background: #1A1A1A;
-            color: #FFFFFF;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-
-            .allocation-editor {
-                grid-column: 1;
-            }
-
-            .summary-panel {
-                grid-column: 1;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                padding: 16px;
-            }
-
-            .header-content {
-                padding: 0 16px;
-            }
-
-            .nav-menu {
-                display: none;
-            }
-
-            .page-title {
-                font-size: 24px;
-            }
-
-            .allocation-controls {
-                flex-direction: column;
-                gap: 12px;
-                align-items: stretch;
-            }
-
-            .portfolio-tabs {
-                flex-direction: column;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .allocation-item {
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        .allocation-item:nth-child(1) { animation-delay: 0.1s; }
-        .allocation-item:nth-child(2) { animation-delay: 0.2s; }
-        .allocation-item:nth-child(3) { animation-delay: 0.3s; }
-        .allocation-item:nth-child(4) { animation-delay: 0.4s; }
-        .allocation-item:nth-child(5) { animation-delay: 0.5s; }
-
-        /* Auto-normalize styles */
-        .auto-normalize {
-            margin-top: 16px;
-            padding: 12px;
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .btn-normalize {
-            padding: 8px 16px;
-            background: rgba(245, 158, 11, 0.2);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 6px;
-            color: #FCD34D;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 8px;
-        }
-
-        .btn-normalize:hover {
-            background: rgba(245, 158, 11, 0.3);
-        }
+      .btn-normalize:hover {
+        background: rgba(245, 158, 11, 0.3);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Header -->
     <header class="header">
-        <div class="header-content">
-            <div class="logo">StockDash</div>
-            <nav class="nav-menu">
-                <a href="#" class="nav-item">대시보드</a>
-                <a href="#" class="nav-item">포트폴리오</a>
-                <a href="#" class="nav-item">분석</a>
-                <a href="#" class="nav-item active">목표 설정</a>
-            </nav>
-        </div>
+      <div class="header-content">
+        <div class="logo">StockDash</div>
+        <nav class="nav-menu">
+          <a href="#" class="nav-item">대시보드</a>
+          <a href="#" class="nav-item">포트폴리오</a>
+          <a href="#" class="nav-item">분석</a>
+          <a href="#" class="nav-item active">목표 설정</a>
+        </nav>
+      </div>
     </header>
 
     <!-- Main Container -->
     <main class="main-container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title">목표 포트폴리오</h1>
-            <p class="page-subtitle">투자 목표에 맞는 포트폴리오 비중을 설정하고 관리하세요</p>
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">목표 포트폴리오</h1>
+        <p class="page-subtitle">
+          투자 목표에 맞는 포트폴리오 비중을 설정하고 관리하세요
+        </p>
+      </div>
+
+      <!-- Portfolio Selector -->
+      <div class="portfolio-selector">
+        <div class="selector-header">
+          <h2 class="selector-title">목표 포트폴리오 관리</h2>
+          <button class="btn-new" onclick="createNewPortfolio()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 5v14m-7-7h14"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            새 포트폴리오
+          </button>
+        </div>
+        <div class="portfolio-tabs" id="portfolioTabs">
+          <!-- Portfolio tabs will be generated dynamically -->
+        </div>
+      </div>
+
+      <!-- Main Grid -->
+      <div class="main-grid">
+        <!-- Allocation Editor -->
+        <div class="card allocation-editor">
+          <div class="card-header">
+            <div>
+              <div class="card-title" id="portfolioName">보수적 포트폴리오</div>
+              <div class="card-subtitle">종목별 목표 비중을 설정하세요</div>
+            </div>
+            <button class="btn-secondary" onclick="addStock()">
+              종목 추가
+            </button>
+          </div>
+
+          <div id="allocationItems">
+            <!-- Allocation items will be generated dynamically -->
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="resetPortfolio()">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M3 3v5h5"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              초기화
+            </button>
+            <button class="btn btn-warning" onclick="autoBalance()">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 3v18m0-18l4 4m-4-4l-4 4"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M8 21h8"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              균등 분배
+            </button>
+            <button
+              class="btn btn-primary"
+              id="saveButton"
+              onclick="savePortfolio()"
+            >
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <polyline
+                  points="17,21 17,13 7,13 7,21"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <polyline
+                  points="7,3 7,8 15,8"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              저장
+            </button>
+          </div>
         </div>
 
-        <!-- Portfolio Selector -->
-        <div class="portfolio-selector">
-            <div class="selector-header">
-                <h2 class="selector-title">목표 포트폴리오 관리</h2>
-                <button class="btn-new" onclick="createNewPortfolio()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    새 포트폴리오
-                </button>
+        <!-- Summary Panel -->
+        <div class="card summary-panel">
+          <div class="card-header">
+            <div>
+              <div class="card-title">포트폴리오 요약</div>
+              <div class="card-subtitle">목표 비중 및 검증</div>
             </div>
-            <div class="portfolio-tabs" id="portfolioTabs">
-                <!-- Portfolio tabs will be generated dynamically -->
+          </div>
+
+          <div class="total-percentage" id="totalPercentage">0%</div>
+
+          <div class="validation-message" id="validationMessage">
+            비중을 설정해주세요
+          </div>
+
+          <div class="auto-normalize" id="autoNormalize" style="display: none">
+            <div style="color: #fcd34d; font-size: 14px; margin-bottom: 8px">
+              총 비중이 100%가 아닙니다
             </div>
+            <button class="btn-normalize" onclick="normalizeAllocations()">
+              자동으로 100%로 조정
+            </button>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">설정된 종목 수</div>
+            <div class="summary-value" id="stockCount">0</div>
+            <div class="summary-description">개 종목</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">최대 비중 종목</div>
+            <div class="summary-value" id="maxStock">-</div>
+            <div class="summary-description" id="maxStockPercent">0%</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">최소 비중 종목</div>
+            <div class="summary-value" id="minStock">-</div>
+            <div class="summary-description" id="minStockPercent">0%</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">평균 비중</div>
+            <div class="summary-value" id="avgAllocation">0%</div>
+            <div class="summary-description">종목당 평균</div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn btn-danger" onclick="deletePortfolio()">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                <polyline
+                  points="3,6 5,6 21,6"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <line
+                  x1="10"
+                  y1="11"
+                  x2="10"
+                  y2="17"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <line
+                  x1="14"
+                  y1="11"
+                  x2="14"
+                  y2="17"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              삭제
+            </button>
+            <button class="btn btn-secondary" onclick="copyPortfolio()">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                <rect
+                  x="9"
+                  y="9"
+                  width="13"
+                  height="13"
+                  rx="2"
+                  ry="2"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              복사
+            </button>
+          </div>
         </div>
-
-        <!-- Main Grid -->
-        <div class="main-grid">
-            <!-- Allocation Editor -->
-            <div class="card allocation-editor">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title" id="portfolioName">보수적 포트폴리오</div>
-                        <div class="card-subtitle">종목별 목표 비중을 설정하세요</div>
-                    </div>
-                    <button class="btn-secondary" onclick="addStock()">종목 추가</button>
-                </div>
-
-                <div id="allocationItems">
-                    <!-- Allocation items will be generated dynamically -->
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn btn-secondary" onclick="resetPortfolio()">
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
-                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M3 3v5h5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        초기화
-                    </button>
-                    <button class="btn btn-warning" onclick="autoBalance()">
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 3v18m0-18l4 4m-4-4l-4 4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M8 21h8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        균등 분배
-                    </button>
-                    <button class="btn btn-primary" id="saveButton" onclick="savePortfolio()">
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
-                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            <polyline points="17,21 17,13 7,13 7,21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            <polyline points="7,3 7,8 15,8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        저장
-                    </button>
-                </div>
-            </div>
-
-            <!-- Summary Panel -->
-            <div class="card summary-panel">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">포트폴리오 요약</div>
-                        <div class="card-subtitle">목표 비중 및 검증</div>
-                    </div>
-                </div>
-
-                <div class="total-percentage" id="totalPercentage">0%</div>
-                
-                <div class="validation-message" id="validationMessage">
-                    비중을 설정해주세요
-                </div>
-
-                <div class="auto-normalize" id="autoNormalize" style="display: none;">
-                    <div style="color: #FCD34D; font-size: 14px; margin-bottom: 8px;">
-                        총 비중이 100%가 아닙니다
-                    </div>
-                    <button class="btn-normalize" onclick="normalizeAllocations()">
-                        자동으로 100%로 조정
-                    </button>
-                </div>
-
-                <div class="summary-item">
-                    <div class="summary-label">설정된 종목 수</div>
-                    <div class="summary-value" id="stockCount">0</div>
-                    <div class="summary-description">개 종목</div>
-                </div>
-
-                <div class="summary-item">
-                    <div class="summary-label">최대 비중 종목</div>
-                    <div class="summary-value" id="maxStock">-</div>
-                    <div class="summary-description" id="maxStockPercent">0%</div>
-                </div>
-
-                <div class="summary-item">
-                    <div class="summary-label">최소 비중 종목</div>
-                    <div class="summary-value" id="minStock">-</div>
-                    <div class="summary-description" id="minStockPercent">0%</div>
-                </div>
-
-                <div class="summary-item">
-                    <div class="summary-label">평균 비중</div>
-                    <div class="summary-value" id="avgAllocation">0%</div>
-                    <div class="summary-description">종목당 평균</div>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="btn btn-danger" onclick="deletePortfolio()">
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
-                            <polyline points="3,6 5,6 21,6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            <line x1="10" y1="11" x2="10" y2="17" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            <line x1="14" y1="11" x2="14" y2="17" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        삭제
-                    </button>
-                    <button class="btn btn-secondary" onclick="copyPortfolio()">
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        복사
-                    </button>
-                </div>
-            </div>
-        </div>
+      </div>
     </main>
 
     <!-- Add Stock Modal -->
     <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">종목 추가</h3>
-                <button class="btn-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">종목 선택</label>
-                    <select class="form-select" id="stockSelect">
-                        <option value="">종목을 선택하세요</option>
-                        <!-- Options will be populated from available stocks -->
-                    </select>
-                </div>
-                <div class="action-buttons">
-                    <button class="btn btn-secondary" onclick="closeModal()">
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
-                            <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        취소
-                    </button>
-                    <button class="btn btn-primary" onclick="addSelectedStock()">
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
-                            <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        추가
-                    </button>
-                </div>
-            </div>
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">종목 추가</h3>
+          <button class="btn-close" onclick="closeModal()">&times;</button>
         </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">종목 선택</label>
+            <select class="form-select" id="stockSelect">
+              <option value="">종목을 선택하세요</option>
+              <!-- Options will be populated from available stocks -->
+            </select>
+          </div>
+          <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="closeModal()">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                <line
+                  x1="18"
+                  y1="6"
+                  x2="6"
+                  y2="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <line
+                  x1="6"
+                  y1="6"
+                  x2="18"
+                  y2="18"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              취소
+            </button>
+            <button class="btn btn-primary" onclick="addSelectedStock()">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+                <line
+                  x1="12"
+                  y1="5"
+                  x2="12"
+                  y2="19"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <line
+                  x1="5"
+                  y1="12"
+                  x2="19"
+                  y2="12"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              추가
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        // Sample data
-        let targetPortfolios = [
+      // Sample data
+      let targetPortfolios = [
+        {
+          id: 1,
+          name: '보수적 포트폴리오',
+          allocations: [
             {
-                id: 1,
-                name: '보수적 포트폴리오',
-                allocations: [
-                    { symbol: 'AAPL', name: 'Apple Inc.', allocation: 25, color: '#6366F1' },
-                    { symbol: 'MSFT', name: 'Microsoft Corp.', allocation: 20, color: '#8B5CF6' },
-                    { symbol: 'GOOGL', name: 'Alphabet Inc.', allocation: 15, color: '#10B981' },
-                    { symbol: 'NVDA', name: 'NVIDIA Corp.', allocation: 25, color: '#F59E0B' },
-                    { symbol: 'TSLA', name: 'Tesla Inc.', allocation: 15, color: '#EF4444' }
-                ]
+              symbol: 'AAPL',
+              name: 'Apple Inc.',
+              allocation: 25,
+              color: '#6366F1',
             },
             {
-                id: 2,
-                name: '성장형 포트폴리오',
-                allocations: [
-                    { symbol: 'TSLA', name: 'Tesla Inc.', allocation: 35, color: '#EF4444' },
-                    { symbol: 'NVDA', name: 'NVIDIA Corp.', allocation: 30, color: '#F59E0B' },
-                    { symbol: 'AMZN', name: 'Amazon.com Inc.', allocation: 20, color: '#8B5CF6' },
-                    { symbol: 'META', name: 'Meta Platforms Inc.', allocation: 15, color: '#10B981' }
-                ]
+              symbol: 'MSFT',
+              name: 'Microsoft Corp.',
+              allocation: 20,
+              color: '#8B5CF6',
             },
             {
-                id: 3,
-                name: '배당형 포트폴리오',
-                allocations: [
-                    { symbol: 'AAPL', name: 'Apple Inc.', allocation: 30, color: '#6366F1' },
-                    { symbol: 'MSFT', name: 'Microsoft Corp.', allocation: 25, color: '#8B5CF6' },
-                    { symbol: 'JNJ', name: 'Johnson & Johnson', allocation: 20, color: '#10B981' },
-                    { symbol: 'PG', name: 'Procter & Gamble', allocation: 15, color: '#F59E0B' },
-                    { symbol: 'KO', name: 'Coca-Cola Company', allocation: 10, color: '#EF4444' }
-                ]
-            }
-        ];
+              symbol: 'GOOGL',
+              name: 'Alphabet Inc.',
+              allocation: 15,
+              color: '#10B981',
+            },
+            {
+              symbol: 'NVDA',
+              name: 'NVIDIA Corp.',
+              allocation: 25,
+              color: '#F59E0B',
+            },
+            {
+              symbol: 'TSLA',
+              name: 'Tesla Inc.',
+              allocation: 15,
+              color: '#EF4444',
+            },
+          ],
+        },
+        {
+          id: 2,
+          name: '성장형 포트폴리오',
+          allocations: [
+            {
+              symbol: 'TSLA',
+              name: 'Tesla Inc.',
+              allocation: 35,
+              color: '#EF4444',
+            },
+            {
+              symbol: 'NVDA',
+              name: 'NVIDIA Corp.',
+              allocation: 30,
+              color: '#F59E0B',
+            },
+            {
+              symbol: 'AMZN',
+              name: 'Amazon.com Inc.',
+              allocation: 20,
+              color: '#8B5CF6',
+            },
+            {
+              symbol: 'META',
+              name: 'Meta Platforms Inc.',
+              allocation: 15,
+              color: '#10B981',
+            },
+          ],
+        },
+        {
+          id: 3,
+          name: '배당형 포트폴리오',
+          allocations: [
+            {
+              symbol: 'AAPL',
+              name: 'Apple Inc.',
+              allocation: 30,
+              color: '#6366F1',
+            },
+            {
+              symbol: 'MSFT',
+              name: 'Microsoft Corp.',
+              allocation: 25,
+              color: '#8B5CF6',
+            },
+            {
+              symbol: 'JNJ',
+              name: 'Johnson & Johnson',
+              allocation: 20,
+              color: '#10B981',
+            },
+            {
+              symbol: 'PG',
+              name: 'Procter & Gamble',
+              allocation: 15,
+              color: '#F59E0B',
+            },
+            {
+              symbol: 'KO',
+              name: 'Coca-Cola Company',
+              allocation: 10,
+              color: '#EF4444',
+            },
+          ],
+        },
+      ]
 
-        // Available stocks for adding
-        const availableStocks = [
-            { symbol: 'AAPL', name: 'Apple Inc.', color: '#6366F1' },
-            { symbol: 'MSFT', name: 'Microsoft Corp.', color: '#8B5CF6' },
-            { symbol: 'GOOGL', name: 'Alphabet Inc.', color: '#10B981' },
-            { symbol: 'AMZN', name: 'Amazon.com Inc.', color: '#F59E0B' },
-            { symbol: 'TSLA', name: 'Tesla Inc.', color: '#EF4444' },
-            { symbol: 'NVDA', name: 'NVIDIA Corp.', color: '#F59E0B' },
-            { symbol: 'META', name: 'Meta Platforms Inc.', color: '#8B5CF6' },
-            { symbol: 'NFLX', name: 'Netflix Inc.', color: '#EF4444' },
-            { symbol: 'JNJ', name: 'Johnson & Johnson', color: '#10B981' },
-            { symbol: 'PG', name: 'Procter & Gamble', color: '#F59E0B' },
-            { symbol: 'KO', name: 'Coca-Cola Company', color: '#EF4444' },
-            { symbol: 'DIS', name: 'Walt Disney Company', color: '#6366F1' }
-        ];
+      // Available stocks for adding
+      const availableStocks = [
+        { symbol: 'AAPL', name: 'Apple Inc.', color: '#6366F1' },
+        { symbol: 'MSFT', name: 'Microsoft Corp.', color: '#8B5CF6' },
+        { symbol: 'GOOGL', name: 'Alphabet Inc.', color: '#10B981' },
+        { symbol: 'AMZN', name: 'Amazon.com Inc.', color: '#F59E0B' },
+        { symbol: 'TSLA', name: 'Tesla Inc.', color: '#EF4444' },
+        { symbol: 'NVDA', name: 'NVIDIA Corp.', color: '#F59E0B' },
+        { symbol: 'META', name: 'Meta Platforms Inc.', color: '#8B5CF6' },
+        { symbol: 'NFLX', name: 'Netflix Inc.', color: '#EF4444' },
+        { symbol: 'JNJ', name: 'Johnson & Johnson', color: '#10B981' },
+        { symbol: 'PG', name: 'Procter & Gamble', color: '#F59E0B' },
+        { symbol: 'KO', name: 'Coca-Cola Company', color: '#EF4444' },
+        { symbol: 'DIS', name: 'Walt Disney Company', color: '#6366F1' },
+      ]
 
-        let currentPortfolioId = 1;
+      let currentPortfolioId = 1
 
-        // Render portfolio tabs
-        function renderPortfolioTabs() {
-            const tabsContainer = document.getElementById('portfolioTabs');
-            tabsContainer.innerHTML = '';
+      // Render portfolio tabs
+      function renderPortfolioTabs() {
+        const tabsContainer = document.getElementById('portfolioTabs')
+        tabsContainer.innerHTML = ''
 
-            targetPortfolios.forEach(portfolio => {
-                const tabElement = document.createElement('div');
-                tabElement.className = `portfolio-tab ${portfolio.id === currentPortfolioId ? 'active' : ''}`;
-                tabElement.innerHTML = `
+        targetPortfolios.forEach((portfolio) => {
+          const tabElement = document.createElement('div')
+          tabElement.className = `portfolio-tab ${portfolio.id === currentPortfolioId ? 'active' : ''}`
+          tabElement.innerHTML = `
                     <div onclick="selectPortfolio(${portfolio.id})">${portfolio.name}</div>
                     <div class="tab-actions">
                         <button class="btn-tab-action" onclick="editPortfolioName(${portfolio.id})">이름 변경</button>
                         <button class="btn-tab-action" onclick="duplicatePortfolio(${portfolio.id})">복사</button>
                     </div>
-                `;
-                tabsContainer.appendChild(tabElement);
-            });
-        }
+                `
+          tabsContainer.appendChild(tabElement)
+        })
+      }
 
-        // Select portfolio
-        function selectPortfolio(portfolioId) {
-            currentPortfolioId = portfolioId;
-            renderPortfolioTabs();
-            renderAllocationEditor();
-        }
+      // Select portfolio
+      function selectPortfolio(portfolioId) {
+        currentPortfolioId = portfolioId
+        renderPortfolioTabs()
+        renderAllocationEditor()
+      }
 
-        // Render allocation editor
-        function renderAllocationEditor() {
-            const portfolio = targetPortfolios.find(p => p.id === currentPortfolioId);
-            if (!portfolio) return;
+      // Render allocation editor
+      function renderAllocationEditor() {
+        const portfolio = targetPortfolios.find(
+          (p) => p.id === currentPortfolioId,
+        )
+        if (!portfolio) return
 
-            document.getElementById('portfolioName').textContent = portfolio.name;
-            
-            const container = document.getElementById('allocationItems');
-            container.innerHTML = '';
+        document.getElementById('portfolioName').textContent = portfolio.name
 
-            portfolio.allocations.forEach((allocation, index) => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'allocation-item';
-                itemElement.innerHTML = `
+        const container = document.getElementById('allocationItems')
+        container.innerHTML = ''
+
+        portfolio.allocations.forEach((allocation, index) => {
+          const itemElement = document.createElement('div')
+          itemElement.className = 'allocation-item'
+          itemElement.innerHTML = `
                     <div class="allocation-header">
                         <div class="stock-info">
                             <div class="stock-color" style="background-color: ${allocation.color}"></div>
@@ -1167,375 +1406,438 @@
                         >
                         <span style="color: #B3B3B3; font-size: 14px;">%</span>
                     </div>
-                `;
-                container.appendChild(itemElement);
-            });
+                `
+          container.appendChild(itemElement)
+        })
 
-            updateSummary();
+        updateSummary()
+      }
+
+      // Update allocation
+      function updateAllocation(symbol, value, source) {
+        const portfolio = targetPortfolios.find(
+          (p) => p.id === currentPortfolioId,
+        )
+        if (!portfolio) return
+
+        const allocation = portfolio.allocations.find(
+          (a) => a.symbol === symbol,
+        )
+        if (!allocation) return
+
+        const numValue = parseFloat(value) || 0
+        allocation.allocation = Math.max(0, Math.min(100, numValue))
+
+        // Update the corresponding input/slider
+        if (source === 'slider') {
+          const input = document.querySelector(
+            `input[type="number"][value="${value}"]`,
+          )
+          if (input) input.value = allocation.allocation
+        } else if (source === 'input') {
+          const slider = document.querySelector(
+            `input[type="range"][value="${value}"]`,
+          )
+          if (slider) {
+            slider.value = allocation.allocation
+            // Update slider track
+            const track = slider.parentElement.querySelector('.slider-track')
+            if (track) track.style.width = `${allocation.allocation}%`
+          }
         }
 
-        // Update allocation
-        function updateAllocation(symbol, value, source) {
-            const portfolio = targetPortfolios.find(p => p.id === currentPortfolioId);
-            if (!portfolio) return;
-
-            const allocation = portfolio.allocations.find(a => a.symbol === symbol);
-            if (!allocation) return;
-
-            const numValue = parseFloat(value) || 0;
-            allocation.allocation = Math.max(0, Math.min(100, numValue));
-
-            // Update the corresponding input/slider
-            if (source === 'slider') {
-                const input = document.querySelector(`input[type="number"][value="${value}"]`);
-                if (input) input.value = allocation.allocation;
-            } else if (source === 'input') {
-                const slider = document.querySelector(`input[type="range"][value="${value}"]`);
-                if (slider) {
-                    slider.value = allocation.allocation;
-                    // Update slider track
-                    const track = slider.parentElement.querySelector('.slider-track');
-                    if (track) track.style.width = `${allocation.allocation}%`;
-                }
-            }
-
-            // Update current allocation display
-            const currentValueElement = allocation.parentElement?.querySelector('.current-value');
-            if (currentValueElement) {
-                currentValueElement.textContent = `${allocation.allocation}%`;
-            }
-
-            updateSummary();
+        // Update current allocation display
+        const currentValueElement =
+          allocation.parentElement?.querySelector('.current-value')
+        if (currentValueElement) {
+          currentValueElement.textContent = `${allocation.allocation}%`
         }
 
-        // Update summary panel
-        function updateSummary() {
-            const portfolio = targetPortfolios.find(p => p.id === currentPortfolioId);
-            if (!portfolio) return;
+        updateSummary()
+      }
 
-            const totalPercentage = portfolio.allocations.reduce((sum, a) => sum + a.allocation, 0);
-            const stockCount = portfolio.allocations.length;
+      // Update summary panel
+      function updateSummary() {
+        const portfolio = targetPortfolios.find(
+          (p) => p.id === currentPortfolioId,
+        )
+        if (!portfolio) return
 
-            // Update total percentage
-            const totalElement = document.getElementById('totalPercentage');
-            totalElement.textContent = `${totalPercentage.toFixed(1)}%`;
+        const totalPercentage = portfolio.allocations.reduce(
+          (sum, a) => sum + a.allocation,
+          0,
+        )
+        const stockCount = portfolio.allocations.length
 
-            // Update percentage validation
-            let validationClass, validationMessage;
-            if (totalPercentage === 100) {
-                validationClass = 'percentage-valid';
-                validationMessage = '완벽한 포트폴리오입니다!';
-                document.getElementById('validationMessage').className = 'validation-message validation-valid';
-                document.getElementById('autoNormalize').style.display = 'none';
-                document.getElementById('saveButton').disabled = false;
-            } else if (totalPercentage > 100) {
-                validationClass = 'percentage-invalid';
-                validationMessage = `총 비중이 ${(totalPercentage - 100).toFixed(1)}% 초과되었습니다`;
-                document.getElementById('validationMessage').className = 'validation-message validation-invalid';
-                document.getElementById('autoNormalize').style.display = 'block';
-                document.getElementById('saveButton').disabled = true;
-            } else if (totalPercentage > 0) {
-                validationClass = 'percentage-warning';
-                validationMessage = `총 비중이 ${(100 - totalPercentage).toFixed(1)}% 부족합니다`;
-                document.getElementById('validationMessage').className = 'validation-message validation-warning';
-                document.getElementById('autoNormalize').style.display = 'block';
-                document.getElementById('saveButton').disabled = true;
-            } else {
-                validationClass = 'percentage-invalid';
-                validationMessage = '비중을 설정해주세요';
-                document.getElementById('validationMessage').className = 'validation-message validation-invalid';
-                document.getElementById('autoNormalize').style.display = 'none';
-                document.getElementById('saveButton').disabled = true;
-            }
+        // Update total percentage
+        const totalElement = document.getElementById('totalPercentage')
+        totalElement.textContent = `${totalPercentage.toFixed(1)}%`
 
-            totalElement.className = `total-percentage ${validationClass}`;
-            document.getElementById('validationMessage').textContent = validationMessage;
-
-            // Update other summary items
-            document.getElementById('stockCount').textContent = stockCount;
-
-            if (stockCount > 0) {
-                const maxAllocation = portfolio.allocations.reduce((max, a) => a.allocation > max.allocation ? a : max);
-                const minAllocation = portfolio.allocations.reduce((min, a) => a.allocation < min.allocation ? a : min);
-                const avgAllocation = totalPercentage / stockCount;
-
-                document.getElementById('maxStock').textContent = maxAllocation.symbol;
-                document.getElementById('maxStockPercent').textContent = `${maxAllocation.allocation.toFixed(1)}%`;
-                
-                document.getElementById('minStock').textContent = minAllocation.symbol;
-                document.getElementById('minStockPercent').textContent = `${minAllocation.allocation.toFixed(1)}%`;
-                
-                document.getElementById('avgAllocation').textContent = `${avgAllocation.toFixed(1)}%`;
-            } else {
-                document.getElementById('maxStock').textContent = '-';
-                document.getElementById('maxStockPercent').textContent = '0%';
-                document.getElementById('minStock').textContent = '-';
-                document.getElementById('minStockPercent').textContent = '0%';
-                document.getElementById('avgAllocation').textContent = '0%';
-            }
+        // Update percentage validation
+        let validationClass, validationMessage
+        if (totalPercentage === 100) {
+          validationClass = 'percentage-valid'
+          validationMessage = '완벽한 포트폴리오입니다!'
+          document.getElementById('validationMessage').className =
+            'validation-message validation-valid'
+          document.getElementById('autoNormalize').style.display = 'none'
+          document.getElementById('saveButton').disabled = false
+        } else if (totalPercentage > 100) {
+          validationClass = 'percentage-invalid'
+          validationMessage = `총 비중이 ${(totalPercentage - 100).toFixed(1)}% 초과되었습니다`
+          document.getElementById('validationMessage').className =
+            'validation-message validation-invalid'
+          document.getElementById('autoNormalize').style.display = 'block'
+          document.getElementById('saveButton').disabled = true
+        } else if (totalPercentage > 0) {
+          validationClass = 'percentage-warning'
+          validationMessage = `총 비중이 ${(100 - totalPercentage).toFixed(1)}% 부족합니다`
+          document.getElementById('validationMessage').className =
+            'validation-message validation-warning'
+          document.getElementById('autoNormalize').style.display = 'block'
+          document.getElementById('saveButton').disabled = true
+        } else {
+          validationClass = 'percentage-invalid'
+          validationMessage = '비중을 설정해주세요'
+          document.getElementById('validationMessage').className =
+            'validation-message validation-invalid'
+          document.getElementById('autoNormalize').style.display = 'none'
+          document.getElementById('saveButton').disabled = true
         }
 
-        // Normalize allocations to 100%
-        function normalizeAllocations() {
-            const portfolio = targetPortfolios.find(p => p.id === currentPortfolioId);
-            if (!portfolio || portfolio.allocations.length === 0) return;
+        totalElement.className = `total-percentage ${validationClass}`
+        document.getElementById('validationMessage').textContent =
+          validationMessage
 
-            const totalPercentage = portfolio.allocations.reduce((sum, a) => sum + a.allocation, 0);
-            if (totalPercentage === 0) return;
+        // Update other summary items
+        document.getElementById('stockCount').textContent = stockCount
 
-            portfolio.allocations.forEach(allocation => {
-                allocation.allocation = (allocation.allocation / totalPercentage) * 100;
-            });
+        if (stockCount > 0) {
+          const maxAllocation = portfolio.allocations.reduce((max, a) =>
+            a.allocation > max.allocation ? a : max,
+          )
+          const minAllocation = portfolio.allocations.reduce((min, a) =>
+            a.allocation < min.allocation ? a : min,
+          )
+          const avgAllocation = totalPercentage / stockCount
 
-            renderAllocationEditor();
+          document.getElementById('maxStock').textContent = maxAllocation.symbol
+          document.getElementById('maxStockPercent').textContent =
+            `${maxAllocation.allocation.toFixed(1)}%`
+
+          document.getElementById('minStock').textContent = minAllocation.symbol
+          document.getElementById('minStockPercent').textContent =
+            `${minAllocation.allocation.toFixed(1)}%`
+
+          document.getElementById('avgAllocation').textContent =
+            `${avgAllocation.toFixed(1)}%`
+        } else {
+          document.getElementById('maxStock').textContent = '-'
+          document.getElementById('maxStockPercent').textContent = '0%'
+          document.getElementById('minStock').textContent = '-'
+          document.getElementById('minStockPercent').textContent = '0%'
+          document.getElementById('avgAllocation').textContent = '0%'
+        }
+      }
+
+      // Normalize allocations to 100%
+      function normalizeAllocations() {
+        const portfolio = targetPortfolios.find(
+          (p) => p.id === currentPortfolioId,
+        )
+        if (!portfolio || portfolio.allocations.length === 0) return
+
+        const totalPercentage = portfolio.allocations.reduce(
+          (sum, a) => sum + a.allocation,
+          0,
+        )
+        if (totalPercentage === 0) return
+
+        portfolio.allocations.forEach((allocation) => {
+          allocation.allocation =
+            (allocation.allocation / totalPercentage) * 100
+        })
+
+        renderAllocationEditor()
+      }
+
+      // Add stock modal
+      function addStock() {
+        const portfolio = targetPortfolios.find(
+          (p) => p.id === currentPortfolioId,
+        )
+        if (!portfolio) return
+
+        const modal = document.getElementById('modalOverlay')
+        const select = document.getElementById('stockSelect')
+
+        // Populate available stocks (excluding already added ones)
+        const existingSymbols = portfolio.allocations.map((a) => a.symbol)
+        const availableOptions = availableStocks.filter(
+          (stock) => !existingSymbols.includes(stock.symbol),
+        )
+
+        select.innerHTML = '<option value="">종목을 선택하세요</option>'
+        availableOptions.forEach((stock) => {
+          const option = document.createElement('option')
+          option.value = stock.symbol
+          option.textContent = `${stock.symbol} - ${stock.name}`
+          option.dataset.name = stock.name
+          option.dataset.color = stock.color
+          select.appendChild(option)
+        })
+
+        modal.classList.add('active')
+        document.body.style.overflow = 'hidden'
+      }
+
+      // Add selected stock
+      function addSelectedStock() {
+        const select = document.getElementById('stockSelect')
+        const selectedOption = select.options[select.selectedIndex]
+
+        if (!selectedOption.value) {
+          alert('종목을 선택해주세요.')
+          return
         }
 
-        // Add stock modal
-        function addStock() {
-            const portfolio = targetPortfolios.find(p => p.id === currentPortfolioId);
-            if (!portfolio) return;
+        const portfolio = targetPortfolios.find(
+          (p) => p.id === currentPortfolioId,
+        )
+        if (!portfolio) return
 
-            const modal = document.getElementById('modalOverlay');
-            const select = document.getElementById('stockSelect');
-            
-            // Populate available stocks (excluding already added ones)
-            const existingSymbols = portfolio.allocations.map(a => a.symbol);
-            const availableOptions = availableStocks.filter(stock => !existingSymbols.includes(stock.symbol));
-            
-            select.innerHTML = '<option value="">종목을 선택하세요</option>';
-            availableOptions.forEach(stock => {
-                const option = document.createElement('option');
-                option.value = stock.symbol;
-                option.textContent = `${stock.symbol} - ${stock.name}`;
-                option.dataset.name = stock.name;
-                option.dataset.color = stock.color;
-                select.appendChild(option);
-            });
-
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+        const newAllocation = {
+          symbol: selectedOption.value,
+          name: selectedOption.dataset.name,
+          allocation: 0,
+          color: selectedOption.dataset.color,
         }
 
-        // Add selected stock
-        function addSelectedStock() {
-            const select = document.getElementById('stockSelect');
-            const selectedOption = select.options[select.selectedIndex];
-            
-            if (!selectedOption.value) {
-                alert('종목을 선택해주세요.');
-                return;
-            }
+        portfolio.allocations.push(newAllocation)
+        closeModal()
+        renderAllocationEditor()
+      }
 
-            const portfolio = targetPortfolios.find(p => p.id === currentPortfolioId);
-            if (!portfolio) return;
+      // Remove stock
+      function removeStock(symbol) {
+        const portfolio = targetPortfolios.find(
+          (p) => p.id === currentPortfolioId,
+        )
+        if (!portfolio) return
 
-            const newAllocation = {
-                symbol: selectedOption.value,
-                name: selectedOption.dataset.name,
-                allocation: 0,
-                color: selectedOption.dataset.color
-            };
+        if (confirm(`${symbol} 종목을 제거하시겠습니까?`)) {
+          portfolio.allocations = portfolio.allocations.filter(
+            (a) => a.symbol !== symbol,
+          )
+          renderAllocationEditor()
+        }
+      }
 
-            portfolio.allocations.push(newAllocation);
-            closeModal();
-            renderAllocationEditor();
+      // Close modal
+      function closeModal() {
+        const modal = document.getElementById('modalOverlay')
+        modal.classList.remove('active')
+        document.body.style.overflow = ''
+      }
+
+      // Reset portfolio
+      function resetPortfolio() {
+        if (confirm('포트폴리오를 초기화하시겠습니까?')) {
+          const portfolio = targetPortfolios.find(
+            (p) => p.id === currentPortfolioId,
+          )
+          if (portfolio) {
+            portfolio.allocations.forEach((allocation) => {
+              allocation.allocation = 0
+            })
+            renderAllocationEditor()
+          }
+        }
+      }
+
+      // Save portfolio
+      function savePortfolio() {
+        const portfolio = targetPortfolios.find(
+          (p) => p.id === currentPortfolioId,
+        )
+        if (!portfolio) return
+
+        const totalPercentage = portfolio.allocations.reduce(
+          (sum, a) => sum + a.allocation,
+          0,
+        )
+
+        if (totalPercentage !== 100) {
+          alert('총 비중이 100%가 되어야 저장할 수 있습니다.')
+          return
         }
 
-        // Remove stock
-        function removeStock(symbol) {
-            const portfolio = targetPortfolios.find(p => p.id === currentPortfolioId);
-            if (!portfolio) return;
+        const saveButton = document.getElementById('saveButton')
 
-            if (confirm(`${symbol} 종목을 제거하시겠습니까?`)) {
-                portfolio.allocations = portfolio.allocations.filter(a => a.symbol !== symbol);
-                renderAllocationEditor();
-            }
-        }
-
-        // Close modal
-        function closeModal() {
-            const modal = document.getElementById('modalOverlay');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // Reset portfolio
-        function resetPortfolio() {
-            if (confirm('포트폴리오를 초기화하시겠습니까?')) {
-                const portfolio = targetPortfolios.find(p => p.id === currentPortfolioId);
-                if (portfolio) {
-                    portfolio.allocations.forEach(allocation => {
-                        allocation.allocation = 0;
-                    });
-                    renderAllocationEditor();
-                }
-            }
-        }
-
-        // Save portfolio
-        function savePortfolio() {
-            const portfolio = targetPortfolios.find(p => p.id === currentPortfolioId);
-            if (!portfolio) return;
-
-            const totalPercentage = portfolio.allocations.reduce((sum, a) => sum + a.allocation, 0);
-            
-            if (totalPercentage !== 100) {
-                alert('총 비중이 100%가 되어야 저장할 수 있습니다.');
-                return;
-            }
-
-            const saveButton = document.getElementById('saveButton');
-            
-            // Simulate API call with loading state
-            saveButton.innerHTML = `
+        // Simulate API call with loading state
+        saveButton.innerHTML = `
                 <div class="loading" style="width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid #fff; border-radius: 50%; animation: spin 1s linear infinite;"></div>
                 저장 중...
-            `;
-            saveButton.disabled = true;
-            
-            setTimeout(() => {
-                // Show success state
-                saveButton.className = 'btn btn-primary btn-saved';
-                saveButton.innerHTML = `
+            `
+        saveButton.disabled = true
+
+        setTimeout(() => {
+          // Show success state
+          saveButton.className = 'btn btn-primary btn-saved'
+          saveButton.innerHTML = `
                     <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
                         <polyline points="20,6 9,17 4,12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     저장 완료!
-                `;
-                
-                // Reset after 2 seconds
-                setTimeout(() => {
-                    saveButton.className = 'btn btn-primary';
-                    saveButton.innerHTML = `
+                `
+
+          // Reset after 2 seconds
+          setTimeout(() => {
+            saveButton.className = 'btn btn-primary'
+            saveButton.innerHTML = `
                         <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
                             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                             <polyline points="17,21 17,13 7,13 7,21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                             <polyline points="7,3 7,8 15,8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         저장
-                    `;
-                    saveButton.disabled = false;
-                }, 2000);
-                
-            }, 1000);
-            
-            // Simulate API call
-            console.log('Saving portfolio:', portfolio);
+                    `
+            saveButton.disabled = false
+          }, 2000)
+        }, 1000)
+
+        // Simulate API call
+        console.log('Saving portfolio:', portfolio)
+      }
+
+      // Create new portfolio
+      function createNewPortfolio() {
+        const name = prompt('새 포트폴리오 이름을 입력하세요:', '새 포트폴리오')
+        if (!name) return
+
+        const newId = Math.max(...targetPortfolios.map((p) => p.id)) + 1
+        const newPortfolio = {
+          id: newId,
+          name: name,
+          allocations: [],
         }
 
-        // Create new portfolio
-        function createNewPortfolio() {
-            const name = prompt('새 포트폴리오 이름을 입력하세요:', '새 포트폴리오');
-            if (!name) return;
+        targetPortfolios.push(newPortfolio)
+        currentPortfolioId = newId
+        renderPortfolioTabs()
+        renderAllocationEditor()
+      }
 
-            const newId = Math.max(...targetPortfolios.map(p => p.id)) + 1;
-            const newPortfolio = {
-                id: newId,
-                name: name,
-                allocations: []
-            };
+      // Edit portfolio name
+      function editPortfolioName(portfolioId) {
+        const portfolio = targetPortfolios.find((p) => p.id === portfolioId)
+        if (!portfolio) return
 
-            targetPortfolios.push(newPortfolio);
-            currentPortfolioId = newId;
-            renderPortfolioTabs();
-            renderAllocationEditor();
+        const newName = prompt('포트폴리오 이름을 입력하세요:', portfolio.name)
+        if (newName && newName !== portfolio.name) {
+          portfolio.name = newName
+          renderPortfolioTabs()
+          if (portfolioId === currentPortfolioId) {
+            document.getElementById('portfolioName').textContent = newName
+          }
+        }
+      }
+
+      // Duplicate portfolio
+      function duplicatePortfolio(portfolioId) {
+        const portfolio = targetPortfolios.find((p) => p.id === portfolioId)
+        if (!portfolio) return
+
+        const newId = Math.max(...targetPortfolios.map((p) => p.id)) + 1
+        const newPortfolio = {
+          id: newId,
+          name: `${portfolio.name} 복사본`,
+          allocations: JSON.parse(JSON.stringify(portfolio.allocations)),
         }
 
-        // Edit portfolio name
-        function editPortfolioName(portfolioId) {
-            const portfolio = targetPortfolios.find(p => p.id === portfolioId);
-            if (!portfolio) return;
+        targetPortfolios.push(newPortfolio)
+        renderPortfolioTabs()
+      }
 
-            const newName = prompt('포트폴리오 이름을 입력하세요:', portfolio.name);
-            if (newName && newName !== portfolio.name) {
-                portfolio.name = newName;
-                renderPortfolioTabs();
-                if (portfolioId === currentPortfolioId) {
-                    document.getElementById('portfolioName').textContent = newName;
-                }
+      // Delete portfolio
+      function deletePortfolio() {
+        if (targetPortfolios.length <= 1) {
+          alert('마지막 포트폴리오는 삭제할 수 없습니다.')
+          return
+        }
+
+        const portfolio = targetPortfolios.find(
+          (p) => p.id === currentPortfolioId,
+        )
+        if (!portfolio) return
+
+        if (confirm(`${portfolio.name}을(를) 삭제하시겠습니까?`)) {
+          targetPortfolios = targetPortfolios.filter(
+            (p) => p.id !== currentPortfolioId,
+          )
+          currentPortfolioId = targetPortfolios[0].id
+          renderPortfolioTabs()
+          renderAllocationEditor()
+        }
+      }
+
+      // Copy portfolio
+      function copyPortfolio() {
+        duplicatePortfolio(currentPortfolioId)
+      }
+
+      // Auto-balance allocations equally
+      function autoBalance() {
+        const portfolio = targetPortfolios.find(
+          (p) => p.id === currentPortfolioId,
+        )
+        if (!portfolio || portfolio.allocations.length === 0) return
+
+        if (confirm('모든 종목을 균등하게 분배하시겠습니까?')) {
+          const equalAllocation = parseFloat(
+            (100 / portfolio.allocations.length).toFixed(2),
+          )
+          portfolio.allocations.forEach((allocation, index) => {
+            allocation.allocation = equalAllocation
+          })
+
+          // Handle rounding to ensure exactly 100%
+          const totalAfterRounding = portfolio.allocations.reduce(
+            (sum, a) => sum + a.allocation,
+            0,
+          )
+          const diff = parseFloat((100 - totalAfterRounding).toFixed(2))
+          if (diff !== 0 && portfolio.allocations.length > 0) {
+            portfolio.allocations[0].allocation = parseFloat(
+              (portfolio.allocations[0].allocation + diff).toFixed(2),
+            )
+          }
+
+          renderAllocationEditor()
+        }
+      }
+
+      // Event listeners
+      document.addEventListener('DOMContentLoaded', function () {
+        renderPortfolioTabs()
+        renderAllocationEditor()
+
+        // Close modal on overlay click
+        document
+          .getElementById('modalOverlay')
+          .addEventListener('click', function (e) {
+            if (e.target === this) {
+              closeModal()
             }
-        }
+          })
 
-        // Duplicate portfolio
-        function duplicatePortfolio(portfolioId) {
-            const portfolio = targetPortfolios.find(p => p.id === portfolioId);
-            if (!portfolio) return;
-
-            const newId = Math.max(...targetPortfolios.map(p => p.id)) + 1;
-            const newPortfolio = {
-                id: newId,
-                name: `${portfolio.name} 복사본`,
-                allocations: JSON.parse(JSON.stringify(portfolio.allocations))
-            };
-
-            targetPortfolios.push(newPortfolio);
-            renderPortfolioTabs();
-        }
-
-        // Delete portfolio
-        function deletePortfolio() {
-            if (targetPortfolios.length <= 1) {
-                alert('마지막 포트폴리오는 삭제할 수 없습니다.');
-                return;
-            }
-
-            const portfolio = targetPortfolios.find(p => p.id === currentPortfolioId);
-            if (!portfolio) return;
-
-            if (confirm(`${portfolio.name}을(를) 삭제하시겠습니까?`)) {
-                targetPortfolios = targetPortfolios.filter(p => p.id !== currentPortfolioId);
-                currentPortfolioId = targetPortfolios[0].id;
-                renderPortfolioTabs();
-                renderAllocationEditor();
-            }
-        }
-
-        // Copy portfolio
-        function copyPortfolio() {
-            duplicatePortfolio(currentPortfolioId);
-        }
-
-        // Auto-balance allocations equally
-        function autoBalance() {
-            const portfolio = targetPortfolios.find(p => p.id === currentPortfolioId);
-            if (!portfolio || portfolio.allocations.length === 0) return;
-
-            if (confirm('모든 종목을 균등하게 분배하시겠습니까?')) {
-                const equalAllocation = parseFloat((100 / portfolio.allocations.length).toFixed(2));
-                portfolio.allocations.forEach((allocation, index) => {
-                    allocation.allocation = equalAllocation;
-                });
-
-                // Handle rounding to ensure exactly 100%
-                const totalAfterRounding = portfolio.allocations.reduce((sum, a) => sum + a.allocation, 0);
-                const diff = parseFloat((100 - totalAfterRounding).toFixed(2));
-                if (diff !== 0 && portfolio.allocations.length > 0) {
-                    portfolio.allocations[0].allocation = parseFloat((portfolio.allocations[0].allocation + diff).toFixed(2));
-                }
-
-                renderAllocationEditor();
-            }
-        }
-
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            renderPortfolioTabs();
-            renderAllocationEditor();
-
-            // Close modal on overlay click
-            document.getElementById('modalOverlay').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeModal();
-                }
-            });
-
-            // Handle escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeModal();
-                }
-            });
-        });
+        // Handle escape key
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') {
+            closeModal()
+          }
+        })
+      })
     </script>
-</body>
+  </body>
 </html>

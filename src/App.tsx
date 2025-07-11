@@ -1,29 +1,32 @@
-import { useState } from 'react'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom'
+import { AuthProvider } from './contexts'
+import { AuthPage, DashboardPage } from './pages'
+import { ProtectedRoute } from './components'
 import './App.css'
-import DatabaseTest from './components/DatabaseTest'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">Stock Dashboard</h1>
-        
-        <div className="mb-8">
-          <DatabaseTest />
-        </div>
-        
-        <div className="text-center">
-          <button
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() => setCount((count) => count + 1)}
-          >
-            count is {count}
-          </button>
-        </div>
-      </div>
-    </div>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/auth" element={<AuthPage />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   )
 }
 

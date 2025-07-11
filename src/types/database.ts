@@ -30,12 +30,12 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
+            foreignKeyName: 'profiles_id_fkey'
+            columns: ['id']
             isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
       stocks: {
@@ -74,12 +74,12 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "stocks_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'stocks_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
       target_portfolios: {
@@ -109,12 +109,12 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "target_portfolios_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'target_portfolios_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
     }
@@ -134,9 +134,12 @@ export interface Database {
 }
 
 // Type helpers
-export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']
-export type Inserts<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert']
-export type Updates<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update']
+export type Tables<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Row']
+export type Inserts<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Insert']
+export type Updates<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Update']
 
 // Specific table types
 export type Profile = Tables<'profiles'>
