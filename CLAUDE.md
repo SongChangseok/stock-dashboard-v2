@@ -49,6 +49,7 @@ Use these for all CSS styling work:
 - Follow existing code patterns and conventions
 - Run lint before marking tasks complete
 - Never commit unless explicitly requested
+- **All text content must be in English for global targeting**
 
 ## GitHub Issue Handling
 - When referencing GitHub issues, always check issue content for specific requirements
