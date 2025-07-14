@@ -1,10 +1,6 @@
 import React, { useState } from 'react'
 import { useAuth } from '../hooks'
-
-interface AuthFormProps {
-  type: 'login' | 'signup'
-  onSuccess?: () => void
-}
+import type { AuthFormProps } from '../types'
 
 export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
   const { signIn, signUp, loading } = useAuth()

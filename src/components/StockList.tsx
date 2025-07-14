@@ -1,13 +1,7 @@
 import React from 'react'
 import type { StockWithValue } from '../types/database'
+import type { StockListProps } from '../types'
 import { stockService } from '../services/stockService'
-
-interface StockListProps {
-  stocks: StockWithValue[]
-  onEdit: (stock: StockWithValue) => void
-  onDelete: (stockId: string) => void
-  onAdd: () => void
-}
 
 export const StockList: React.FC<StockListProps> = ({
   stocks,

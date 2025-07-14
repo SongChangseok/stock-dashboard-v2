@@ -1,18 +1,7 @@
 import { create } from 'zustand'
 import { stockService } from '../services/stockService'
-import type { Stock, StockWithValue, PortfolioSummary } from '../types/database'
+import type { PortfolioState } from '../types'
 
-interface PortfolioState {
-  stocks: Stock[]
-  stocksWithValue: StockWithValue[]
-  portfolioSummary: PortfolioSummary
-  isLoading: boolean
-  error: string | null
-  fetchStocks: () => Promise<void>
-  deleteStock: (stockId: string) => Promise<void>
-  refreshData: () => void
-  updateCalculations: () => void
-}
 
 export const usePortfolioStore = create<PortfolioState>((set, get) => ({
   stocks: [],

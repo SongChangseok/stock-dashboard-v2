@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import type { Stock } from '../types/database'
-import { stockService, CreateStockData, UpdateStockData } from '../services/stockService'
-
-interface StockFormProps {
-  isOpen: boolean
-  onClose: () => void
-  onSave: () => void
-  editStock?: Stock | null
-}
+import type { StockFormProps, CreateStockData, UpdateStockData } from '../types'
+import { stockService } from '../services/stockService'
 
 export const StockForm: React.FC<StockFormProps> = ({
   isOpen,

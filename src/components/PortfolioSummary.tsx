@@ -1,10 +1,6 @@
 import React from 'react'
-import type { PortfolioSummary as PortfolioSummaryType } from '../types/database'
+import type { PortfolioSummaryProps } from '../types'
 import { stockService } from '../services/stockService'
-
-interface PortfolioSummaryProps {
-  summary: PortfolioSummaryType
-}
 
 export const PortfolioSummary: React.FC<PortfolioSummaryProps> = ({ summary }) => {
   const dailyChange = summary.totalValue * 0.0067 // Simulated daily change

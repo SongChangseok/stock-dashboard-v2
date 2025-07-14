@@ -1,17 +1,8 @@
 import { create } from 'zustand'
-import { User, AuthError } from '@supabase/supabase-js'
+import type { AuthError } from '@supabase/supabase-js'
 import { authService } from '../services/database'
+import type { AuthState } from '../types'
 
-interface AuthState {
-  user: User | null
-  loading: boolean
-  signUp: (email: string, password: string) => Promise<{ user: User | null; error: AuthError | null }>
-  signIn: (email: string, password: string) => Promise<{ user: User | null; error: AuthError | null }>
-  signOut: () => Promise<{ error: AuthError | null }>
-  setUser: (user: User | null) => void
-  setLoading: (loading: boolean) => void
-  initialize: () => Promise<void>
-}
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,

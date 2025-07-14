@@ -1,17 +1,5 @@
 import { supabase } from './supabase'
-import type { Stock, StockWithValue, PortfolioSummary } from '../types/database'
-
-export interface CreateStockData {
-  stock_name: string
-  ticker?: string
-  quantity: number
-  purchase_price: number
-  current_price: number
-}
-
-export interface UpdateStockData extends Partial<CreateStockData> {
-  id: string
-}
+import type { Stock, StockWithValue, PortfolioSummary, CreateStockData, UpdateStockData } from '../types'
 
 class StockService {
   async getStocks(): Promise<Stock[]> {

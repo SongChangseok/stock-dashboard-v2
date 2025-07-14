@@ -1,11 +1,7 @@
 import React from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
-import type { PortfolioSummary } from '../types/database'
+import type { PortfolioChartProps, ChartData } from '../types'
 import { stockService } from '../services/stockService'
-
-interface PortfolioChartProps {
-  summary: PortfolioSummary
-}
 
 const COLORS = [
   '#6366F1', // Indigo - primary
@@ -22,12 +18,6 @@ const COLORS = [
   '#3B82F6', // Blue
 ]
 
-interface ChartData {
-  name: string
-  value: number
-  percentage: number
-  color: string
-}
 
 const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: ChartData }> }) => {
   if (active && payload && payload.length) {
