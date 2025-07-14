@@ -20,7 +20,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
     setSuccess('')
 
     if (type === 'signup' && password !== confirmPassword) {
-      setError('비밀번호가 일치하지 않습니다.')
+      setError('Passwords do not match.')
       return
     }
 
@@ -30,7 +30,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
         if (error) {
           setError(error.message)
         } else {
-          setSuccess('로그인이 완료되었습니다!')
+          setSuccess('Login successful!')
           onSuccess?.()
         }
       } else {
@@ -38,12 +38,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
         if (error) {
           setError(error.message)
         } else {
-          setSuccess('회원가입이 완료되었습니다! 이메일을 확인해주세요.')
+          setSuccess('Sign up successful! Please check your email.')
           onSuccess?.()
         }
       }
     } catch {
-      setError('오류가 발생했습니다. 다시 시도해주세요.')
+      setError('An error occurred. Please try again.')
     }
   }
 
@@ -67,7 +67,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
           htmlFor="email"
           className="block text-sm font-medium text-white mb-2"
         >
-          이메일
+          Email
         </label>
         <input
           type="email"
@@ -86,14 +86,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
           htmlFor="password"
           className="block text-sm font-medium text-white mb-2"
         >
-          비밀번호
+          Password
         </label>
         <input
           type="password"
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder={type === 'signup' ? '최소 8자 이상' : '••••••••'}
+          placeholder={type === 'signup' ? 'Minimum 8 characters' : '••••••••'}
           minLength={type === 'signup' ? 8 : undefined}
           required
           className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 focus:ring-3 focus:ring-indigo-500/10 transition-all duration-300 hover:bg-white/7 hover:border-white/20"
@@ -107,14 +107,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
             htmlFor="confirmPassword"
             className="block text-sm font-medium text-white mb-2"
           >
-            비밀번호 확인
+            Confirm Password
           </label>
           <input
             type="password"
             id="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="비밀번호를 다시 입력하세요"
+            placeholder="Re-enter password"
             required
             className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 focus:ring-3 focus:ring-indigo-500/10 transition-all duration-300 hover:bg-white/7 hover:border-white/20"
           />
@@ -130,10 +130,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
         {loading ? (
           <>
             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            <span>처리중...</span>
+            <span>Processing...</span>
           </>
         ) : (
-          <span>{type === 'login' ? '로그인' : '회원가입'}</span>
+          <span>{type === 'login' ? 'Login' : 'Sign Up'}</span>
         )}
       </button>
     </form>

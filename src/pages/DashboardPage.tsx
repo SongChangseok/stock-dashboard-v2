@@ -20,18 +20,18 @@ export const DashboardPage: React.FC = () => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
               StockDash
             </h1>
-            <p className="text-gray-400 mt-1">포트폴리오 대시보드</p>
+            <p className="text-gray-400 mt-1">Portfolio Dashboard</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="text-sm text-gray-400">환영합니다!</p>
+              <p className="text-sm text-gray-400">Welcome!</p>
               <p className="text-white font-medium">{user?.email}</p>
             </div>
             <button
               onClick={handleSignOut}
               className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all duration-300"
             >
-              로그아웃
+              Logout
             </button>
           </div>
         </div>
@@ -41,7 +41,7 @@ export const DashboardPage: React.FC = () => {
           {/* Portfolio Overview */}
           <div className="lg:col-span-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
             <h2 className="text-xl font-semibold text-white mb-4">
-              포트폴리오 개요
+              Portfolio Overview
             </h2>
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -59,9 +59,9 @@ export const DashboardPage: React.FC = () => {
                   />
                 </svg>
               </div>
-              <p className="text-gray-400 mb-2">포트폴리오 데이터가 없습니다</p>
+              <p className="text-gray-400 mb-2">No portfolio data available</p>
               <p className="text-sm text-gray-500">
-                주식을 추가하여 포트폴리오를 시작해보세요
+                Add stocks to start your portfolio
               </p>
             </div>
           </div>
@@ -70,36 +70,36 @@ export const DashboardPage: React.FC = () => {
           <div className="space-y-6">
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4">
-                빠른 액션
+                Quick Actions
               </h3>
               <div className="space-y-3">
                 <button className="w-full py-3 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 rounded-lg hover:bg-indigo-500/30 transition-all duration-300">
-                  주식 추가
+                  Add Stock
                 </button>
                 <button className="w-full py-3 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all duration-300">
-                  포트폴리오 분석
+                  Portfolio Analysis
                 </button>
                 <button className="w-full py-3 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all duration-300">
-                  시장 동향
+                  Market Trends
                 </button>
               </div>
             </div>
 
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4">
-                계정 정보
+                Account Information
               </h3>
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">이메일</span>
+                  <span className="text-gray-400 text-sm">Email</span>
                   <span className="text-white text-sm">{user?.email}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">가입일</span>
+                  <span className="text-gray-400 text-sm">Join Date</span>
                   <span className="text-white text-sm">
                     {user?.created_at
-                      ? new Date(user.created_at).toLocaleDateString('ko-KR')
-                      : '알 수 없음'}
+                      ? new Date(user.created_at).toLocaleDateString('en-US')
+                      : 'Unknown'}
                   </span>
                 </div>
               </div>

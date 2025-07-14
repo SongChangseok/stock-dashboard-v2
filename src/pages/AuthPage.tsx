@@ -28,7 +28,7 @@ export const AuthPage: React.FC = () => {
             StockDash
           </h1>
           <p className="text-gray-400 text-sm font-medium">
-            한국 주식 포트폴리오 관리 플랫폼
+            Global Stock Portfolio Management Platform
           </p>
         </div>
 
@@ -47,7 +47,7 @@ export const AuthPage: React.FC = () => {
                   : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              로그인
+              Login
             </button>
             <button
               onClick={() => setActiveTab('signup')}
@@ -57,7 +57,7 @@ export const AuthPage: React.FC = () => {
                   : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              회원가입
+              Sign Up
             </button>
           </div>
 
@@ -67,7 +67,7 @@ export const AuthPage: React.FC = () => {
           {/* Divider */}
           <div className="flex items-center my-6">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            <span className="px-4 text-sm text-gray-400">또는</span>
+            <span className="px-4 text-sm text-gray-400">or</span>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </div>
 
@@ -75,7 +75,7 @@ export const AuthPage: React.FC = () => {
           <button
             onClick={() => {
               // TODO: Implement Google auth
-              alert('Google 로그인 기능은 곧 구현 예정입니다.')
+              alert('Google login feature coming soon.')
             }}
             className="w-full py-4 bg-white/5 border border-white/10 text-white font-medium rounded-xl hover:bg-white/10 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-3"
           >
@@ -97,7 +97,7 @@ export const AuthPage: React.FC = () => {
                 fill="#EA4335"
               />
             </svg>
-            Google로 {activeTab === 'login' ? '계속하기' : '가입하기'}
+            Google {activeTab === 'login' ? 'Continue' : 'Sign Up'}
           </button>
         </div>
 
@@ -105,15 +105,15 @@ export const AuthPage: React.FC = () => {
         <div className="text-center mt-8 pt-6 border-t border-white/10">
           <p className="text-sm text-gray-400">
             {activeTab === 'login'
-              ? '계정이 없으신가요?'
-              : '이미 계정이 있으신가요?'}{' '}
+              ? 'Don\'t have an account?'
+              : 'Already have an account?'}{' '}
             <button
               onClick={() =>
                 setActiveTab(activeTab === 'login' ? 'signup' : 'login')
               }
               className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors duration-300"
             >
-              {activeTab === 'login' ? '회원가입' : '로그인'}
+              {activeTab === 'login' ? 'Sign Up' : 'Login'}
             </button>
           </p>
         </div>
