@@ -2,6 +2,8 @@
 
 Global stock portfolio dashboard built with React 18, TypeScript, and Vite.
 
+**Project Type**: User-input based stock portfolio tracker. All stock data and prices are manually entered by users - no real-time market data or automatic price updates.
+
 ## Development Commands
 
 - `npm run dev` - Start development server

@@ -10,22 +10,12 @@ export const usePortfolio = () => {
     error,
     fetchStocks,
     deleteStock,
-    refreshData,
-    simulatePriceUpdates,
-    stopPriceUpdates
+    refreshData
   } = usePortfolioStore()
 
   useEffect(() => {
     fetchStocks()
   }, [fetchStocks])
-
-  useEffect(() => {
-    if (stocks.length > 0) {
-      simulatePriceUpdates()
-    }
-    
-    return () => stopPriceUpdates()
-  }, [stocks.length, simulatePriceUpdates, stopPriceUpdates])
 
   return {
     stocks,
