@@ -4,7 +4,8 @@ import {
   StockForm, 
   StockList, 
   PortfolioSummary, 
-  FloatingActionButton 
+  FloatingActionButton,
+  PortfolioChart
 } from '../components'
 import type { Stock } from '../types/database'
 
@@ -96,6 +97,11 @@ export const DashboardPage: React.FC = () => {
 
         {/* Portfolio Summary */}
         <PortfolioSummary summary={portfolioSummary} />
+
+        {/* Portfolio Chart */}
+        <div className="mb-8">
+          <PortfolioChart summary={portfolioSummary} />
+        </div>
 
         {/* Stock List */}
         <StockList

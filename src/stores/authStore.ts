@@ -28,7 +28,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       // Listen for auth changes
       authService.onAuthStateChange((_event, session) => {
-        set({ user: session?.user || null, loading: false })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        set({ user: (session as any)?.user || null, loading: false })
       })
     } catch (error) {
       console.error('Error initializing auth:', error)
