@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { useTargetPortfolioStore } from '../stores'
+import { targetPortfolioService } from '../services'
 import type { TargetPortfolioFormProps, TargetPortfolioStock, PortfolioValidationResult } from '../types'
 
 export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
@@ -7,11 +9,13 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
   onSave,
   editPortfolio
 }) => {
+  const { createTargetPortfolio, updateTargetPortfolio } = useTargetPortfolioStore()
+  
   const [formData, setFormData] = useState({
     name: '',
     description: ''
   })
-  const [stocks, setStocks] = useState<Omit<TargetPortfolioStock, 'id'>[]>([])
+  const [stocks, setStocks] = useState<TargetPortfolioStock[]>([])
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
 
@@ -19,9 +23,9 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
     if (editPortfolio) {
       setFormData({
         name: editPortfolio.name,
-        description: editPortfolio.description || ''
+        description: editPortfolio.allocations.description || ''
       })
-      setStocks(editPortfolio.stocks.map(stock => ({
+      setStocks(editPortfolio.allocations.stocks.map(stock => ({
         stock_name: stock.stock_name,
         ticker: stock.ticker,
         target_weight: stock.target_weight
@@ -34,34 +38,22 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
   }, [editPortfolio, isOpen])
 
   const validatePortfolio = (): PortfolioValidationResult => {
-    const errors: string[] = []
-    const totalWeight = stocks.reduce((sum, stock) => sum + stock.target_weight, 0)
-
+    const allocations = {
+      description: formData.description,
+      stocks,
+      total_weight: stocks.reduce((sum, stock) => sum + stock.target_weight, 0)
+    }
+    
+    const validation = targetPortfolioService.validateAllocations(allocations)
+    
     if (!formData.name.trim()) {
-      errors.push('Portfolio name is required')
+      validation.errors.unshift('Portfolio name is required')
     }
-
-    if (stocks.length === 0) {
-      errors.push('At least one stock is required')
-    }
-
-    if (Math.abs(totalWeight - 100) > 0.01) {
-      errors.push(`Total weight must equal 100% (current: ${totalWeight.toFixed(2)}%)`)
-    }
-
-    stocks.forEach((stock, index) => {
-      if (!stock.stock_name.trim()) {
-        errors.push(`Stock ${index + 1}: Name is required`)
-      }
-      if (stock.target_weight <= 0 || stock.target_weight > 100) {
-        errors.push(`Stock ${index + 1}: Weight must be between 0% and 100%`)
-      }
-    })
-
+    
     return {
-      isValid: errors.length === 0,
-      errors,
-      totalWeight
+      isValid: validation.isValid && formData.name.trim().length > 0,
+      errors: validation.errors,
+      totalWeight: allocations.total_weight
     }
   }
 
@@ -69,11 +61,29 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
     setStocks([...stocks, { stock_name: '', ticker: '', target_weight: 0 }])
   }
 
+  const handleAutoBalance = () => {
+    if (stocks.length === 0) return
+    
+    const equalWeight = 100 / stocks.length
+    const balancedStocks = stocks.map(stock => ({
+      ...stock,
+      target_weight: Math.round(equalWeight * 10) / 10 // Round to 1 decimal place
+    }))
+    
+    // Adjust the first stock to ensure total equals exactly 100%
+    const total = balancedStocks.reduce((sum, stock) => sum + stock.target_weight, 0)
+    if (total !== 100) {
+      balancedStocks[0].target_weight += 100 - total
+    }
+    
+    setStocks(balancedStocks)
+  }
+
   const handleRemoveStock = (index: number) => {
     setStocks(stocks.filter((_, i) => i !== index))
   }
 
-  const handleStockChange = (index: number, field: keyof Omit<TargetPortfolioStock, 'id'>, value: string | number) => {
+  const handleStockChange = (index: number, field: keyof TargetPortfolioStock, value: string | number) => {
     const updatedStocks = [...stocks]
     updatedStocks[index] = { ...updatedStocks[index], [field]: value }
     setStocks(updatedStocks)
@@ -90,13 +100,33 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
 
     setIsLoading(true)
     try {
-      // TODO: Implement save logic
-      console.log('Saving target portfolio:', { ...formData, stocks })
+      const portfolioData = {
+        name: formData.name.trim(),
+        allocations: {
+          description: formData.description.trim() || undefined,
+          stocks,
+          total_weight: validation.totalWeight
+        }
+      }
+
+      if (editPortfolio) {
+        await updateTargetPortfolio({
+          id: editPortfolio.id,
+          ...portfolioData
+        })
+      } else {
+        await createTargetPortfolio(portfolioData)
+      }
+
       onSave()
       onClose()
     } catch (error) {
       console.error('Error saving target portfolio:', error)
-      setErrors({ form: 'Failed to save target portfolio. Please try again.' })
+      setErrors({ 
+        form: error instanceof Error 
+          ? error.message 
+          : 'Failed to save target portfolio. Please try again.' 
+      })
     } finally {
       setIsLoading(false)
     }
@@ -179,16 +209,30 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="text-lg font-semibold">Stock Allocation</h4>
-                <button
-                  type="button"
-                  onClick={handleAddStock}
-                  className="min-h-[44px] px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                  Add Stock
-                </button>
+                <div className="flex gap-2">
+                  {stocks.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={handleAutoBalance}
+                      className="min-h-[44px] px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 text-sm"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" strokeWidth="2"/>
+                      </svg>
+                      Auto Balance
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleAddStock}
+                    className="min-h-[44px] px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    Add Stock
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-3">

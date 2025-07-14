@@ -1,32 +1,38 @@
 // Target Portfolio Types
 
 export interface TargetPortfolioStock {
-  id: string
   stock_name: string
   ticker?: string
   target_weight: number // Percentage (0-100)
 }
 
-export interface TargetPortfolioData {
-  id: string
-  name: string
+export interface TargetPortfolioAllocations {
   description?: string
   stocks: TargetPortfolioStock[]
   total_weight: number // Should equal 100
+}
+
+export interface TargetPortfolioData {
+  id: string
+  name: string
+  allocations: TargetPortfolioAllocations
   created_at: string
   updated_at: string
   user_id: string
 }
 
-export interface CreateTargetPortfolioData {
+// Database interaction types
+export type CreateTargetPortfolioData = {
   name: string
-  description?: string
-  stocks: Omit<TargetPortfolioStock, 'id'>[]
+  allocations: TargetPortfolioAllocations
 }
 
-export interface UpdateTargetPortfolioData extends Partial<CreateTargetPortfolioData> {
+export type UpdateTargetPortfolioData = {
   id: string
+  name?: string
+  allocations?: TargetPortfolioAllocations
 }
+
 
 // UI Component Types
 export interface TargetPortfolioFormProps {
@@ -41,6 +47,7 @@ export interface TargetPortfolioListProps {
   onEdit: (portfolio: TargetPortfolioData) => void
   onDelete: (portfolioId: string) => void
   onAdd: () => void
+  onDuplicate?: (portfolio: TargetPortfolioData) => void
 }
 
 export interface WeightInputProps {

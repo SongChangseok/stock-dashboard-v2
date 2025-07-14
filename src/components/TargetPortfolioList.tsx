@@ -1,16 +1,25 @@
 import React from 'react'
-import type { TargetPortfolioListProps } from '../types'
+import { Link } from 'react-router-dom'
+import { useTargetPortfolioStore } from '../stores'
+import type { TargetPortfolioListProps, TargetPortfolioData } from '../types'
 
 export const TargetPortfolioList: React.FC<TargetPortfolioListProps> = ({
   portfolios,
   onEdit,
   onDelete,
-  onAdd
+  onAdd,
+  onDuplicate
 }) => {
+  const { setSelectedTargetPortfolio } = useTargetPortfolioStore()
+  
   const handleDelete = (portfolioId: string, portfolioName: string) => {
     if (window.confirm(`Are you sure you want to delete "${portfolioName}"?`)) {
       onDelete(portfolioId)
     }
+  }
+
+  const handleComparePortfolio = (portfolio: TargetPortfolioData) => {
+    setSelectedTargetPortfolio(portfolio)
   }
 
   if (portfolios.length === 0) {
@@ -67,11 +76,34 @@ export const TargetPortfolioList: React.FC<TargetPortfolioListProps> = ({
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-lg font-semibold text-white">{portfolio.name}</h3>
-                  {portfolio.description && (
-                    <p className="text-sm text-gray-400 mt-1">{portfolio.description}</p>
+                  {portfolio.allocations.description && (
+                    <p className="text-sm text-gray-400 mt-1">{portfolio.allocations.description}</p>
                   )}
                 </div>
                 <div className="flex gap-2">
+                  <Link
+                    to="/analytics"
+                    onClick={() => handleComparePortfolio(portfolio)}
+                    className="min-h-[44px] min-w-[44px] flex items-center justify-center bg-green-600/20 text-green-400 border border-green-600/30 rounded-lg hover:bg-green-600/30 transition-colors"
+                    title="Compare Portfolio"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M9 19c-5 0-9-4-9-9s4-9 9-9 9 4 9 9-4 9-9 9z" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M12 9a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                  </Link>
+                  {onDuplicate && (
+                    <button
+                      onClick={() => onDuplicate(portfolio)}
+                      className="min-h-[44px] min-w-[44px] flex items-center justify-center bg-purple-600/20 text-purple-400 border border-purple-600/30 rounded-lg hover:bg-purple-600/30 transition-colors"
+                      title="Duplicate Portfolio"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" stroke="currentColor" strokeWidth="2"/>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1" stroke="currentColor" strokeWidth="2"/>
+                      </svg>
+                    </button>
+                  )}
                   <button
                     onClick={() => onEdit(portfolio)}
                     className="min-h-[44px] min-w-[44px] flex items-center justify-center bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-lg hover:bg-blue-600/30 transition-colors"
@@ -96,12 +128,12 @@ export const TargetPortfolioList: React.FC<TargetPortfolioListProps> = ({
               <div className="space-y-3">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-400">Stocks:</span>
-                  <span className="text-white font-medium">{portfolio.stocks.length}</span>
+                  <span className="text-white font-medium">{portfolio.allocations.stocks.length}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-gray-400">Total Weight:</span>
-                  <span className={`font-medium ${Math.abs(portfolio.total_weight - 100) <= 0.01 ? 'text-green-400' : 'text-red-400'}`}>
-                    {portfolio.total_weight.toFixed(1)}%
+                  <span className={`font-medium ${Math.abs(portfolio.allocations.total_weight - 100) <= 0.01 ? 'text-green-400' : 'text-red-400'}`}>
+                    {portfolio.allocations.total_weight.toFixed(1)}%
                   </span>
                 </div>
                 
@@ -109,7 +141,7 @@ export const TargetPortfolioList: React.FC<TargetPortfolioListProps> = ({
                 <div className="space-y-2">
                   <span className="text-xs text-gray-400">Top Holdings:</span>
                   <div className="space-y-1">
-                    {portfolio.stocks
+                    {portfolio.allocations.stocks
                       .sort((a, b) => b.target_weight - a.target_weight)
                       .slice(0, 3)
                       .map((stock, index) => (
@@ -141,8 +173,8 @@ export const TargetPortfolioList: React.FC<TargetPortfolioListProps> = ({
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-white">{portfolio.name}</h3>
-                {portfolio.description && (
-                  <p className="text-sm text-gray-400 mt-1">{portfolio.description}</p>
+                {portfolio.allocations.description && (
+                  <p className="text-sm text-gray-400 mt-1">{portfolio.allocations.description}</p>
                 )}
               </div>
             </div>
@@ -150,26 +182,41 @@ export const TargetPortfolioList: React.FC<TargetPortfolioListProps> = ({
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
                 <div className="text-gray-400">Stocks</div>
-                <div className="text-white font-medium">{portfolio.stocks.length}</div>
+                <div className="text-white font-medium">{portfolio.allocations.stocks.length}</div>
               </div>
               <div>
                 <div className="text-gray-400">Total Weight</div>
-                <div className={`font-medium ${Math.abs(portfolio.total_weight - 100) <= 0.01 ? 'text-green-400' : 'text-red-400'}`}>
-                  {portfolio.total_weight.toFixed(1)}%
+                <div className={`font-medium ${Math.abs(portfolio.allocations.total_weight - 100) <= 0.01 ? 'text-green-400' : 'text-red-400'}`}>
+                  {portfolio.allocations.total_weight.toFixed(1)}%
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-2 pt-2">
+            <div className={`grid gap-2 pt-2 ${onDuplicate ? 'grid-cols-4' : 'grid-cols-3'}`}>
+              <Link
+                to="/analytics"
+                onClick={() => handleComparePortfolio(portfolio)}
+                className="min-h-[44px] bg-green-600/20 text-green-400 border border-green-600/30 rounded-lg font-medium hover:bg-green-600/30 transition-colors flex items-center justify-center text-xs"
+              >
+                Compare
+              </Link>
+              {onDuplicate && (
+                <button
+                  onClick={() => onDuplicate(portfolio)}
+                  className="min-h-[44px] bg-purple-600/20 text-purple-400 border border-purple-600/30 rounded-lg font-medium hover:bg-purple-600/30 transition-colors text-xs"
+                >
+                  Copy
+                </button>
+              )}
               <button
                 onClick={() => onEdit(portfolio)}
-                className="flex-1 min-h-[44px] bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-lg font-medium hover:bg-blue-600/30 transition-colors"
+                className="min-h-[44px] bg-blue-600/20 text-blue-400 border border-blue-600/30 rounded-lg font-medium hover:bg-blue-600/30 transition-colors text-xs"
               >
                 Edit
               </button>
               <button
                 onClick={() => handleDelete(portfolio.id, portfolio.name)}
-                className="flex-1 min-h-[44px] bg-red-600/20 text-red-400 border border-red-600/30 rounded-lg font-medium hover:bg-red-600/30 transition-colors"
+                className="min-h-[44px] bg-red-600/20 text-red-400 border border-red-600/30 rounded-lg font-medium hover:bg-red-600/30 transition-colors text-xs"
               >
                 Delete
               </button>

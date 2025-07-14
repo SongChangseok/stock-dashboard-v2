@@ -1,4 +1,5 @@
 import { Stock, StockWithValue, PortfolioSummary } from './database'
+import { TargetPortfolioData } from './targetPortfolio'
 
 // Auth component types
 export interface AuthFormProps {
@@ -23,6 +24,27 @@ export interface PortfolioSummaryProps {
 
 export interface PortfolioChartProps {
   summary: PortfolioSummary
+}
+
+export interface PortfolioComparisonProps {
+  currentPortfolio: PortfolioSummary
+  targetPortfolio: TargetPortfolioData | null
+}
+
+export interface ComparisonData {
+  name: string
+  current: number
+  target: number
+  difference: number
+  isOverweight: boolean
+  color: string
+}
+
+export interface ComparisonTooltipProps {
+  active?: boolean
+  payload?: Array<{ payload: ComparisonData & { percentage: number } }>
+  label?: string | number
+  type: 'current' | 'target'
 }
 
 export interface ChartData {
