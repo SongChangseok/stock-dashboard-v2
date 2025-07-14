@@ -1,30 +1,18 @@
 import React, { useState } from 'react'
-import { useAuth, usePortfolio } from '../hooks'
+import { usePortfolio } from '../hooks'
 import { 
   StockForm, 
   StockList, 
   PortfolioSummary, 
   FloatingActionButton,
-  PortfolioChart,
-  BottomTabNavigation,
-  MobileHeader
+  PortfolioChart
 } from '../components'
 import type { Stock } from '../types/database'
 
 export const DashboardPage: React.FC = () => {
-  const { user, signOut } = useAuth()
   const { stocksWithValue, portfolioSummary, isLoading, error, refreshData, deleteStock } = usePortfolio()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingStock, setEditingStock] = useState<Stock | null>(null)
-  const [activeTab, setActiveTab] = useState('dashboard')
-
-  const handleSignOut = async () => {
-    try {
-      await signOut()
-    } catch (error) {
-      console.error('Sign out error:', error)
-    }
-  }
 
   const handleAddStock = () => {
     setEditingStock(null)
@@ -45,9 +33,11 @@ export const DashboardPage: React.FC = () => {
     refreshData()
   }
 
-  if (isLoading) {
+  const showInitialLoading = isLoading && stocksWithValue.length === 0
+
+  if (showInitialLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
+      <div className="flex items-center justify-center" style={{ minHeight: 'calc(100vh - 160px)' }}>
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-400">Loading portfolio...</p>
@@ -58,7 +48,7 @@ export const DashboardPage: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
+      <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
           <div className="text-red-400 mb-4">⚠️</div>
           <p className="text-red-400 mb-4">{error}</p>
@@ -74,70 +64,43 @@ export const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      {/* Mobile Header */}
-      <MobileHeader user={user} onSignOut={handleSignOut} />
-      
-      <div className="container mx-auto px-4 py-4 md:py-8 max-w-7xl pb-20 md:pb-8">
-        {/* Desktop Header */}
-        <div className="hidden md:flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
-              StockDash
-            </h1>
-            <p className="text-gray-400 mt-1">Manage your portfolio and track real-time performance</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm text-gray-400">Welcome!</p>
-              <p className="text-white font-medium">{user?.email}</p>
-            </div>
-            <button
-              onClick={handleSignOut}
-              className="min-h-[44px] px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all duration-300"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-
-        {/* Portfolio Summary */}
-        <div className="mb-4 md:mb-8">
-          <PortfolioSummary summary={portfolioSummary} />
-        </div>
-
-        {/* Portfolio Chart */}
-        <div className="mb-4 md:mb-8">
-          <PortfolioChart summary={portfolioSummary} />
-        </div>
-
-        {/* Stock List */}
-        <StockList
-          stocks={stocksWithValue}
-          onEdit={handleEditStock}
-          onDelete={deleteStock}
-          onAdd={handleAddStock}
-        />
-
-        {/* Floating Action Button - Hidden on mobile */}
-        <div className="hidden md:block">
-          <FloatingActionButton onClick={handleAddStock} />
-        </div>
-
-        {/* Stock Form Modal */}
-        <StockForm
-          isOpen={isFormOpen}
-          onClose={handleCloseForm}
-          onSave={handleSaveStock}
-          editStock={editingStock}
-        />
+    <>
+      {/* Page Title - Desktop Only */}
+      <div className="hidden md:block mb-8">
+        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+        <p className="text-gray-400">Manage your portfolio and track real-time performance</p>
       </div>
-      
-      {/* Bottom Tab Navigation - Mobile Only */}
-      <BottomTabNavigation 
-        activeTab={activeTab} 
-        onTabChange={setActiveTab} 
+
+      {/* Portfolio Summary */}
+      <div className="mb-4 md:mb-8">
+        <PortfolioSummary summary={portfolioSummary} />
+      </div>
+
+      {/* Portfolio Chart */}
+      <div className="mb-4 md:mb-8">
+        <PortfolioChart summary={portfolioSummary} />
+      </div>
+
+      {/* Stock List */}
+      <StockList
+        stocks={stocksWithValue}
+        onEdit={handleEditStock}
+        onDelete={deleteStock}
+        onAdd={handleAddStock}
       />
-    </div>
+
+      {/* Floating Action Button - Hidden on mobile */}
+      <div className="hidden md:block">
+        <FloatingActionButton onClick={handleAddStock} />
+      </div>
+
+      {/* Stock Form Modal */}
+      <StockForm
+        isOpen={isFormOpen}
+        onClose={handleCloseForm}
+        onSave={handleSaveStock}
+        editStock={editingStock}
+      />
+    </>
   )
 }

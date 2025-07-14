@@ -60,15 +60,17 @@ export interface FormData {
 export interface TabItem {
   id: string
   label: string
+  route?: string
   icon: React.ReactNode
 }
 
-export interface BottomTabNavigationProps {
-  activeTab: string
-  onTabChange: (tabId: string) => void
-}
-
-export interface MobileHeaderProps {
+export interface HeaderProps {
   user: { email?: string } | null
   onSignOut: () => Promise<void>
+}
+
+export interface NavItem {
+  id: string
+  label: string
+  route?: string
 }

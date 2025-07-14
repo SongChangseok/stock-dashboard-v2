@@ -6,8 +6,8 @@ import {
   Navigate,
 } from 'react-router-dom'
 import { useAuthStore } from './stores'
-import { AuthPage, DashboardPage } from './pages'
-import { ProtectedRoute } from './components'
+import { AuthPage, DashboardPage, TargetPortfolioPage } from './pages'
+import { ProtectedRoute, Layout } from './components'
 import './App.css'
 
 function App() {
@@ -22,14 +22,17 @@ function App() {
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
         <Route
-          path="/dashboard"
+          path="/"
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <Layout />
             </ProtectedRoute>
           }
-        />
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        >
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="target-portfolio" element={<TargetPortfolioPage />} />
+        </Route>
       </Routes>
     </Router>
   )

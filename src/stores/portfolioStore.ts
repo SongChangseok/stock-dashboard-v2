@@ -13,7 +13,7 @@ export const usePortfolioStore = create<PortfolioState>((set, get) => ({
     totalProfitLossPercent: 0,
     stocks: []
   },
-  isLoading: true,
+  isLoading: false,
   error: null,
 
   updateCalculations: () => {
