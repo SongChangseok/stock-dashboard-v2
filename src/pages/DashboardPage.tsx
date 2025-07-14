@@ -5,7 +5,9 @@ import {
   StockList, 
   PortfolioSummary, 
   FloatingActionButton,
-  PortfolioChart
+  PortfolioChart,
+  BottomTabNavigation,
+  MobileHeader
 } from '../components'
 import type { Stock } from '../types/database'
 
@@ -14,6 +16,7 @@ export const DashboardPage: React.FC = () => {
   const { stocksWithValue, portfolioSummary, isLoading, error, refreshData, deleteStock } = usePortfolio()
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingStock, setEditingStock] = useState<Stock | null>(null)
+  const [activeTab, setActiveTab] = useState('dashboard')
 
   const handleSignOut = async () => {
     try {
@@ -72,9 +75,12 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+      {/* Mobile Header */}
+      <MobileHeader user={user} onSignOut={handleSignOut} />
+      
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-7xl pb-20 md:pb-8">
+        {/* Desktop Header */}
+        <div className="hidden md:flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
               StockDash
@@ -88,7 +94,7 @@ export const DashboardPage: React.FC = () => {
             </div>
             <button
               onClick={handleSignOut}
-              className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all duration-300"
+              className="min-h-[44px] px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all duration-300"
             >
               Logout
             </button>
@@ -96,10 +102,12 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Portfolio Summary */}
-        <PortfolioSummary summary={portfolioSummary} />
+        <div className="mb-4 md:mb-8">
+          <PortfolioSummary summary={portfolioSummary} />
+        </div>
 
         {/* Portfolio Chart */}
-        <div className="mb-8">
+        <div className="mb-4 md:mb-8">
           <PortfolioChart summary={portfolioSummary} />
         </div>
 
@@ -111,8 +119,10 @@ export const DashboardPage: React.FC = () => {
           onAdd={handleAddStock}
         />
 
-        {/* Floating Action Button */}
-        <FloatingActionButton onClick={handleAddStock} />
+        {/* Floating Action Button - Hidden on mobile */}
+        <div className="hidden md:block">
+          <FloatingActionButton onClick={handleAddStock} />
+        </div>
 
         {/* Stock Form Modal */}
         <StockForm
@@ -122,6 +132,12 @@ export const DashboardPage: React.FC = () => {
           editStock={editingStock}
         />
       </div>
+      
+      {/* Bottom Tab Navigation - Mobile Only */}
+      <BottomTabNavigation 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+      />
     </div>
   )
 }

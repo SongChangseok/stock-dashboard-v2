@@ -55,3 +55,20 @@ export interface FormErrors {
 export interface FormData {
   [key: string]: string | number
 }
+
+// Navigation types
+export interface TabItem {
+  id: string
+  label: string
+  icon: React.ReactNode
+}
+
+export interface BottomTabNavigationProps {
+  activeTab: string
+  onTabChange: (tabId: string) => void
+}
+
+export interface MobileHeaderProps {
+  user: { email?: string } | null
+  onSignOut: () => Promise<void>
+}

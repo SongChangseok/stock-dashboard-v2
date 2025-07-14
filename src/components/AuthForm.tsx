@@ -44,15 +44,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 p-4 md:p-0">
       {/* Error/Success Messages */}
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-400 text-sm">
+        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 md:p-4 text-red-400 text-sm md:text-base">
           {error}
         </div>
       )}
       {success && (
-        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-green-400 text-sm">
+        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 md:p-4 text-green-400 text-sm md:text-base">
           {success}
         </div>
       )}
@@ -61,7 +61,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
       <div>
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-white mb-2"
+          className="block text-sm md:text-base font-medium text-white mb-2"
         >
           Email
         </label>
@@ -72,7 +72,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="example@email.com"
           required
-          className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 focus:ring-3 focus:ring-indigo-500/10 transition-all duration-300 hover:bg-white/7 hover:border-white/20"
+          className="w-full px-4 py-3 md:px-5 md:py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 focus:ring-3 focus:ring-indigo-500/10 transition-all duration-300 hover:bg-white/7 hover:border-white/20 text-sm md:text-base min-h-[44px]"
         />
       </div>
 
@@ -80,7 +80,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
       <div>
         <label
           htmlFor="password"
-          className="block text-sm font-medium text-white mb-2"
+          className="block text-sm md:text-base font-medium text-white mb-2"
         >
           Password
         </label>
@@ -92,7 +92,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
           placeholder={type === 'signup' ? 'Minimum 8 characters' : '••••••••'}
           minLength={type === 'signup' ? 8 : undefined}
           required
-          className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 focus:ring-3 focus:ring-indigo-500/10 transition-all duration-300 hover:bg-white/7 hover:border-white/20"
+          className="w-full px-4 py-3 md:px-5 md:py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 focus:ring-3 focus:ring-indigo-500/10 transition-all duration-300 hover:bg-white/7 hover:border-white/20 text-sm md:text-base min-h-[44px]"
         />
       </div>
 
@@ -101,7 +101,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
         <div>
           <label
             htmlFor="confirmPassword"
-            className="block text-sm font-medium text-white mb-2"
+            className="block text-sm md:text-base font-medium text-white mb-2"
           >
             Confirm Password
           </label>
@@ -112,7 +112,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Re-enter password"
             required
-            className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 focus:ring-3 focus:ring-indigo-500/10 transition-all duration-300 hover:bg-white/7 hover:border-white/20"
+            className="w-full px-4 py-3 md:px-5 md:py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 focus:ring-3 focus:ring-indigo-500/10 transition-all duration-300 hover:bg-white/7 hover:border-white/20 text-sm md:text-base min-h-[44px]"
           />
         </div>
       )}
@@ -121,11 +121,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ type, onSuccess }) => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+        className="w-full py-3 md:py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 text-sm md:text-base min-h-[44px] touch-manipulation"
       >
         {loading ? (
           <>
-            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             <span>Processing...</span>
           </>
         ) : (

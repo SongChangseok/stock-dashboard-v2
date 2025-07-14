@@ -21,6 +21,27 @@ Global stock portfolio dashboard built with React 18, TypeScript, and Vite.
 - **Primary Color**: Indigo Blue (#6366F1)
 - **Font**: Pretendard (Korean-optimized)
 - **Theme**: Dark mode with mobile-first responsive design
+- **Breakpoints**: Mobile 375px+, Tablet 768px+, Desktop 1024px+
+
+## Mobile-First Responsive Implementation
+
+**Mobile Navigation (< 768px)**:
+- Bottom tab navigation with 4 tabs (Dashboard, Portfolio, Analytics, Settings)
+- Mobile header with hamburger menu
+- Card-based layouts for data display
+- Touch-optimized interactions (44px minimum touch targets)
+
+**Desktop Navigation (≥ 768px)**:
+- Traditional header with user info and logout
+- Table-based data display
+- Floating action buttons
+- Hover states and desktop interactions
+
+**Responsive Components**:
+- `BottomTabNavigation` - Mobile-only navigation
+- `MobileHeader` - Mobile header with slide-out menu
+- `StockList` - Table view (desktop) / Card view (mobile)
+- All components use `min-h-[44px]` for touch accessibility
 
 ## Design References
 
@@ -30,18 +51,39 @@ Use these for all CSS styling work:
 - **Material Design**: https://material.io/design
 
 **Design Principles**:
+- Mobile-first responsive design approach
 - Minimal & clean with subtle animations
-- Glassmorphism patterns and micro-interactions
+- Glassmorphism patterns (`bg-white/5`, `backdrop-blur-xl`)
 - Typography hierarchy with bold weights
 - Smooth transitions (150ms fast, 350ms standard, 650ms slow)
-- Consistent spacing, hover effects, and responsive behavior
+- Consistent spacing with responsive breakpoints (`p-4 md:p-6`)
+- Touch-friendly interface with 44px minimum touch targets
 
 ## Tech Stack
 - React 18, TypeScript, Vite
-- Tailwind CSS 3.x with dark mode
+- Tailwind CSS 3.x with dark mode + mobile-first responsive classes
 - Zustand for state management
 - Supabase (configured)
 - Recharts (planned)
+
+## Project Structure
+```
+src/
+├── components/
+│   ├── BottomTabNavigation.tsx    # Mobile navigation
+│   ├── MobileHeader.tsx           # Mobile header with menu
+│   ├── StockList.tsx              # Responsive table/card layout
+│   └── ...
+├── types/
+│   ├── components.ts              # Component prop types
+│   ├── store.ts                   # State management types
+│   ├── api.ts                     # API service types
+│   └── database.ts                # Database types
+├── styles/
+│   └── mobile.css                 # Mobile-specific optimizations
+└── pages/
+    └── DashboardPage.tsx          # Main responsive layout
+```
 
 ## Claude Guidelines
 - Keep responses ≤4 lines unless detail requested
@@ -53,6 +95,27 @@ Use these for all CSS styling work:
 - Run lint before marking tasks complete
 - Never commit unless explicitly requested
 - **All text content must be in English for global targeting**
+
+## Development Best Practices
+
+**Mobile-First Development**:
+- Start with mobile layout (`base` classes)
+- Add tablet/desktop breakpoints (`md:`, `lg:`)
+- Use `min-h-[44px]` for all interactive elements
+- Test responsive breakpoints at 375px, 768px, 1024px
+
+**Type Organization**:
+- Component props: `types/components.ts`
+- Store interfaces: `types/store.ts`
+- API types: `types/api.ts`
+- Database types: `types/database.ts`
+- Export all from `types/index.ts`
+
+**Component Patterns**:
+- Use centralized types for all component props
+- Implement responsive visibility (`hidden md:block`, `md:hidden`)
+- Apply glassmorphism consistently (`bg-white/5`, `backdrop-blur-xl`)
+- Follow mobile-first spacing patterns (`p-4 md:p-6`)
 
 ## GitHub Issue Handling
 - When referencing GitHub issues, always check issue content for specific requirements

@@ -131,7 +131,7 @@ export const StockForm: React.FC<StockFormProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-900/95 border border-white/10 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto backdrop-blur-xl">
+      <div className="bg-gray-900/95 border border-white/10 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto backdrop-blur-xl safe-area-padding">
         <div className="p-6 border-b border-white/10 flex justify-between items-center">
           <h3 className="text-xl font-semibold">
             {editStock ? 'Edit Stock' : 'Add Stock'}
@@ -158,7 +158,7 @@ export const StockForm: React.FC<StockFormProps> = ({
                 value={formData.stock_name}
                 onChange={handleInputChange}
                 placeholder="e.g., Apple Inc."
-                className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
+                className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
                 required
               />
               {errors.stock_name && (
@@ -176,7 +176,7 @@ export const StockForm: React.FC<StockFormProps> = ({
                 value={formData.ticker}
                 onChange={handleInputChange}
                 placeholder="e.g., AAPL"
-                className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
+                className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
               />
             </div>
 
@@ -193,7 +193,7 @@ export const StockForm: React.FC<StockFormProps> = ({
                   placeholder="100"
                   step="0.001"
                   min="0"
-                  className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
+                  className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
                   required
                 />
                 {errors.quantity && (
@@ -213,7 +213,7 @@ export const StockForm: React.FC<StockFormProps> = ({
                   placeholder="150"
                   min="0"
                   step="0.01"
-                  className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
+                  className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
                   required
                 />
                 {errors.purchase_price && (
@@ -234,7 +234,7 @@ export const StockForm: React.FC<StockFormProps> = ({
                 placeholder="175"
                 min="0"
                 step="0.01"
-                className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
+                className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
                 required
               />
               {errors.current_price && (
@@ -276,14 +276,14 @@ export const StockForm: React.FC<StockFormProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 p-3 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10 transition-all"
+              className="flex-1 min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white hover:bg-white/10 transition-all"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 p-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-white font-medium hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex-1 min-h-[44px] p-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-white font-medium hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {isLoading ? 'Saving...' : 'Save'}
             </button>

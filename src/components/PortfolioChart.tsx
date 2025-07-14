@@ -61,13 +61,13 @@ const CustomLabel = (props: any) => {
 export const PortfolioChart: React.FC<PortfolioChartProps> = ({ summary }) => {
   if (!summary.stocks.length) {
     return (
-      <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-xl">
-        <h3 className="text-xl font-bold mb-6">Portfolio Allocation</h3>
-        <div className="flex items-center justify-center h-64 text-gray-400">
+      <div className="bg-white/5 border border-white/10 rounded-xl md:rounded-2xl p-4 md:p-8 backdrop-blur-xl mx-4 md:mx-0">
+        <h3 className="text-lg md:text-xl font-bold mb-4 md:mb-6">Portfolio Allocation</h3>
+        <div className="flex items-center justify-center h-48 md:h-64 text-gray-400">
           <div className="text-center">
-            <div className="text-4xl mb-2">📊</div>
-            <p>No stocks in portfolio</p>
-            <p className="text-sm">Add stocks to see allocation chart</p>
+            <div className="text-3xl md:text-4xl mb-2">📊</div>
+            <p className="text-sm md:text-base">No stocks in portfolio</p>
+            <p className="text-xs md:text-sm">Add stocks to see allocation chart</p>
           </div>
         </div>
       </div>
@@ -82,15 +82,15 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ summary }) => {
   }))
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-xl">
+    <div className="bg-white/5 border border-white/10 rounded-xl md:rounded-2xl p-4 md:p-6 backdrop-blur-xl mx-4 md:mx-0 relative">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
       
-      <h3 className="text-xl font-bold mb-6">Portfolio Allocation</h3>
+      <h3 className="text-lg md:text-xl font-bold mb-4 md:mb-6">Portfolio Allocation</h3>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Pie Chart */}
         <div className="lg:col-span-2">
-          <div className="h-80">
+          <div className="h-64 md:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -99,8 +99,8 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ summary }) => {
                   cy="50%"
                   labelLine={false}
                   label={CustomLabel}
-                  outerRadius={120}
-                  innerRadius={60}
+                  outerRadius={window.innerWidth < 768 ? 80 : 120}
+                  innerRadius={window.innerWidth < 768 ? 40 : 60}
                   fill="#8884d8"
                   dataKey="value"
                   strokeWidth={2}
@@ -117,25 +117,25 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ summary }) => {
         </div>
 
         {/* Legend */}
-        <div className="space-y-3">
-          <h4 className="text-lg font-semibold text-gray-300 mb-4">Holdings</h4>
-          <div className="max-h-72 overflow-y-auto space-y-2">
+        <div className="space-y-2 md:space-y-3">
+          <h4 className="text-base md:text-lg font-semibold text-gray-300 mb-3 md:mb-4">Holdings</h4>
+          <div className="max-h-64 md:max-h-72 overflow-y-auto space-y-2">
             {chartData.map((item) => (
               <div 
                 key={item.name} 
-                className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors"
+                className="flex items-center justify-between p-2 md:p-3 bg-white/5 rounded-lg border border-white/5 hover:bg-white/10 transition-colors min-h-[44px]"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 md:gap-3">
                   <div 
                     className="w-3 h-3 rounded-full flex-shrink-0"
                     style={{ backgroundColor: item.color }}
                   />
-                  <span className="text-sm font-medium text-white truncate">
+                  <span className="text-xs md:text-sm font-medium text-white truncate">
                     {item.name}
                   </span>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-medium text-white">
+                  <div className="text-xs md:text-sm font-medium text-white">
                     {item.percentage.toFixed(1)}%
                   </div>
                   <div className="text-xs text-gray-400">
