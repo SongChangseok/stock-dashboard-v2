@@ -38,8 +38,9 @@ Global stock portfolio dashboard built with React 18, TypeScript, and Vite.
 - Hover states and desktop interactions
 
 **Responsive Components**:
-- `BottomTabNavigation` - Mobile-only navigation
-- `MobileHeader` - Mobile header with slide-out menu
+- `BottomTabNavigation` - Mobile-only navigation with React Router integration
+- `Header` - Unified responsive header (desktop menu, mobile hamburger)
+- `Layout` - Global layout wrapper with Header and BottomTabNavigation
 - `StockList` - Table view (desktop) / Card view (mobile)
 - All components use `min-h-[44px]` for touch accessibility
 
@@ -70,19 +71,22 @@ Use these for all CSS styling work:
 ```
 src/
 ├── components/
-│   ├── BottomTabNavigation.tsx    # Mobile navigation
-│   ├── MobileHeader.tsx           # Mobile header with menu
+│   ├── Layout.tsx                 # Global layout with Header & Navigation
+│   ├── Header.tsx                 # Unified responsive header
+│   ├── BottomTabNavigation.tsx    # Mobile navigation (React Router)
 │   ├── StockList.tsx              # Responsive table/card layout
+│   └── ...
+├── pages/
+│   ├── DashboardPage.tsx          # Content-only page (no layout)
+│   ├── TargetPortfolioPage.tsx    # Content-only page (no layout)
 │   └── ...
 ├── types/
 │   ├── components.ts              # Component prop types
 │   ├── store.ts                   # State management types
 │   ├── api.ts                     # API service types
 │   └── database.ts                # Database types
-├── styles/
-│   └── mobile.css                 # Mobile-specific optimizations
-└── pages/
-    └── DashboardPage.tsx          # Main responsive layout
+└── styles/
+    └── mobile.css                 # Mobile-specific optimizations
 ```
 
 ## Claude Guidelines
@@ -116,6 +120,13 @@ src/
 - Implement responsive visibility (`hidden md:block`, `md:hidden`)
 - Apply glassmorphism consistently (`bg-white/5`, `backdrop-blur-xl`)
 - Follow mobile-first spacing patterns (`p-4 md:p-6`)
+
+**Layout Architecture**:
+- `Layout.tsx` - Global wrapper with Header, main content area, and BottomTabNavigation
+- Pages render content-only using React Router's `<Outlet />` 
+- Navigation state managed by React Router `useLocation` hook
+- No props needed for BottomTabNavigation (auto-detects active route)
+- Auth logic centralized in Layout component
 
 ## GitHub Issue Handling
 - When referencing GitHub issues, always check issue content for specific requirements
