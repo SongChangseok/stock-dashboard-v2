@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useTargetPortfolioStore } from '../stores'
+import { useTargetPortfolioStore, usePortfolioStore } from '../stores'
 import { targetPortfolioService } from '../services'
 import type { TargetPortfolioFormProps, TargetPortfolioStock, PortfolioValidationResult } from '../types'
 
@@ -10,6 +10,7 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
   editPortfolio
 }) => {
   const { createTargetPortfolio, updateTargetPortfolio } = useTargetPortfolioStore()
+  const { stocks: availableStocks, fetchStocks } = usePortfolioStore()
   
   const [formData, setFormData] = useState({
     name: '',
@@ -18,6 +19,12 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
   const [stocks, setStocks] = useState<TargetPortfolioStock[]>([])
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchStocks() // Fetch available stocks when form opens
+    }
+  }, [isOpen, fetchStocks])
 
   useEffect(() => {
     if (editPortfolio) {
@@ -58,7 +65,25 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
   }
 
   const handleAddStock = () => {
-    setStocks([...stocks, { stock_name: '', ticker: '', target_weight: 0 }])
+    // Get available stocks that are not already selected
+    const selectedStockNames = stocks.map(s => s.stock_name)
+    const availableStockOptions = availableStocks.filter(stock => 
+      !selectedStockNames.includes(stock.stock_name)
+    )
+    
+    if (availableStockOptions.length === 0) {
+      setErrors({ form: 'No more stocks available to add. Please add stocks to your portfolio first.' })
+      return
+    }
+    
+    // Add the first available stock
+    const firstAvailable = availableStockOptions[0]
+    setStocks([...stocks, { 
+      stock_name: firstAvailable.stock_name, 
+      ticker: firstAvailable.ticker || '', 
+      target_weight: 0 
+    }])
+    setErrors({}) // Clear any previous errors
   }
 
   const handleAutoBalance = () => {
@@ -85,7 +110,22 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
 
   const handleStockChange = (index: number, field: keyof TargetPortfolioStock, value: string | number) => {
     const updatedStocks = [...stocks]
-    updatedStocks[index] = { ...updatedStocks[index], [field]: value }
+    
+    if (field === 'stock_name') {
+      // Find the selected stock from available stocks and auto-populate ticker
+      const selectedStock = availableStocks.find(stock => stock.stock_name === value)
+      if (selectedStock) {
+        updatedStocks[index] = { 
+          ...updatedStocks[index], 
+          stock_name: selectedStock.stock_name,
+          ticker: selectedStock.ticker || ''
+        }
+      }
+    } else if (field === 'target_weight') {
+      // Only allow target_weight changes now (ticker is auto-populated)
+      updatedStocks[index] = { ...updatedStocks[index], target_weight: value as number }
+    }
+    
     setStocks(updatedStocks)
   }
 
@@ -225,7 +265,8 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
                   <button
                     type="button"
                     onClick={handleAddStock}
-                    className="min-h-[44px] px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                    disabled={availableStocks.length === 0 || stocks.length >= availableStocks.length}
+                    className="min-h-[44px] px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path d="M12 5v14m-7-7h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -235,66 +276,97 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
                 </div>
               </div>
 
+              {availableStocks.length === 0 && (
+                <div className="text-center py-8 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                  <div className="text-amber-500 text-3xl mb-4">📊</div>
+                  <h4 className="text-lg font-medium text-amber-400 mb-2">No Stocks Available</h4>
+                  <p className="text-gray-400 text-sm">
+                    Please add stocks to your portfolio first to create target allocations.
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-3">
-                {stocks.map((stock, index) => (
-                  <div key={index} className="bg-white/3 border border-white/10 rounded-lg p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-400">
-                          Stock Name *
-                        </label>
-                        <input
-                          type="text"
-                          value={stock.stock_name}
-                          onChange={(e) => handleStockChange(index, 'stock_name', e.target.value)}
-                          placeholder="Apple Inc."
-                          className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 transition-all"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-400">
-                          Ticker
-                        </label>
-                        <input
-                          type="text"
-                          value={stock.ticker || ''}
-                          onChange={(e) => handleStockChange(index, 'ticker', e.target.value.toUpperCase())}
-                          placeholder="AAPL"
-                          className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 transition-all"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-400">
-                          Target Weight (%)
-                        </label>
-                        <input
-                          type="number"
-                          value={stock.target_weight}
-                          onChange={(e) => handleStockChange(index, 'target_weight', parseFloat(e.target.value) || 0)}
-                          placeholder="25"
-                          min="0"
-                          max="100"
-                          step="0.1"
-                          className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 transition-all"
-                        />
-                      </div>
-                      
-                      <div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveStock(index)}
-                          className="min-h-[44px] min-w-[44px] flex items-center justify-center bg-red-600/20 text-red-400 border border-red-600/30 rounded-lg hover:bg-red-600/30 transition-colors"
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                          </svg>
-                        </button>
+                {stocks.map((stock, index) => {
+                  // Get available stocks for this dropdown (including current selection)
+                  const selectedStockNames = stocks.map(s => s.stock_name).filter((_, i) => i !== index)
+                  const availableStockOptions = availableStocks.filter(availableStock => 
+                    !selectedStockNames.includes(availableStock.stock_name)
+                  )
+                  
+                  return (
+                    <div key={index} className="bg-white/3 border border-white/10 rounded-lg p-4">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                        <div>
+                          <label className="block text-xs font-medium mb-1 text-gray-400">
+                            Stock *
+                          </label>
+                          <select
+                            value={stock.stock_name}
+                            onChange={(e) => handleStockChange(index, 'stock_name', e.target.value)}
+                            className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-indigo-500 transition-all"
+                            required
+                          >
+                            <option value="" disabled className="bg-gray-800">
+                              Select a stock...
+                            </option>
+                            {availableStockOptions.map((availableStock) => (
+                              <option 
+                                key={availableStock.id} 
+                                value={availableStock.stock_name}
+                                className="bg-gray-800"
+                              >
+                                {availableStock.stock_name}
+                                {availableStock.ticker && ` (${availableStock.ticker})`}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-xs font-medium mb-1 text-gray-400">
+                            Ticker
+                          </label>
+                          <input
+                            type="text"
+                            value={stock.ticker || ''}
+                            readOnly
+                            className="w-full min-h-[44px] p-3 bg-white/3 border border-white/10 rounded-lg text-gray-400 cursor-not-allowed"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-xs font-medium mb-1 text-gray-400">
+                            Target Weight (%)
+                          </label>
+                          <input
+                            type="number"
+                            value={stock.target_weight}
+                            onChange={(e) => handleStockChange(index, 'target_weight', parseFloat(e.target.value) || 0)}
+                            placeholder="25"
+                            min="0"
+                            max="100"
+                            step="0.1"
+                            className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 transition-all"
+                            required
+                          />
+                        </div>
+                        
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveStock(index)}
+                            className="min-h-[44px] min-w-[44px] flex items-center justify-center bg-red-600/20 text-red-400 border border-red-600/30 rounded-lg hover:bg-red-600/30 transition-colors"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                              <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           </div>

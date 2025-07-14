@@ -37,6 +37,10 @@ Global stock portfolio dashboard built with React 18, TypeScript, and Vite.
 - `StockList` - Table view (desktop) / Card view (mobile)
 - `PortfolioChart` - Responsive pie chart with mobile-optimized sizing
 - `PortfolioComparison` - Dual chart layout (stacked mobile, side-by-side desktop)
+- `RebalancingCalculator` - Advanced calculator with responsive options grid
+- `TradingGuide` - Tab-based interface with trading cards and simulation
+- `TradingGuideCard` - Individual stock action cards with visual indicators
+- `RebalancingSimulation` - Interactive before/after portfolio visualization
 - All components use `min-h-[44px]` for touch accessibility
 
 ## Design References
@@ -66,42 +70,48 @@ Use these for all CSS styling work:
 ```
 src/
 ├── components/
-│   ├── Layout.tsx                 # Global layout with Header
-│   ├── Header.tsx                 # Unified responsive header
-│   ├── StockList.tsx              # Responsive table/card layout
-│   ├── PortfolioChart.tsx         # Pie chart visualization with Recharts
-│   ├── PortfolioComparison.tsx    # Dual chart comparison component
-│   ├── TargetPortfolioForm.tsx    # Modal form for portfolio CRUD
-│   ├── TargetPortfolioList.tsx    # Grid/list view with action buttons
+│   ├── Layout.tsx                   # Global layout with Header
+│   ├── Header.tsx                   # Unified responsive header
+│   ├── StockList.tsx                # Responsive table/card layout
+│   ├── PortfolioChart.tsx           # Pie chart visualization with Recharts
+│   ├── PortfolioComparison.tsx      # Dual chart comparison component
+│   ├── RebalancingCalculator.tsx    # Advanced rebalancing calculations and settings
+│   ├── TradingGuide.tsx             # Trading guide with cards and simulation
+│   ├── TradingGuideCard.tsx         # Individual stock trading guide cards
+│   ├── RebalancingSimulation.tsx    # Before/after rebalancing simulation
+│   ├── TargetPortfolioForm.tsx      # Modal form for portfolio CRUD
+│   ├── TargetPortfolioList.tsx      # Grid/list view with action buttons
 │   └── ...
 ├── pages/
-│   ├── AuthPage.tsx               # Login/signup authentication
-│   ├── DashboardPage.tsx          # Portfolio overview with quick actions
-│   ├── TargetPortfolioPage.tsx    # Target portfolio management
-│   ├── PortfolioComparisonPage.tsx # Analytics and comparison view
-│   └── index.ts                   # Page exports
+│   ├── AuthPage.tsx                 # Login/signup authentication
+│   ├── DashboardPage.tsx            # Portfolio overview with quick actions
+│   ├── TargetPortfolioPage.tsx      # Target portfolio management
+│   ├── PortfolioComparisonPage.tsx  # Analytics, comparison, and rebalancing view
+│   └── index.ts                     # Page exports
 ├── services/
-│   ├── stockService.ts            # Stock data CRUD operations
-│   ├── targetPortfolioService.ts  # Target portfolio database operations
-│   └── supabase.ts                # Database configuration
+│   ├── stockService.ts              # Stock data CRUD operations
+│   ├── targetPortfolioService.ts    # Target portfolio database operations
+│   ├── rebalancingService.ts        # Rebalancing calculations and algorithms
+│   └── supabase.ts                  # Database configuration
 ├── stores/
-│   ├── portfolioStore.ts          # Current portfolio state management
-│   ├── targetPortfolioStore.ts    # Target portfolio state management
-│   ├── authStore.ts               # Authentication state
-│   └── index.ts                   # Store exports
+│   ├── portfolioStore.ts            # Current portfolio state management
+│   ├── targetPortfolioStore.ts      # Target portfolio state management
+│   ├── authStore.ts                 # Authentication state
+│   └── index.ts                     # Store exports
 ├── hooks/
-│   ├── useAuth.ts                 # Authentication hook
-│   ├── usePortfolio.ts            # Portfolio data hook
-│   └── index.ts                   # Hook exports
+│   ├── useAuth.ts                   # Authentication hook
+│   ├── usePortfolio.ts              # Portfolio data hook
+│   └── index.ts                     # Hook exports
 ├── types/
-│   ├── components.ts              # Component prop types
-│   ├── store.ts                   # State management types
-│   ├── targetPortfolio.ts         # Target portfolio specific types
-│   ├── api.ts                     # API service types
-│   └── database.ts                # Database schema types
+│   ├── components.ts                # Component prop types
+│   ├── store.ts                     # State management types
+│   ├── targetPortfolio.ts           # Target portfolio specific types
+│   ├── rebalancing.ts               # Rebalancing calculation types
+│   ├── api.ts                       # API service types
+│   └── database.ts                  # Database schema types
 └── styles/
-    ├── mobile.css                 # Mobile-specific optimizations
-    └── index.css                  # Global styles and Tailwind imports
+    ├── mobile.css                   # Mobile-specific optimizations
+    └── index.css                    # Global styles and Tailwind imports
 ```
 
 ## Claude Guidelines
@@ -133,10 +143,13 @@ src/
 
 **Target Portfolio System**:
 - Create multiple target portfolio templates with custom allocations
+- Stock selection from existing portfolio holdings (dropdown-based)
 - Visual weight distribution with auto-balance functionality
 - Portfolio duplication and template management
 - Real-time validation ensuring 100% total weight allocation
 - Responsive modal form with weight input controls
+- Automatic ticker population when stocks are selected
+- Prevention of duplicate stock selection within portfolios
 
 **Portfolio Comparison & Analytics**:
 - Side-by-side dual pie chart comparison (current vs target)
@@ -144,6 +157,15 @@ src/
 - Rebalancing recommendations and deviation alerts
 - Interactive tooltips showing detailed allocation data
 - Cross-page navigation with context preservation
+
+**Advanced Rebalancing System**:
+- Sophisticated rebalancing calculator with customizable options
+- Buy/sell quantity calculations with minimum trading unit constraints
+- Commission consideration and cost optimization
+- Individual stock trading guide cards with visual action indicators
+- Before/after portfolio simulation with interactive toggle
+- Trading guide with priority-based recommendations
+- Real-time calculation validation and error handling
 
 **Page Interconnections**:
 - Dashboard → Analytics: Quick access card for portfolio analysis
@@ -163,6 +185,7 @@ src/
 - Component props: `types/components.ts`
 - Store interfaces: `types/store.ts`
 - Target portfolio types: `types/targetPortfolio.ts`
+- Rebalancing types: `types/rebalancing.ts`
 - API types: `types/api.ts`
 - Database types: `types/database.ts`
 - Export all from `types/index.ts`
@@ -174,6 +197,8 @@ src/
 - Follow mobile-first spacing patterns (`p-4 md:p-6`)
 - Use proper loading states and error boundaries
 - Implement optimistic UI updates for better UX
+- Integrate dropdowns for stock selection to prevent data inconsistency
+- Auto-populate related fields (ticker from stock name) for better UX
 
 **Database Integration Patterns**:
 - Use Zustand stores for state management with async operations
@@ -194,17 +219,20 @@ src/
 1. Navigate to Target Portfolio page
 2. Click "Create Portfolio" button
 3. Fill portfolio name and description
-4. Add stocks with target weight percentages
-5. Use "Auto Balance" to distribute weights equally
-6. Validate that total weight equals 100%
-7. Save to database with real-time sync
+4. Select stocks from existing portfolio holdings via dropdown
+5. Set target weight percentages for each selected stock
+6. Use "Auto Balance" to distribute weights equally
+7. Validate that total weight equals 100%
+8. Save to database with real-time sync
 
 **Portfolio Comparison Analysis**:
 1. Select target portfolio from comparison page
 2. View dual pie charts (current vs target)
 3. Analyze weight differences and deviations
-4. Check rebalancing recommendations
-5. Navigate back to adjust portfolio or holdings
+4. Use rebalancing calculator with customizable options
+5. Review individual stock trading guide cards
+6. Simulate before/after portfolio scenarios
+7. Follow priority-based trading recommendations
 
 **Cross-Page Navigation Flows**:
 - Dashboard quick access → Analytics comparison
@@ -259,6 +287,7 @@ stocks (
 - Email notifications for rebalancing alerts
 - Multi-currency support
 - Portfolio benchmarking against indices
+- Manual stock entry for target portfolios (restricted to existing holdings)
 
 **Planned Enhancements**:
 - Advanced portfolio analytics and metrics

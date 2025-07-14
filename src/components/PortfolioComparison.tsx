@@ -164,7 +164,6 @@ export const PortfolioComparison: React.FC<PortfolioComparisonProps> = ({
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
       
       <h3 className="text-lg md:text-xl font-bold mb-4 md:mb-6">Portfolio Comparison</h3>
-      <p className="text-gray-300 text-sm mb-6">vs {targetPortfolio.name}</p>
 
       <RebalanceAlert hasSignificantDifferences={hasSignificantDifferences} />
 

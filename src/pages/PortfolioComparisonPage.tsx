@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { PortfolioComparison } from '../components'
+import { PortfolioComparison, RebalancingCalculator, TradingGuide } from '../components'
 import { usePortfolioStore, useTargetPortfolioStore } from '../stores'
+import { rebalancingService } from '../services'
+import type { RebalancingOptions } from '../types'
 
 export const PortfolioComparisonPage: React.FC = () => {
   const { portfolioSummary } = usePortfolioStore()
@@ -14,6 +16,26 @@ export const PortfolioComparisonPage: React.FC = () => {
     setSelectedTargetPortfolio,
     clearError
   } = useTargetPortfolioStore()
+
+  // Rebalancing options state
+  const [rebalancingOptions, setRebalancingOptions] = useState<RebalancingOptions>({
+    minimumTradingUnit: 1,
+    rebalanceThreshold: 5.0,
+    allowPartialShares: false,
+    commission: 0,
+    considerCommission: false,
+  })
+
+  // Calculate rebalancing data
+  const rebalancingResult = useMemo(() => {
+    if (!selectedTargetPortfolio || !portfolioSummary.stocks.length) return null
+    
+    return rebalancingService.calculateRebalancing(
+      portfolioSummary,
+      selectedTargetPortfolio,
+      rebalancingOptions
+    )
+  }, [portfolioSummary, selectedTargetPortfolio, rebalancingOptions])
 
   // Fetch target portfolios on component mount
   useEffect(() => {
@@ -122,31 +144,31 @@ export const PortfolioComparisonPage: React.FC = () => {
         targetPortfolio={selectedTargetPortfolio}
       />
 
-      {/* Additional Information */}
-      {selectedTargetPortfolio && (
+      {/* Rebalancing Calculator */}
+      {selectedTargetPortfolio && portfolioSummary.stocks.length > 0 && (
         <div className="px-4 md:px-0">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4 md:p-6 backdrop-blur-xl">
-            <h3 className="text-lg font-semibold mb-4">Target Portfolio Details</h3>
-            <div className="space-y-3">
-              <div>
-                <h4 className="font-medium text-white mb-2">{selectedTargetPortfolio.name}</h4>
-                <p className="text-gray-300 text-sm">{selectedTargetPortfolio.allocations.description || 'No description provided'}</p>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {selectedTargetPortfolio.allocations.stocks.map((stock, index) => (
-                  <div key={`${stock.stock_name}-${index}`} className="bg-white/5 rounded-lg p-3">
-                    <div className="font-medium text-sm">{stock.stock_name}</div>
-                    <div className="text-indigo-400 font-semibold">{stock.target_weight}%</div>
-                    {stock.ticker && (
-                      <div className="text-xs text-gray-400 mt-1">{stock.ticker}</div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <RebalancingCalculator 
+            currentPortfolio={portfolioSummary}
+            targetPortfolio={selectedTargetPortfolio}
+            options={rebalancingOptions}
+            onOptionsChange={setRebalancingOptions}
+          />
         </div>
       )}
+
+      {/* Trading Guide */}
+      {selectedTargetPortfolio && portfolioSummary.stocks.length > 0 && rebalancingResult && (
+        <div className="px-4 md:px-0">
+          <TradingGuide 
+            currentPortfolio={portfolioSummary}
+            targetPortfolio={selectedTargetPortfolio}
+            calculations={rebalancingResult.calculations}
+            commission={rebalancingOptions.commission}
+            formatCurrency={(value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)}
+          />
+        </div>
+      )}
+
     </div>
   )
 }
