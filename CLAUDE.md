@@ -25,23 +25,15 @@ Global stock portfolio dashboard built with React 18, TypeScript, and Vite.
 
 ## Mobile-First Responsive Implementation
 
-**Mobile Navigation (< 768px)**:
-- Bottom tab navigation with 4 tabs (Dashboard, Portfolio, Analytics, Settings)
-- Mobile header with hamburger menu
-- Card-based layouts for data display
+**Navigation**:
+- Header with user info and logout
+- Table-based data display for desktop
+- Card-based layouts for mobile
 - Touch-optimized interactions (44px minimum touch targets)
-- Settings tab placeholder (not yet implemented)
-
-**Desktop Navigation (≥ 768px)**:
-- Traditional header with user info and logout
-- Table-based data display
-- Floating action buttons
-- Hover states and desktop interactions
 
 **Responsive Components**:
-- `BottomTabNavigation` - Mobile-only navigation with React Router integration
 - `Header` - Unified responsive header (desktop menu, mobile hamburger)
-- `Layout` - Global layout wrapper with Header and BottomTabNavigation
+- `Layout` - Global layout wrapper with Header
 - `StockList` - Table view (desktop) / Card view (mobile)
 - `PortfolioChart` - Responsive pie chart with mobile-optimized sizing
 - `PortfolioComparison` - Dual chart layout (stacked mobile, side-by-side desktop)
@@ -74,9 +66,8 @@ Use these for all CSS styling work:
 ```
 src/
 ├── components/
-│   ├── Layout.tsx                 # Global layout with Header & Navigation
+│   ├── Layout.tsx                 # Global layout with Header
 │   ├── Header.tsx                 # Unified responsive header
-│   ├── BottomTabNavigation.tsx    # Mobile navigation (React Router)
 │   ├── StockList.tsx              # Responsive table/card layout
 │   ├── PortfolioChart.tsx         # Pie chart visualization with Recharts
 │   ├── PortfolioComparison.tsx    # Dual chart comparison component
@@ -192,10 +183,9 @@ src/
 - Handle JSON data types with proper type casting for Supabase
 
 **Layout Architecture**:
-- `Layout.tsx` - Global wrapper with Header, main content area, and BottomTabNavigation
+- `Layout.tsx` - Global wrapper with Header and main content area
 - Pages render content-only using React Router's `<Outlet />` 
 - Navigation state managed by React Router `useLocation` hook
-- No props needed for BottomTabNavigation (auto-detects active route)
 - Auth logic centralized in Layout component
 
 ## Portfolio Management Workflows
