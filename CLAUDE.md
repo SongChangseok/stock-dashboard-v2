@@ -37,6 +37,7 @@ Use these for all CSS styling work:
 ## Tech Stack
 - React 18, TypeScript, Vite
 - Tailwind CSS 3.x with dark mode
+- Zustand for state management
 - Supabase (configured)
 - Recharts (planned)
 
