@@ -1,7 +1,18 @@
-import { useAuth } from '../hooks'
+import React, { useState } from 'react'
+import { useAuth, usePortfolio } from '../hooks'
+import { 
+  StockForm, 
+  StockList, 
+  PortfolioSummary, 
+  FloatingActionButton 
+} from '../components'
+import type { Stock } from '../types/database'
 
 export const DashboardPage: React.FC = () => {
   const { user, signOut } = useAuth()
+  const { stocksWithValue, portfolioSummary, isLoading, error, refreshData, deleteStock } = usePortfolio()
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingStock, setEditingStock] = useState<Stock | null>(null)
 
   const handleSignOut = async () => {
     try {
@@ -11,16 +22,63 @@ export const DashboardPage: React.FC = () => {
     }
   }
 
+  const handleAddStock = () => {
+    setEditingStock(null)
+    setIsFormOpen(true)
+  }
+
+  const handleEditStock = (stock: Stock) => {
+    setEditingStock(stock)
+    setIsFormOpen(true)
+  }
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false)
+    setEditingStock(null)
+  }
+
+  const handleSaveStock = () => {
+    refreshData()
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading portfolio...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-400 mb-4">⚠️</div>
+          <p className="text-red-400 mb-4">{error}</p>
+          <button
+            onClick={refreshData}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
               StockDash
             </h1>
-            <p className="text-gray-400 mt-1">Portfolio Dashboard</p>
+            <p className="text-gray-400 mt-1">Manage your portfolio and track real-time performance</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
@@ -36,76 +94,27 @@ export const DashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Portfolio Overview */}
-          <div className="lg:col-span-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-            <h2 className="text-xl font-semibold text-white mb-4">
-              Portfolio Overview
-            </h2>
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-8 h-8 text-indigo-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                  />
-                </svg>
-              </div>
-              <p className="text-gray-400 mb-2">No portfolio data available</p>
-              <p className="text-sm text-gray-500">
-                Add stocks to start your portfolio
-              </p>
-            </div>
-          </div>
+        {/* Portfolio Summary */}
+        <PortfolioSummary summary={portfolioSummary} />
 
-          {/* Quick Actions */}
-          <div className="space-y-6">
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">
-                Quick Actions
-              </h3>
-              <div className="space-y-3">
-                <button className="w-full py-3 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 rounded-lg hover:bg-indigo-500/30 transition-all duration-300">
-                  Add Stock
-                </button>
-                <button className="w-full py-3 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all duration-300">
-                  Portfolio Analysis
-                </button>
-                <button className="w-full py-3 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/10 transition-all duration-300">
-                  Market Trends
-                </button>
-              </div>
-            </div>
+        {/* Stock List */}
+        <StockList
+          stocks={stocksWithValue}
+          onEdit={handleEditStock}
+          onDelete={deleteStock}
+          onAdd={handleAddStock}
+        />
 
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">
-                Account Information
-              </h3>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">Email</span>
-                  <span className="text-white text-sm">{user?.email}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">Join Date</span>
-                  <span className="text-white text-sm">
-                    {user?.created_at
-                      ? new Date(user.created_at).toLocaleDateString('en-US')
-                      : 'Unknown'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Floating Action Button */}
+        <FloatingActionButton onClick={handleAddStock} />
+
+        {/* Stock Form Modal */}
+        <StockForm
+          isOpen={isFormOpen}
+          onClose={handleCloseForm}
+          onSave={handleSaveStock}
+          editStock={editingStock}
+        />
       </div>
     </div>
   )
