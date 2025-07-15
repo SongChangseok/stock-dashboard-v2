@@ -3,8 +3,6 @@
  * Separates calculation and transformation logic from presentation
  */
 
-import type { RebalancingOptions } from '../types'
-
 /**
  * Get action color class based on rebalancing action
  * @param action - Rebalancing action (buy/sell/hold)
@@ -84,34 +82,6 @@ export const formatDifference = (difference: number): string => {
   return `${sign}${difference.toFixed(1)}%`
 }
 
-/**
- * Validate rebalancing options
- * @param options - Rebalancing options
- * @returns Validation result
- */
-export const validateRebalancingOptions = (options: RebalancingOptions): {
-  isValid: boolean
-  errors: string[]
-} => {
-  const errors: string[] = []
-
-  if (options.minimumTradingUnit < 1) {
-    errors.push('Minimum trading unit must be at least 1')
-  }
-
-  if (options.rebalanceThreshold < 0 || options.rebalanceThreshold > 100) {
-    errors.push('Rebalance threshold must be between 0 and 100')
-  }
-
-  if (options.commission < 0) {
-    errors.push('Commission cannot be negative')
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors
-  }
-}
 
 /**
  * Filter calculations that need display
@@ -164,20 +134,3 @@ export const getRecommendationClass = (recommendation: {
   return ''
 }
 
-/**
- * Update rebalancing options with validation
- * @param currentOptions - Current options
- * @param field - Field to update
- * @param value - New value
- * @returns Updated options or null if invalid
- */
-export const updateRebalancingOption = (
-  currentOptions: RebalancingOptions,
-  field: keyof RebalancingOptions,
-  value: string | number | boolean
-): RebalancingOptions | null => {
-  const newOptions = { ...currentOptions, [field]: value }
-  const validation = validateRebalancingOptions(newOptions)
-  
-  return validation.isValid ? newOptions : null
-}

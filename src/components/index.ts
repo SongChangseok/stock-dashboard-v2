@@ -1,7 +1,6 @@
 // Export all components
 export { AuthForm } from './AuthForm'
 export { ProtectedRoute } from './ProtectedRoute'
-export { default as DatabaseTest } from './DatabaseTest'
 export { StockForm } from './StockForm'
 export { StockList } from './StockList'
 export { PortfolioSummary } from './PortfolioSummary'
@@ -16,4 +15,4 @@ export { default as RebalancingCalculator } from './RebalancingCalculator'
 export { default as TradingGuide } from './TradingGuide'
 export { default as TradingGuideCard } from './TradingGuideCard'
 export { default as RebalancingSimulation } from './RebalancingSimulation'
-export { ErrorBoundary, withErrorBoundary } from './ErrorBoundary'
+export { ErrorBoundary } from './ErrorBoundary'
