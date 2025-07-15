@@ -1,7 +1,7 @@
 import React from 'react'
 import type { StockWithValue } from '../types/database'
 import type { StockListProps } from '../types'
-import { stockService } from '../services/stockService'
+import { formatCurrency, formatPercentageValue } from '../utils'
 
 export const StockList: React.FC<StockListProps> = ({
   stocks,
@@ -96,19 +96,19 @@ export const StockList: React.FC<StockListProps> = ({
                   {stock.quantity}
                 </td>
                 <td className="p-4 text-white">
-                  {stockService.formatCurrency(stock.purchase_price)}
+                  {formatCurrency(stock.purchase_price)}
                 </td>
                 <td className="p-4 text-white">
-                  {stockService.formatCurrency(stock.current_price)}
+                  {formatCurrency(stock.current_price)}
                 </td>
                 <td className="p-4 text-white">
-                  {stockService.formatCurrency(stock.totalValue)}
+                  {formatCurrency(stock.totalValue)}
                 </td>
                 <td className={`p-4 ${stock.profitLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {stockService.formatCurrency(stock.profitLoss)}
+                  {formatCurrency(stock.profitLoss)}
                 </td>
                 <td className={`p-4 ${stock.profitLossPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {stockService.formatPercentage(stock.profitLossPercent)}
+                  {formatPercentageValue(stock.profitLossPercent)}
                 </td>
                 <td className="p-4">
                   <div className="flex gap-2">
@@ -151,10 +151,10 @@ export const StockList: React.FC<StockListProps> = ({
               </div>
               <div className="text-right">
                 <div className="text-white font-medium">
-                  {stockService.formatCurrency(stock.totalValue)}
+                  {formatCurrency(stock.totalValue)}
                 </div>
                 <div className={`text-sm ${stock.profitLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {stockService.formatPercentage(stock.profitLossPercent)}
+                  {formatPercentageValue(stock.profitLossPercent)}
                 </div>
               </div>
             </div>
@@ -167,16 +167,16 @@ export const StockList: React.FC<StockListProps> = ({
               </div>
               <div>
                 <div className="text-gray-400">Avg Cost</div>
-                <div className="text-white font-medium">{stockService.formatCurrency(stock.purchase_price)}</div>
+                <div className="text-white font-medium">{formatCurrency(stock.purchase_price)}</div>
               </div>
               <div>
                 <div className="text-gray-400">Current Price</div>
-                <div className="text-white font-medium">{stockService.formatCurrency(stock.current_price)}</div>
+                <div className="text-white font-medium">{formatCurrency(stock.current_price)}</div>
               </div>
               <div>
                 <div className="text-gray-400">Gain/Loss</div>
                 <div className={`font-medium ${stock.profitLoss >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {stockService.formatCurrency(stock.profitLoss)}
+                  {formatCurrency(stock.profitLoss)}
                 </div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import type { PortfolioChartProps, ChartData } from '../types'
-import { stockService } from '../services/stockService'
+import { formatCurrency } from '../utils'
 
 const COLORS = [
   '#6366F1', // Indigo - primary
@@ -25,7 +25,7 @@ const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<
     return (
       <div className="bg-gray-800/95 backdrop-blur-xl border border-white/10 rounded-lg p-3 shadow-xl">
         <p className="text-white font-medium">{data.name}</p>
-        <p className="text-indigo-400">{stockService.formatCurrency(data.value)}</p>
+        <p className="text-indigo-400">{formatCurrency(data.value)}</p>
         <p className="text-gray-300">{data.percentage.toFixed(1)}%</p>
       </div>
     )
@@ -139,7 +139,7 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ summary }) => {
                     {item.percentage.toFixed(1)}%
                   </div>
                   <div className="text-xs text-gray-400">
-                    {stockService.formatCurrency(item.value)}
+                    {formatCurrency(item.value)}
                   </div>
                 </div>
               </div>

@@ -7,12 +7,13 @@ import type {
   TargetPortfolioStock,
   TargetPortfolioAllocations
 } from '../types'
+import { BUSINESS_RULES } from '../utils/constants'
 
 const DEFAULT_OPTIONS: RebalancingOptions = {
-  minimumTradingUnit: 1,
-  rebalanceThreshold: 5.0, // 5% threshold for significant differences
+  minimumTradingUnit: BUSINESS_RULES.MIN_TRADING_UNIT,
+  rebalanceThreshold: BUSINESS_RULES.REBALANCE_THRESHOLD,
   allowPartialShares: false,
-  commission: 0,
+  commission: BUSINESS_RULES.DEFAULT_COMMISSION,
   considerCommission: false
 }
 
@@ -104,7 +105,7 @@ export class RebalancingService {
       if (opts.considerCommission && opts.commission > 0 && Math.abs(adjustedQuantityChange) > 0) {
         const commissionCost = Math.abs(adjustedQuantityChange) * opts.commission
         // Reduce trade size if commission makes it uneconomical
-        if (commissionCost > Math.abs(adjustedValueChange) * 0.1) { // 10% threshold
+        if (commissionCost > Math.abs(adjustedValueChange) * BUSINESS_RULES.COMMISSION_THRESHOLD) { // 10% threshold
           adjustedQuantityChange = 0
           adjustedValueChange = 0
           action = 'hold'

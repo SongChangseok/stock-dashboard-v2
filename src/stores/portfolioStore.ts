@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { stockService } from '../services/stockService'
+import { calculatePortfolioSummary } from '../utils/calculations'
 import type { PortfolioState } from '../types'
 
 
@@ -18,7 +19,7 @@ export const usePortfolioStore = create<PortfolioState>((set, get) => ({
 
   updateCalculations: () => {
     const { stocks } = get()
-    const summary = stockService.calculatePortfolioSummary(stocks)
+    const summary = calculatePortfolioSummary(stocks)
     set({
       stocksWithValue: summary.stocks,
       portfolioSummary: summary

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import TradingGuideCard from './TradingGuideCard'
 import RebalancingSimulation from './RebalancingSimulation'
+import { formatCurrency } from '../utils'
 import type { RebalancingCalculation, PortfolioSummary, TargetPortfolioData } from '../types'
 
 interface TradingGuideProps {
@@ -8,7 +9,6 @@ interface TradingGuideProps {
   targetPortfolio: TargetPortfolioData
   calculations: RebalancingCalculation[]
   commission: number
-  formatCurrency: (value: number) => string
 }
 
 const TradingGuide: React.FC<TradingGuideProps> = ({
@@ -16,7 +16,6 @@ const TradingGuide: React.FC<TradingGuideProps> = ({
   targetPortfolio,
   calculations,
   commission,
-  formatCurrency,
 }) => {
   const [activeTab, setActiveTab] = useState<'guide' | 'simulation'>('guide')
 
@@ -96,7 +95,6 @@ const TradingGuide: React.FC<TradingGuideProps> = ({
                       key={`${calc.stock_name}-${index}`}
                       calculation={calc}
                       commission={commission}
-                      formatCurrency={formatCurrency}
                     />
                   ))}
               </div>
@@ -118,7 +116,6 @@ const TradingGuide: React.FC<TradingGuideProps> = ({
                       key={`${calc.stock_name}-hold-${index}`}
                       calculation={calc}
                       commission={commission}
-                      formatCurrency={formatCurrency}
                     />
                   ))}
               </div>
@@ -169,7 +166,6 @@ const TradingGuide: React.FC<TradingGuideProps> = ({
           currentPortfolio={currentPortfolio}
           targetPortfolio={targetPortfolio}
           calculations={calculations}
-          formatCurrency={formatCurrency}
         />
       )}
     </div>

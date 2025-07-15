@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { rebalancingService } from '../services'
+import { formatCurrency, BUSINESS_RULES } from '../utils'
 import type { RebalancingOptions, RebalancingCalculatorProps } from '../types'
 
 const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = ({
@@ -9,10 +10,10 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = ({
   onOptionsChange,
 }) => {
   const [internalOptions, setInternalOptions] = useState<RebalancingOptions>({
-    minimumTradingUnit: 1,
-    rebalanceThreshold: 5.0,
+    minimumTradingUnit: BUSINESS_RULES.MIN_TRADING_UNIT,
+    rebalanceThreshold: BUSINESS_RULES.REBALANCE_THRESHOLD,
     allowPartialShares: false,
-    commission: 0,
+    commission: BUSINESS_RULES.DEFAULT_COMMISSION,
     considerCommission: false,
   })
 
@@ -43,12 +44,6 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = ({
     return rebalancingService.validateCalculations(rebalancingResult)
   }, [rebalancingResult])
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(value)
-  }
 
   return (
     <div className="bg-white/5 border border-white/10 rounded-xl p-4 md:p-6 backdrop-blur-xl">

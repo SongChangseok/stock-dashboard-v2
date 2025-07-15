@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
+import { formatCurrency } from '../utils'
 import type { RebalancingCalculation, PortfolioSummary, TargetPortfolioData, TargetPortfolioAllocations } from '../types'
 
 interface ChartData {
@@ -12,7 +13,6 @@ interface RebalancingSimulationProps {
   currentPortfolio: PortfolioSummary
   targetPortfolio: TargetPortfolioData
   calculations: RebalancingCalculation[]
-  formatCurrency: (value: number) => string
 }
 
 const COLORS = [
@@ -24,7 +24,6 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
   currentPortfolio,
   targetPortfolio,
   calculations,
-  formatCurrency,
 }) => {
   const [showAfter, setShowAfter] = useState(false)
 

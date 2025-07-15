@@ -1,28 +1,28 @@
 import React from 'react'
 import type { PortfolioSummaryProps } from '../types'
-import { stockService } from '../services/stockService'
+import { formatCurrency, formatPercentageValue, calculateSimulatedDailyChange, BUSINESS_RULES } from '../utils'
 
 export const PortfolioSummary: React.FC<PortfolioSummaryProps> = ({ summary }) => {
-  const dailyChange = summary.totalValue * 0.0067 // Simulated daily change
+  const dailyChangeData = calculateSimulatedDailyChange(summary.totalValue, BUSINESS_RULES.DAILY_CHANGE_SIMULATION)
 
   const summaryCards = [
     {
       title: 'Total Investment',
-      value: stockService.formatCurrency(summary.totalCost),
+      value: formatCurrency(summary.totalCost),
       subtitle: 'Cost Basis',
       color: 'text-gray-300'
     },
     {
       title: 'Current Value',
-      value: stockService.formatCurrency(summary.totalValue),
-      subtitle: `${stockService.formatCurrency(summary.totalProfitLoss)} (${stockService.formatPercentage(summary.totalProfitLossPercent)})`,
+      value: formatCurrency(summary.totalValue),
+      subtitle: `${formatCurrency(summary.totalProfitLoss)} (${formatPercentageValue(summary.totalProfitLossPercent)})`,
       color: summary.totalProfitLoss >= 0 ? 'text-green-400' : 'text-red-400'
     },
     {
       title: 'Daily Change',
-      value: stockService.formatCurrency(dailyChange),
-      subtitle: stockService.formatPercentage(0.67),
-      color: dailyChange >= 0 ? 'text-green-400' : 'text-red-400'
+      value: formatCurrency(dailyChangeData.changeAmount),
+      subtitle: formatPercentageValue(dailyChangeData.changePercentage),
+      color: dailyChangeData.isPositive ? 'text-green-400' : 'text-red-400'
     },
     {
       title: 'Holdings',

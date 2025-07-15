@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { PortfolioComparison, RebalancingCalculator, TradingGuide } from '../components'
 import { usePortfolioStore, useTargetPortfolioStore } from '../stores'
 import { rebalancingService } from '../services'
+import { BUSINESS_RULES } from '../utils'
 import type { RebalancingOptions } from '../types'
 
 export const PortfolioComparisonPage: React.FC = () => {
@@ -19,10 +20,10 @@ export const PortfolioComparisonPage: React.FC = () => {
 
   // Rebalancing options state
   const [rebalancingOptions, setRebalancingOptions] = useState<RebalancingOptions>({
-    minimumTradingUnit: 1,
-    rebalanceThreshold: 5.0,
+    minimumTradingUnit: BUSINESS_RULES.MIN_TRADING_UNIT,
+    rebalanceThreshold: BUSINESS_RULES.REBALANCE_THRESHOLD,
     allowPartialShares: false,
-    commission: 0,
+    commission: BUSINESS_RULES.DEFAULT_COMMISSION,
     considerCommission: false,
   })
 
@@ -164,7 +165,6 @@ export const PortfolioComparisonPage: React.FC = () => {
             targetPortfolio={selectedTargetPortfolio}
             calculations={rebalancingResult.calculations}
             commission={rebalancingOptions.commission}
-            formatCurrency={(value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)}
           />
         </div>
       )}

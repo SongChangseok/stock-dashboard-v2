@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import type { StockFormProps, CreateStockData, UpdateStockData } from '../types'
 import { stockService } from '../services/stockService'
+import { formatCurrency, formatPercentageValue } from '../utils'
 
 export const StockForm: React.FC<StockFormProps> = ({
   isOpen,
@@ -246,22 +247,22 @@ export const StockForm: React.FC<StockFormProps> = ({
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <label className="block text-gray-400 mb-1">Investment Amount</label>
-                  <div className="text-gray-300">{stockService.formatCurrency(metrics.investmentAmount)}</div>
+                  <div className="text-gray-300">{formatCurrency(metrics.investmentAmount)}</div>
                 </div>
                 <div>
                   <label className="block text-gray-400 mb-1">Current Value</label>
-                  <div className="text-gray-300">{stockService.formatCurrency(metrics.currentValue)}</div>
+                  <div className="text-gray-300">{formatCurrency(metrics.currentValue)}</div>
                 </div>
                 <div>
                   <label className="block text-gray-400 mb-1">Profit/Loss</label>
                   <div className={metrics.profitLoss >= 0 ? 'text-green-400' : 'text-red-400'}>
-                    {stockService.formatCurrency(metrics.profitLoss)}
+                    {formatCurrency(metrics.profitLoss)}
                   </div>
                 </div>
                 <div>
                   <label className="block text-gray-400 mb-1">Return Rate</label>
                   <div className={metrics.returnRate >= 0 ? 'text-green-400' : 'text-red-400'}>
-                    {stockService.formatPercentage(metrics.returnRate)}
+                    {formatPercentageValue(metrics.returnRate)}
                   </div>
                 </div>
               </div>

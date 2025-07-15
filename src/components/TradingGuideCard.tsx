@@ -1,16 +1,15 @@
 import React from 'react'
 import type { RebalancingCalculation } from '../types'
+import { formatCurrency } from '../utils'
 
 interface TradingGuideCardProps {
   calculation: RebalancingCalculation
   commission: number
-  formatCurrency: (value: number) => string
 }
 
 const TradingGuideCard: React.FC<TradingGuideCardProps> = ({
   calculation,
   commission,
-  formatCurrency,
 }) => {
   const { 
     stock_name, 
