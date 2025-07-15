@@ -108,8 +108,14 @@ src/
 │   ├── store.ts                     # State management types
 │   ├── targetPortfolio.ts           # Target portfolio specific types
 │   ├── rebalancing.ts               # Rebalancing calculation types
+│   ├── analytics.ts                 # Portfolio analytics types
 │   ├── api.ts                       # API service types
 │   └── database.ts                  # Database schema types
+├── utils/
+│   ├── formatting.ts                # Formatting utilities (currency, percentage, etc.)
+│   ├── calculations.ts              # Portfolio calculation utilities
+│   ├── validation.ts                # Input validation utilities
+│   └── constants.ts                 # Business rules and UI constants
 └── styles/
     ├── mobile.css                   # Mobile-specific optimizations
     └── index.css                    # Global styles and Tailwind imports
@@ -187,6 +193,7 @@ src/
 - Store interfaces: `types/store.ts`
 - Target portfolio types: `types/targetPortfolio.ts`
 - Rebalancing types: `types/rebalancing.ts`
+- Analytics types: `types/analytics.ts`
 - API types: `types/api.ts`
 - Database types: `types/database.ts`
 - Export all from `types/index.ts`
@@ -200,6 +207,24 @@ src/
 - Implement optimistic UI updates for better UX
 - Integrate dropdowns for stock selection to prevent data inconsistency
 - Auto-populate related fields (ticker from stock name) for better UX
+
+**Business Logic Separation**:
+- Utility functions centralized in `utils/` directory
+- Formatting utilities: `formatCurrency`, `formatPercentage` in `utils/formatting.ts`
+- Calculation utilities: portfolio calculations in `utils/calculations.ts`
+- Validation utilities: input validation in `utils/validation.ts`
+- Business rules: constants and thresholds in `utils/constants.ts`
+- Service layer: database operations separated from UI logic
+
+**Type Declaration Guidelines**:
+- **NEVER** declare types in component `.tsx` files
+- **NEVER** declare types in utility `.ts` files, service files, or hook files
+- **ALWAYS** declare types in the centralized `types/` directory
+- Component prop interfaces → `types/components.ts`
+- Business logic types → appropriate type files (`types/analytics.ts`, `types/rebalancing.ts`, etc.)
+- Import types from centralized location: `import type { TypeName } from '../types'`
+- Use `export type` for type-only exports from type files
+- Keep type files focused and well-organized by domain
 
 **Database Integration Patterns**:
 - Use Zustand stores for state management with async operations
@@ -291,12 +316,20 @@ stocks (
 - Manual stock entry for target portfolios (restricted to existing holdings)
 
 **Planned Enhancements**:
-- Advanced portfolio analytics and metrics
-- Automatic rebalancing suggestions
-- Portfolio risk assessment tools
+- Advanced portfolio analytics and metrics (partially implemented)
+- Automatic rebalancing suggestions (partially implemented)
+- Portfolio risk assessment tools (partially implemented)
 - Historical performance tracking
 - Social features (portfolio sharing)
 - Mobile app with push notifications
+
+**Recently Implemented**:
+- Business logic separation and utility function centralization
+- Portfolio analytics service with risk metrics and performance analysis
+- Comprehensive type organization in centralized types/ directory
+- Rebalancing calculation utilities with trading insights
+- Validation utilities for input handling
+- Business rules constants for configuration management
 
 ## GitHub Issue Handling
 - When referencing GitHub issues, always check issue content for specific requirements
