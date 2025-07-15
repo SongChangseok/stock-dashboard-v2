@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import type { PortfolioComparisonProps, ComparisonData, ComparisonTooltipProps } from '../types'
+import { useResponsive, usePerformanceMonitor } from '../hooks'
 
 const COLORS = [
   '#6366F1', // Indigo - primary
@@ -18,7 +19,7 @@ const COLORS = [
 ]
 
 
-const ComparisonTooltip: React.FC<ComparisonTooltipProps> = ({ active, payload, type }) => {
+const ComparisonTooltip: React.FC<ComparisonTooltipProps> = React.memo(({ active, payload, type }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload
     const value = type === 'current' ? data.current : data.target
@@ -38,9 +39,9 @@ const ComparisonTooltip: React.FC<ComparisonTooltipProps> = ({ active, payload, 
     )
   }
   return null
-}
+})
 
-const RebalanceAlert: React.FC<{ hasSignificantDifferences: boolean }> = ({ hasSignificantDifferences }) => {
+const RebalanceAlert: React.FC<{ hasSignificantDifferences: boolean }> = React.memo(({ hasSignificantDifferences }) => {
   if (!hasSignificantDifferences) {
     return (
       <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 mb-6">
@@ -66,12 +67,80 @@ const RebalanceAlert: React.FC<{ hasSignificantDifferences: boolean }> = ({ hasS
       </div>
     </div>
   )
-}
+})
 
-export const PortfolioComparison: React.FC<PortfolioComparisonProps> = ({ 
+export const PortfolioComparison: React.FC<PortfolioComparisonProps> = React.memo(({ 
   currentPortfolio, 
   targetPortfolio 
 }) => {
+  const { isMobile } = useResponsive()
+  usePerformanceMonitor('PortfolioComparison')
+  
+  // Create comparison data
+  const { comparisonData, currentChartData, targetChartData, hasSignificantDifferences } = useMemo(() => {
+    if (!targetPortfolio || !currentPortfolio.stocks.length) {
+      return { comparisonData: [], currentChartData: [], targetChartData: [], hasSignificantDifferences: false }
+    }
+    
+    const comparisonData: ComparisonData[] = []
+    const stockMap = new Map<string, { current: number; target: number }>()
+
+    // Map current portfolio weights
+    currentPortfolio.stocks.forEach(stock => {
+      const key = stock.ticker || stock.stock_name
+      const weight = (stock.totalValue / currentPortfolio.totalValue) * 100
+      stockMap.set(key, { current: weight, target: 0 })
+    })
+
+    // Map target portfolio weights
+    targetPortfolio.allocations.stocks.forEach(stock => {
+      const key = stock.ticker || stock.stock_name
+      const existing = stockMap.get(key)
+      if (existing) {
+        existing.target = stock.target_weight
+      } else {
+        stockMap.set(key, { current: 0, target: stock.target_weight })
+      }
+    })
+
+    // Create comparison array
+    let colorIndex = 0
+    stockMap.forEach((weights, name) => {
+      const difference = weights.current - weights.target
+      comparisonData.push({
+        name,
+        current: weights.current,
+        target: weights.target,
+        difference,
+        isOverweight: difference > 0,
+        color: COLORS[colorIndex % COLORS.length]
+      })
+      colorIndex++
+    })
+
+    // Prepare chart data
+    const currentChartData = comparisonData
+      .filter(item => item.current > 0)
+      .map(item => ({
+        ...item,
+        percentage: item.current,
+        value: item.current
+      }))
+
+    const targetChartData = comparisonData
+      .filter(item => item.target > 0)
+      .map(item => ({
+        ...item,
+        percentage: item.target,
+        value: item.target
+      }))
+
+    // Check for significant differences (>5%)
+    const hasSignificantDifferences = comparisonData.some(item => Math.abs(item.difference) > 5)
+    
+    return { comparisonData, currentChartData, targetChartData, hasSignificantDifferences }
+  }, [currentPortfolio, targetPortfolio])
+
   if (!targetPortfolio) {
     return (
       <div className="bg-white/5 border border-white/10 rounded-xl md:rounded-2xl p-4 md:p-8 backdrop-blur-xl mx-4 md:mx-0">
@@ -102,63 +171,6 @@ export const PortfolioComparison: React.FC<PortfolioComparisonProps> = ({
     )
   }
 
-  // Create comparison data
-  const comparisonData: ComparisonData[] = []
-  const stockMap = new Map<string, { current: number; target: number }>()
-
-  // Map current portfolio weights
-  currentPortfolio.stocks.forEach(stock => {
-    const key = stock.ticker || stock.stock_name
-    const weight = (stock.totalValue / currentPortfolio.totalValue) * 100
-    stockMap.set(key, { current: weight, target: 0 })
-  })
-
-  // Map target portfolio weights
-  targetPortfolio.allocations.stocks.forEach(stock => {
-    const key = stock.ticker || stock.stock_name
-    const existing = stockMap.get(key)
-    if (existing) {
-      existing.target = stock.target_weight
-    } else {
-      stockMap.set(key, { current: 0, target: stock.target_weight })
-    }
-  })
-
-  // Create comparison array
-  let colorIndex = 0
-  stockMap.forEach((weights, name) => {
-    const difference = weights.current - weights.target
-    comparisonData.push({
-      name,
-      current: weights.current,
-      target: weights.target,
-      difference,
-      isOverweight: difference > 0,
-      color: COLORS[colorIndex % COLORS.length]
-    })
-    colorIndex++
-  })
-
-  // Prepare chart data
-  const currentChartData = comparisonData
-    .filter(item => item.current > 0)
-    .map(item => ({
-      ...item,
-      percentage: item.current,
-      value: item.current
-    }))
-
-  const targetChartData = comparisonData
-    .filter(item => item.target > 0)
-    .map(item => ({
-      ...item,
-      percentage: item.target,
-      value: item.target
-    }))
-
-  // Check for significant differences (>5%)
-  const hasSignificantDifferences = comparisonData.some(item => Math.abs(item.difference) > 5)
-
   return (
     <div className="bg-white/5 border border-white/10 rounded-xl md:rounded-2xl p-4 md:p-6 backdrop-blur-xl mx-4 md:mx-0 relative">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
@@ -178,8 +190,8 @@ export const PortfolioComparison: React.FC<PortfolioComparisonProps> = ({
                   data={currentChartData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={window.innerWidth < 768 ? 80 : 100}
-                  innerRadius={window.innerWidth < 768 ? 40 : 50}
+                  outerRadius={isMobile ? 80 : 100}
+                  innerRadius={isMobile ? 40 : 50}
                   dataKey="value"
                   strokeWidth={2}
                   stroke="rgba(255,255,255,0.1)"
@@ -204,8 +216,8 @@ export const PortfolioComparison: React.FC<PortfolioComparisonProps> = ({
                   data={targetChartData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={window.innerWidth < 768 ? 80 : 100}
-                  innerRadius={window.innerWidth < 768 ? 40 : 50}
+                  outerRadius={isMobile ? 80 : 100}
+                  innerRadius={isMobile ? 40 : 50}
                   dataKey="value"
                   strokeWidth={2}
                   stroke="rgba(255,255,255,0.1)"
@@ -266,4 +278,4 @@ export const PortfolioComparison: React.FC<PortfolioComparisonProps> = ({
       </div>
     </div>
   )
-}
+})

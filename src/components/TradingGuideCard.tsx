@@ -2,7 +2,7 @@ import React from 'react'
 import type { TradingGuideCardProps } from '../types'
 import { formatCurrency } from '../utils'
 
-const TradingGuideCard: React.FC<TradingGuideCardProps> = ({
+const TradingGuideCard: React.FC<TradingGuideCardProps> = React.memo(({
   calculation,
   commission,
 }) => {
@@ -127,6 +127,6 @@ const TradingGuideCard: React.FC<TradingGuideCardProps> = ({
       </div>
     </div>
   )
-}
+})
 
 export default TradingGuideCard

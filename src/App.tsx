@@ -7,7 +7,8 @@ import {
 } from 'react-router-dom'
 import { useAuthStore } from './stores'
 import { AuthPage, DashboardPage, TargetPortfolioPage, PortfolioComparisonPage } from './pages'
-import { ProtectedRoute, Layout } from './components'
+import { ProtectedRoute, Layout, ErrorBoundary } from './components'
+import { setupGlobalErrorHandler } from './services/errorService'
 import './App.css'
 
 function App() {
@@ -15,27 +16,48 @@ function App() {
 
   useEffect(() => {
     initialize()
+    setupGlobalErrorHandler()
   }, [initialize])
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/auth" element={<AuthPage />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="target-portfolio" element={<TargetPortfolioPage />} />
-          <Route path="analytics" element={<PortfolioComparisonPage />} />
-        </Route>
-      </Routes>
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <Routes>
+          <Route path="/auth" element={
+            <ErrorBoundary>
+              <AuthPage />
+            </ErrorBoundary>
+          } />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <ErrorBoundary>
+                  <Layout />
+                </ErrorBoundary>
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route path="dashboard" element={
+              <ErrorBoundary>
+                <DashboardPage />
+              </ErrorBoundary>
+            } />
+            <Route path="target-portfolio" element={
+              <ErrorBoundary>
+                <TargetPortfolioPage />
+              </ErrorBoundary>
+            } />
+            <Route path="analytics" element={
+              <ErrorBoundary>
+                <PortfolioComparisonPage />
+              </ErrorBoundary>
+            } />
+          </Route>
+        </Routes>
+      </Router>
+    </ErrorBoundary>
   )
 }
 

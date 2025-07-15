@@ -1,14 +1,17 @@
 import React, { useState, useMemo } from 'react'
 import { rebalancingService } from '../services'
 import { formatCurrency, BUSINESS_RULES } from '../utils'
+import { usePerformanceMonitor } from '../hooks'
 import type { RebalancingOptions, RebalancingCalculatorProps } from '../types'
 
-const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = ({
+const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo(({
   currentPortfolio,
   targetPortfolio,
   options: externalOptions,
   onOptionsChange,
 }) => {
+  usePerformanceMonitor('RebalancingCalculator')
+  
   const [internalOptions, setInternalOptions] = useState<RebalancingOptions>({
     minimumTradingUnit: BUSINESS_RULES.MIN_TRADING_UNIT,
     rebalanceThreshold: BUSINESS_RULES.REBALANCE_THRESHOLD,
@@ -300,6 +303,6 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = ({
       )}
     </div>
   )
-}
+})
 
 export default RebalancingCalculator

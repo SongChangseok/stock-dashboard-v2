@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { formatCurrency } from '../utils'
+import { useResponsive } from '../hooks'
 import type { RebalancingSimulationProps, RebalancingSimulationChartData, TargetPortfolioAllocations } from '../types'
 
 const COLORS = [
@@ -8,12 +9,13 @@ const COLORS = [
   '#06B6D4', '#8B5A2B', '#6B7280', '#F97316', '#84CC16', '#3B82F6'
 ]
 
-const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
+const RebalancingSimulation: React.FC<RebalancingSimulationProps> = React.memo(({
   currentPortfolio,
   targetPortfolio,
   calculations,
 }) => {
   const [showAfter, setShowAfter] = useState(false)
+  const { isMobile } = useResponsive()
 
   const simulatedPortfolio = useMemo(() => {
     const stocks = currentPortfolio.stocks.map(stock => {
@@ -69,7 +71,7 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
     color: COLORS[index % COLORS.length]
   }))
 
-  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { payload: RebalancingSimulationChartData }[] }) => {
+  const CustomTooltip = React.memo(({ active, payload }: { active?: boolean; payload?: { payload: RebalancingSimulationChartData }[] }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
@@ -80,7 +82,7 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
       )
     }
     return null
-  }
+  })
 
   return (
     <div className="bg-white/5 border border-white/10 rounded-xl p-4 md:p-6 backdrop-blur-xl">
@@ -123,8 +125,8 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
                   data={showAfter ? simulatedRebalancingSimulationChartData : currentRebalancingSimulationChartData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={window.innerWidth < 768 ? 80 : 100}
-                  innerRadius={window.innerWidth < 768 ? 40 : 50}
+                  outerRadius={isMobile ? 80 : 100}
+                  innerRadius={isMobile ? 40 : 50}
                   dataKey="value"
                   strokeWidth={2}
                   stroke="rgba(255,255,255,0.1)"
@@ -149,8 +151,8 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
                   data={targetRebalancingSimulationChartData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={window.innerWidth < 768 ? 80 : 100}
-                  innerRadius={window.innerWidth < 768 ? 40 : 50}
+                  outerRadius={isMobile ? 80 : 100}
+                  innerRadius={isMobile ? 40 : 50}
                   dataKey="value"
                   strokeWidth={2}
                   stroke="rgba(255,255,255,0.1)"
@@ -280,6 +282,6 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
       </div>
     </div>
   )
-}
+})
 
 export default RebalancingSimulation

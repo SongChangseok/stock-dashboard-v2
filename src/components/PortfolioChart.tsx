@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import type { PortfolioChartProps, ChartData } from '../types'
 import { formatCurrency } from '../utils'
+import { useResponsive, usePerformanceMonitor } from '../hooks'
 
 const COLORS = [
   '#6366F1', // Indigo - primary
@@ -19,7 +20,7 @@ const COLORS = [
 ]
 
 
-const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: ChartData }> }) => {
+const CustomTooltip = React.memo(({ active, payload }: { active?: boolean; payload?: Array<{ payload: ChartData }> }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload
     return (
@@ -31,7 +32,7 @@ const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<
     )
   }
   return null
-}
+})
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomLabel = (props: any) => {
@@ -58,7 +59,19 @@ const CustomLabel = (props: any) => {
   )
 }
 
-export const PortfolioChart: React.FC<PortfolioChartProps> = ({ summary }) => {
+export const PortfolioChart: React.FC<PortfolioChartProps> = React.memo(({ summary }) => {
+  const { isMobile } = useResponsive()
+  usePerformanceMonitor('PortfolioChart')
+  
+  const chartData: ChartData[] = useMemo(() => 
+    summary.stocks.map((stock, index) => ({
+      name: stock.ticker || stock.stock_name,
+      value: stock.totalValue,
+      percentage: (stock.totalValue / summary.totalValue) * 100,
+      color: COLORS[index % COLORS.length]
+    }))
+  , [summary.stocks, summary.totalValue])
+
   if (!summary.stocks.length) {
     return (
       <div className="bg-white/5 border border-white/10 rounded-xl md:rounded-2xl p-4 md:p-8 backdrop-blur-xl mx-4 md:mx-0">
@@ -73,13 +86,6 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ summary }) => {
       </div>
     )
   }
-
-  const chartData: ChartData[] = summary.stocks.map((stock, index) => ({
-    name: stock.ticker || stock.stock_name,
-    value: stock.totalValue,
-    percentage: (stock.totalValue / summary.totalValue) * 100,
-    color: COLORS[index % COLORS.length]
-  }))
 
   return (
     <div className="bg-white/5 border border-white/10 rounded-xl md:rounded-2xl p-4 md:p-6 backdrop-blur-xl mx-4 md:mx-0 relative">
@@ -99,8 +105,8 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ summary }) => {
                   cy="50%"
                   labelLine={false}
                   label={CustomLabel}
-                  outerRadius={window.innerWidth < 768 ? 80 : 120}
-                  innerRadius={window.innerWidth < 768 ? 40 : 60}
+                  outerRadius={isMobile ? 80 : 120}
+                  innerRadius={isMobile ? 40 : 60}
                   fill="#8884d8"
                   dataKey="value"
                   strokeWidth={2}
@@ -149,4 +155,4 @@ export const PortfolioChart: React.FC<PortfolioChartProps> = ({ summary }) => {
       </div>
     </div>
   )
-}
+})
