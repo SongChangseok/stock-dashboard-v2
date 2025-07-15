@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { useTargetPortfolioStore, usePortfolioStore } from '../stores'
-import { targetPortfolioService } from '../services'
-import type { TargetPortfolioFormProps, TargetPortfolioStock, PortfolioValidationResult } from '../types'
+import { errorService } from '../services/errorService'
+import { validateTargetPortfolioForm } from '../utils/validation'
+import { 
+  calculateEqualWeights, 
+  calculateTotalWeight, 
+  isWeightValid, 
+  getWeightColorClass, 
+  getWeightBarColorClass, 
+  getAvailableStocksForSelection, 
+  createNewStockEntry, 
+  updateStockWithSelection, 
+  transformPortfolioFormData 
+} from '../utils/targetPortfolioFormUtils'
+import type { TargetPortfolioFormProps, TargetPortfolioStock, PortfolioValidationResult, Stock } from '../types'
 
 export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
   isOpen,
@@ -45,31 +57,22 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
   }, [editPortfolio, isOpen])
 
   const validatePortfolio = (): PortfolioValidationResult => {
-    const allocations = {
-      description: formData.description,
-      stocks,
-      total_weight: stocks.reduce((sum, stock) => sum + stock.target_weight, 0)
-    }
+    const validationResult = validateTargetPortfolioForm({
+      name: formData.name,
+      stocks
+    })
     
-    const validation = targetPortfolioService.validateAllocations(allocations)
-    
-    if (!formData.name.trim()) {
-      validation.errors.unshift('Portfolio name is required')
-    }
+    const totalWeight = stocks.reduce((sum, stock) => sum + stock.target_weight, 0)
     
     return {
-      isValid: validation.isValid && formData.name.trim().length > 0,
-      errors: validation.errors,
-      totalWeight: allocations.total_weight
+      isValid: validationResult.isValid,
+      errors: validationResult.errors,
+      totalWeight
     }
   }
 
   const handleAddStock = () => {
-    // Get available stocks that are not already selected
-    const selectedStockNames = stocks.map(s => s.stock_name)
-    const availableStockOptions = availableStocks.filter(stock => 
-      !selectedStockNames.includes(stock.stock_name)
-    )
+    const availableStockOptions = getAvailableStocksForSelection(availableStocks, stocks)
     
     if (availableStockOptions.length === 0) {
       setErrors({ form: 'No more stocks available to add. Please add stocks to your portfolio first.' })
@@ -78,30 +81,13 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
     
     // Add the first available stock
     const firstAvailable = availableStockOptions[0]
-    setStocks([...stocks, { 
-      stock_name: firstAvailable.stock_name, 
-      ticker: firstAvailable.ticker || '', 
-      target_weight: 0 
-    }])
+    setStocks([...stocks, createNewStockEntry(firstAvailable)])
     setErrors({}) // Clear any previous errors
   }
 
   const handleAutoBalance = () => {
     if (stocks.length === 0) return
-    
-    const equalWeight = 100 / stocks.length
-    const balancedStocks = stocks.map(stock => ({
-      ...stock,
-      target_weight: Math.round(equalWeight * 10) / 10 // Round to 1 decimal place
-    }))
-    
-    // Adjust the first stock to ensure total equals exactly 100%
-    const total = balancedStocks.reduce((sum, stock) => sum + stock.target_weight, 0)
-    if (total !== 100) {
-      balancedStocks[0].target_weight += 100 - total
-    }
-    
-    setStocks(balancedStocks)
+    setStocks(calculateEqualWeights(stocks))
   }
 
   const handleRemoveStock = (index: number) => {
@@ -113,13 +99,9 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
     
     if (field === 'stock_name') {
       // Find the selected stock from available stocks and auto-populate ticker
-      const selectedStock = availableStocks.find(stock => stock.stock_name === value)
+      const selectedStock = availableStocks.find((stock: Stock) => stock.stock_name === value)
       if (selectedStock) {
-        updatedStocks[index] = { 
-          ...updatedStocks[index], 
-          stock_name: selectedStock.stock_name,
-          ticker: selectedStock.ticker || ''
-        }
+        updatedStocks[index] = updateStockWithSelection(updatedStocks[index], selectedStock)
       }
     } else if (field === 'target_weight') {
       // Only allow target_weight changes now (ticker is auto-populated)
@@ -140,14 +122,7 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
 
     setIsLoading(true)
     try {
-      const portfolioData = {
-        name: formData.name.trim(),
-        allocations: {
-          description: formData.description.trim() || undefined,
-          stocks,
-          total_weight: validation.totalWeight
-        }
-      }
+      const portfolioData = transformPortfolioFormData(formData, stocks, validation.totalWeight)
 
       if (editPortfolio) {
         await updateTargetPortfolio({
@@ -161,7 +136,9 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
       onSave()
       onClose()
     } catch (error) {
-      console.error('Error saving target portfolio:', error)
+      errorService.handleError(error instanceof Error ? error : new Error('Failed to save target portfolio'), {
+        context: { component: 'TargetPortfolioForm', action: 'submit' }
+      })
       setErrors({ 
         form: error instanceof Error 
           ? error.message 
@@ -172,8 +149,8 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
     }
   }
 
-  const totalWeight = stocks.reduce((sum, stock) => sum + stock.target_weight, 0)
-  const isWeightValid = Math.abs(totalWeight - 100) <= 0.01
+  const totalWeight = calculateTotalWeight(stocks)
+  const weightValid = isWeightValid(totalWeight)
 
   if (!isOpen) return null
 
@@ -231,15 +208,13 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
             <div className="bg-white/5 border border-white/10 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Total Weight:</span>
-                <span className={`text-lg font-semibold ${isWeightValid ? 'text-green-400' : 'text-red-400'}`}>
+                <span className={`text-lg font-semibold ${getWeightColorClass(totalWeight)}`}>
                   {totalWeight.toFixed(1)}%
                 </span>
               </div>
               <div className="mt-2 w-full bg-gray-700 rounded-full h-2">
                 <div 
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    isWeightValid ? 'bg-green-500' : totalWeight > 100 ? 'bg-red-500' : 'bg-yellow-500'
-                  }`}
+                  className={`h-2 rounded-full transition-all duration-300 ${getWeightBarColorClass(totalWeight)}`}
                   style={{ width: `${Math.min(totalWeight, 100)}%` }}
                 />
               </div>
@@ -289,10 +264,7 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
               <div className="space-y-3">
                 {stocks.map((stock, index) => {
                   // Get available stocks for this dropdown (including current selection)
-                  const selectedStockNames = stocks.map(s => s.stock_name).filter((_, i) => i !== index)
-                  const availableStockOptions = availableStocks.filter(availableStock => 
-                    !selectedStockNames.includes(availableStock.stock_name)
-                  )
+                  const availableStockOptions = getAvailableStocksForSelection(availableStocks, stocks, index)
                   
                   return (
                     <div key={index} className="bg-white/3 border border-white/10 rounded-lg p-4">
@@ -310,7 +282,7 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
                             <option value="" disabled className="bg-gray-800">
                               Select a stock...
                             </option>
-                            {availableStockOptions.map((availableStock) => (
+                            {availableStockOptions.map((availableStock: Stock) => (
                               <option 
                                 key={availableStock.id} 
                                 value={availableStock.stock_name}
@@ -385,7 +357,7 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
             </button>
             <button
               type="submit"
-              disabled={isLoading || !isWeightValid}
+              disabled={isLoading || !weightValid}
               className="flex-1 min-h-[44px] p-3 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-white font-medium hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {isLoading ? 'Saving...' : 'Save Portfolio'}

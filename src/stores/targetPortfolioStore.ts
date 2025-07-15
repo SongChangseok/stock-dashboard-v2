@@ -2,8 +2,10 @@ import { create } from 'zustand'
 import type { CreateTargetPortfolioData, UpdateTargetPortfolioData } from '../types/targetPortfolio'
 import type { TargetPortfolioState } from '../types/store'
 import { targetPortfolioService } from '../services'
+import { realtimeService } from '../services/realtimeService'
+import { saveToSession, loadFromSession, SESSION_KEYS } from '../utils/sessionStorage'
 
-export const useTargetPortfolioStore = create<TargetPortfolioState>((set) => ({
+export const useTargetPortfolioStore = create<TargetPortfolioState>((set, get) => ({
   targetPortfolios: [],
   selectedTargetPortfolio: null,
   isLoading: false,
@@ -25,28 +27,71 @@ export const useTargetPortfolioStore = create<TargetPortfolioState>((set) => ({
 
   // Create new target portfolio
   createTargetPortfolio: async (portfolioData: CreateTargetPortfolioData) => {
-    set({ isLoading: true, error: null })
+    const tempId = `temp_${Date.now()}`
+    
+    // Optimistic update - add portfolio immediately with temporary ID
+    const optimisticPortfolio = {
+      id: tempId,
+      user_id: 'temp_user', // Will be replaced with real data
+      name: portfolioData.name,
+      allocations: portfolioData.allocations,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+    
+    set((state) => ({
+      targetPortfolios: [optimisticPortfolio, ...state.targetPortfolios],
+      isLoading: true,
+      error: null
+    }))
+    
     try {
       const newPortfolio = await targetPortfolioService.createTargetPortfolio(portfolioData)
+      // Replace optimistic portfolio with real one
       set((state) => ({
-        targetPortfolios: [newPortfolio, ...state.targetPortfolios],
+        targetPortfolios: state.targetPortfolios.map(p => 
+          p.id === tempId ? newPortfolio : p
+        ),
         isLoading: false
       }))
       return newPortfolio
     } catch (error) {
-      set({ 
+      // Revert optimistic update on error
+      set((state) => ({
+        targetPortfolios: state.targetPortfolios.filter(p => p.id !== tempId),
         error: error instanceof Error ? error.message : 'Failed to create target portfolio',
         isLoading: false 
-      })
+      }))
       throw error
     }
   },
 
   // Update existing target portfolio
   updateTargetPortfolio: async (portfolioData: UpdateTargetPortfolioData) => {
-    set({ isLoading: true, error: null })
+    const originalPortfolios = get().targetPortfolios
+    const originalSelected = get().selectedTargetPortfolio
+    
+    // Optimistic update - update portfolio immediately
+    const optimisticPortfolio = {
+      ...originalPortfolios.find(p => p.id === portfolioData.id)!,
+      ...portfolioData,
+      updated_at: new Date().toISOString()
+    }
+    
+    set((state) => ({
+      targetPortfolios: state.targetPortfolios.map(p => 
+        p.id === portfolioData.id ? optimisticPortfolio : p
+      ),
+      selectedTargetPortfolio: state.selectedTargetPortfolio?.id === portfolioData.id 
+        ? optimisticPortfolio 
+        : state.selectedTargetPortfolio,
+      isLoading: true,
+      error: null
+    }))
+    
     try {
       const updatedPortfolio = await targetPortfolioService.updateTargetPortfolio(portfolioData)
+      // Replace optimistic update with real data
       set((state) => ({
         targetPortfolios: state.targetPortfolios.map(p => 
           p.id === updatedPortfolio.id ? updatedPortfolio : p
@@ -58,7 +103,10 @@ export const useTargetPortfolioStore = create<TargetPortfolioState>((set) => ({
       }))
       return updatedPortfolio
     } catch (error) {
+      // Revert optimistic update on error
       set({ 
+        targetPortfolios: originalPortfolios,
+        selectedTargetPortfolio: originalSelected,
         error: error instanceof Error ? error.message : 'Failed to update target portfolio',
         isLoading: false 
       })
@@ -68,18 +116,28 @@ export const useTargetPortfolioStore = create<TargetPortfolioState>((set) => ({
 
   // Delete target portfolio
   deleteTargetPortfolio: async (portfolioId: string) => {
-    set({ isLoading: true, error: null })
+    const originalPortfolios = get().targetPortfolios
+    const originalSelected = get().selectedTargetPortfolio
+    
+    // Optimistic update - remove portfolio immediately
+    set((state) => ({
+      targetPortfolios: state.targetPortfolios.filter(p => p.id !== portfolioId),
+      selectedTargetPortfolio: state.selectedTargetPortfolio?.id === portfolioId 
+        ? null 
+        : state.selectedTargetPortfolio,
+      isLoading: true,
+      error: null
+    }))
+    
     try {
       await targetPortfolioService.deleteTargetPortfolio(portfolioId)
-      set((state) => ({
-        targetPortfolios: state.targetPortfolios.filter(p => p.id !== portfolioId),
-        selectedTargetPortfolio: state.selectedTargetPortfolio?.id === portfolioId 
-          ? null 
-          : state.selectedTargetPortfolio,
-        isLoading: false
-      }))
+      // Success - optimistic update is correct
+      set({ isLoading: false })
     } catch (error) {
+      // Revert optimistic update on error
       set({ 
+        targetPortfolios: originalPortfolios,
+        selectedTargetPortfolio: originalSelected,
         error: error instanceof Error ? error.message : 'Failed to delete target portfolio',
         isLoading: false 
       })
@@ -93,5 +151,64 @@ export const useTargetPortfolioStore = create<TargetPortfolioState>((set) => ({
   setError: (error) => set({ error }),
 
   // Clear error
-  clearError: () => set({ error: null })
+  clearError: () => set({ error: null }),
+
+  // Real-time subscription management
+  subscribeToRealtime: (userId: string) => {
+    return realtimeService.subscribeToTargetPortfolios(userId, (payload) => {
+      const { eventType, old: oldPortfolio, new: newPortfolio } = payload
+      
+      switch (eventType) {
+        case 'INSERT':
+          if (newPortfolio) {
+            set(state => ({
+              targetPortfolios: [newPortfolio, ...state.targetPortfolios]
+            }))
+          }
+          break
+          
+        case 'UPDATE':
+          if (newPortfolio) {
+            set(state => ({
+              targetPortfolios: state.targetPortfolios.map(portfolio => 
+                portfolio.id === newPortfolio.id ? newPortfolio : portfolio
+              ),
+              selectedTargetPortfolio: state.selectedTargetPortfolio?.id === newPortfolio.id 
+                ? newPortfolio 
+                : state.selectedTargetPortfolio
+            }))
+          }
+          break
+          
+        case 'DELETE':
+          if (oldPortfolio) {
+            set(state => ({
+              targetPortfolios: state.targetPortfolios.filter(portfolio => 
+                portfolio.id !== oldPortfolio.id
+              ),
+              selectedTargetPortfolio: state.selectedTargetPortfolio?.id === oldPortfolio.id 
+                ? null 
+                : state.selectedTargetPortfolio
+            }))
+          }
+          break
+      }
+    })
+  },
+
+  // Persist selected portfolio to session storage
+  saveSelectedToSession: () => {
+    const { selectedTargetPortfolio } = get()
+    if (selectedTargetPortfolio) {
+      saveToSession(SESSION_KEYS.SELECTED_TARGET_PORTFOLIO, selectedTargetPortfolio)
+    }
+  },
+
+  // Load selected portfolio from session storage
+  loadSelectedFromSession: () => {
+    const cachedPortfolio = loadFromSession(SESSION_KEYS.SELECTED_TARGET_PORTFOLIO)
+    if (cachedPortfolio) {
+      set({ selectedTargetPortfolio: cachedPortfolio })
+    }
+  }
 }))

@@ -1,6 +1,19 @@
 import React, { useState, useMemo } from 'react'
 import { rebalancingService } from '../services'
 import { formatCurrency, BUSINESS_RULES } from '../utils'
+import { validateRebalanceThreshold, validateCommission, parseNumericInput } from '../utils/validation'
+import { 
+  getActionColorClass, 
+  getQuantityChangeColorClass, 
+  getValueChangeColorClass, 
+  getDifferenceColorClass, 
+  getStatusColorClass, 
+  formatQuantityChange, 
+  formatDifference, 
+  filterDisplayCalculations, 
+  formatRecommendation, 
+  getRecommendationClass 
+} from '../utils/rebalancingCalculatorUtils'
 import { usePerformanceMonitor } from '../hooks'
 import type { RebalancingOptions, RebalancingCalculatorProps } from '../types'
 
@@ -104,7 +117,7 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
         <div className="bg-white/5 rounded-lg p-3">
           <div className="text-xs text-gray-400 mb-1">Status</div>
           <div
-            className={`font-semibold ${rebalancingResult.isBalanced ? 'text-green-400' : 'text-amber-400'}`}
+            className={`font-semibold ${getStatusColorClass(rebalancingResult.isBalanced)}`}
           >
             {rebalancingResult.isBalanced ? 'Balanced' : 'Needs Rebalancing'}
           </div>
@@ -115,23 +128,16 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
       <div className="mb-6">
         <h4 className="text-base font-medium mb-3">Recommendations</h4>
         <div className="bg-white/5 rounded-lg p-4 space-y-2">
-          {recommendations.map((recommendation, index) => (
-            <div key={index} className="text-sm text-gray-300">
-              {recommendation.startsWith('  •') ? (
-                <div className="ml-4 text-indigo-300">{recommendation}</div>
-              ) : (
-                <div
-                  className={
-                    recommendation.includes('Consider')
-                      ? 'font-medium text-white'
-                      : ''
-                  }
-                >
-                  {recommendation}
+          {recommendations.map((recommendation, index) => {
+            const formatted = formatRecommendation(recommendation)
+            return (
+              <div key={index} className="text-sm text-gray-300">
+                <div className={getRecommendationClass(formatted)}>
+                  {formatted.text}
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            )
+          })}
         </div>
       </div>
 
@@ -160,7 +166,8 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
                   min="1"
                   value={options.minimumTradingUnit}
                   onChange={(e) => {
-                    const newOptions = { ...options, minimumTradingUnit: Number(e.target.value) }
+                    const value = parseNumericInput(e.target.value, 1)
+                    const newOptions = { ...options, minimumTradingUnit: Math.max(1, value) }
                     setOptions(newOptions)
                   }}
                   className="w-16 px-2 py-1 bg-white/10 border border-white/20 rounded text-sm"
@@ -175,8 +182,11 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
                   step="0.1"
                   value={options.rebalanceThreshold}
                   onChange={(e) => {
-                    const newOptions = { ...options, rebalanceThreshold: Number(e.target.value) }
-                    setOptions(newOptions)
+                    const value = parseNumericInput(e.target.value, 5)
+                    if (validateRebalanceThreshold(value)) {
+                      const newOptions = { ...options, rebalanceThreshold: value }
+                      setOptions(newOptions)
+                    }
                   }}
                   className="w-16 px-2 py-1 bg-white/10 border border-white/20 rounded text-sm"
                 />
@@ -190,8 +200,11 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
                   step="0.01"
                   value={options.commission}
                   onChange={(e) => {
-                    const newOptions = { ...options, commission: Number(e.target.value) }
-                    setOptions(newOptions)
+                    const value = parseNumericInput(e.target.value, 0)
+                    if (validateCommission(value)) {
+                      const newOptions = { ...options, commission: value }
+                      setOptions(newOptions)
+                    }
                   }}
                   className="w-16 px-2 py-1 bg-white/10 border border-white/20 rounded text-sm"
                 />
@@ -225,10 +238,7 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
                 </tr>
               </thead>
               <tbody>
-                {rebalancingResult.calculations
-                  .filter(
-                    (calc) => calc.currentWeight > 0 || calc.targetWeight > 0,
-                  )
+                {filterDisplayCalculations(rebalancingResult.calculations)
                   .map((calc, index) => (
                     <tr key={index} className="border-b border-white/5">
                       <td className="p-2 font-medium">{calc.stock_name}</td>
@@ -239,26 +249,13 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
                         {calc.targetWeight.toFixed(1)}%
                       </td>
                       <td
-                        className={`text-right p-2 ${
-                          Math.abs(calc.difference) < 1
-                            ? 'text-green-400'
-                            : calc.difference > 0
-                              ? 'text-red-400'
-                              : 'text-blue-400'
-                        }`}
+                        className={`text-right p-2 ${getDifferenceColorClass(calc.difference)}`}
                       >
-                        {calc.difference > 0 ? '+' : ''}
-                        {calc.difference.toFixed(1)}%
+                        {formatDifference(calc.difference)}
                       </td>
                       <td className="text-right p-2">
                         <span
-                          className={`px-2 py-1 rounded text-xs ${
-                            calc.action === 'buy'
-                              ? 'bg-green-500/20 text-green-400'
-                              : calc.action === 'sell'
-                                ? 'bg-red-500/20 text-red-400'
-                                : 'bg-gray-500/20 text-gray-400'
-                          }`}
+                          className={`px-2 py-1 rounded text-xs ${getActionColorClass(calc.action)}`}
                         >
                           {calc.action.toUpperCase()}
                         </span>
@@ -266,14 +263,9 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
                       <td className="text-right p-2">
                         {calc.adjustedQuantityChange !== 0 ? (
                           <span
-                            className={
-                              calc.adjustedQuantityChange > 0
-                                ? 'text-green-400'
-                                : 'text-red-400'
-                            }
+                            className={getQuantityChangeColorClass(calc.adjustedQuantityChange)}
                           >
-                            {calc.adjustedQuantityChange > 0 ? '+' : ''}
-                            {calc.adjustedQuantityChange.toFixed(0)}
+                            {formatQuantityChange(calc.adjustedQuantityChange)}
                           </span>
                         ) : (
                           <span className="text-gray-400">0</span>
@@ -282,11 +274,7 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
                       <td className="text-right p-2">
                         {calc.adjustedValueChange !== 0 ? (
                           <span
-                            className={
-                              calc.adjustedValueChange > 0
-                                ? 'text-green-400'
-                                : 'text-red-400'
-                            }
+                            className={getValueChangeColorClass(calc.adjustedValueChange)}
                           >
                             {formatCurrency(calc.adjustedValueChange)}
                           </span>

@@ -63,7 +63,7 @@ export const AuthPage: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 pt-6 border-t border-white/10">
+        <div className="text-center pt-6">
           <p className="text-sm text-gray-400">
             {activeTab === 'login'
               ? "Don't have an account?"

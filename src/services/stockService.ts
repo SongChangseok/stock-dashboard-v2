@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { getCurrentUserId } from './authHelpers'
 import type { Stock, CreateStockData, UpdateStockData } from '../types'
 
 class StockService {
@@ -16,17 +17,13 @@ class StockService {
   }
 
   async createStock(stockData: CreateStockData): Promise<Stock> {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      throw new Error('User not authenticated')
-    }
+    const userId = await getCurrentUserId()
 
     const { data, error } = await supabase
       .from('stocks')
       .insert({
         ...stockData,
-        user_id: user.id
+        user_id: userId
       })
       .select()
       .single()

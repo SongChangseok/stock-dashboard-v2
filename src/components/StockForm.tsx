@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import type { StockFormProps, CreateStockData, UpdateStockData } from '../types'
 import { stockService } from '../services/stockService'
-import { formatCurrency, formatPercentageValue } from '../utils'
+import { errorService } from '../services/errorService'
+import { validateStockForm } from '../utils/validation'
+import { 
+  calculateStockMetrics, 
+  formatStockMetrics, 
+  transformFormToCreateData, 
+  transformFormToUpdateData, 
+  transformStockToFormData, 
+  getProfitLossColorClass,
+  type StockFormData 
+} from '../utils/stockFormUtils'
 
 export const StockForm: React.FC<StockFormProps> = ({
   isOpen,
@@ -9,7 +19,7 @@ export const StockForm: React.FC<StockFormProps> = ({
   onSave,
   editStock
 }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<StockFormData>({
     stock_name: '',
     ticker: '',
     quantity: '',
@@ -21,13 +31,7 @@ export const StockForm: React.FC<StockFormProps> = ({
 
   useEffect(() => {
     if (editStock) {
-      setFormData({
-        stock_name: editStock.stock_name,
-        ticker: editStock.ticker || '',
-        quantity: editStock.quantity.toString(),
-        purchase_price: editStock.purchase_price.toString(),
-        current_price: editStock.current_price.toString()
-      })
+      setFormData(transformStockToFormData(editStock))
     } else {
       setFormData({
         stock_name: '',
@@ -49,29 +53,30 @@ export const StockForm: React.FC<StockFormProps> = ({
   }
 
   const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {}
+    const validationResult = validateStockForm({
+      stock_name: formData.stock_name,
+      ticker: formData.ticker,
+      quantity: formData.quantity,
+      purchase_price: formData.purchase_price,
+      current_price: formData.current_price
+    })
 
-    if (!formData.stock_name.trim()) {
-      newErrors.stock_name = 'Stock name is required'
+    if (!validationResult.isValid) {
+      const newErrors: Record<string, string> = {}
+      validationResult.errors.forEach((error, index) => {
+        const fieldMap = ['stock_name', 'ticker', 'quantity', 'purchase_price', 'current_price']
+        if (index < fieldMap.length) {
+          newErrors[fieldMap[index]] = error
+        } else {
+          newErrors.submit = error
+        }
+      })
+      setErrors(newErrors)
+    } else {
+      setErrors({})
     }
 
-    const quantity = parseFloat(formData.quantity)
-    if (!quantity || quantity <= 0) {
-      newErrors.quantity = 'Please enter a valid quantity'
-    }
-
-    const purchasePrice = parseFloat(formData.purchase_price)
-    if (!purchasePrice || purchasePrice <= 0) {
-      newErrors.purchase_price = 'Please enter a valid purchase price'
-    }
-
-    const currentPrice = parseFloat(formData.current_price)
-    if (!currentPrice || currentPrice <= 0) {
-      newErrors.current_price = 'Please enter a valid current price'
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    return validationResult.isValid
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,52 +86,26 @@ export const StockForm: React.FC<StockFormProps> = ({
 
     setIsLoading(true)
     try {
-      const stockData = {
-        stock_name: formData.stock_name.trim(),
-        ticker: formData.ticker.trim().toUpperCase() || undefined,
-        quantity: parseFloat(formData.quantity),
-        purchase_price: parseFloat(formData.purchase_price),
-        current_price: parseFloat(formData.current_price)
-      }
-
       if (editStock) {
-        await stockService.updateStock({
-          id: editStock.id,
-          ...stockData
-        } as UpdateStockData)
+        await stockService.updateStock(transformFormToUpdateData(formData, editStock.id) as UpdateStockData)
       } else {
-        await stockService.createStock(stockData as CreateStockData)
+        await stockService.createStock(transformFormToCreateData(formData) as CreateStockData)
       }
 
       onSave()
       onClose()
     } catch (error) {
-      console.error('Error saving stock:', error)
+      errorService.handleError(error instanceof Error ? error : new Error('Failed to save stock'), {
+        context: { component: 'StockForm', action: 'submit' }
+      })
       setErrors({ submit: 'Failed to save stock. Please try again.' })
     } finally {
       setIsLoading(false)
     }
   }
 
-  const calculateMetrics = () => {
-    const quantity = parseFloat(formData.quantity) || 0
-    const purchasePrice = parseFloat(formData.purchase_price) || 0
-    const currentPrice = parseFloat(formData.current_price) || 0
-
-    const investmentAmount = quantity * purchasePrice
-    const currentValue = quantity * currentPrice
-    const profitLoss = currentValue - investmentAmount
-    const returnRate = investmentAmount > 0 ? (profitLoss / investmentAmount) * 100 : 0
-
-    return {
-      investmentAmount,
-      currentValue,
-      profitLoss,
-      returnRate
-    }
-  }
-
-  const metrics = calculateMetrics()
+  const metrics = calculateStockMetrics(formData)
+  const formattedMetrics = formatStockMetrics(metrics)
 
   if (!isOpen) return null
 
@@ -213,7 +192,7 @@ export const StockForm: React.FC<StockFormProps> = ({
                   onChange={handleInputChange}
                   placeholder="150"
                   min="0"
-                  step="0.01"
+                  step="0.0001"
                   className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
                   required
                 />
@@ -234,7 +213,7 @@ export const StockForm: React.FC<StockFormProps> = ({
                 onChange={handleInputChange}
                 placeholder="175"
                 min="0"
-                step="0.01"
+                step="0.0001"
                 className="w-full min-h-[44px] p-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white/8 transition-all"
                 required
               />
@@ -247,22 +226,22 @@ export const StockForm: React.FC<StockFormProps> = ({
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <label className="block text-gray-400 mb-1">Investment Amount</label>
-                  <div className="text-gray-300">{formatCurrency(metrics.investmentAmount)}</div>
+                  <div className="text-gray-300">{formattedMetrics.investmentAmount}</div>
                 </div>
                 <div>
                   <label className="block text-gray-400 mb-1">Current Value</label>
-                  <div className="text-gray-300">{formatCurrency(metrics.currentValue)}</div>
+                  <div className="text-gray-300">{formattedMetrics.currentValue}</div>
                 </div>
                 <div>
                   <label className="block text-gray-400 mb-1">Profit/Loss</label>
-                  <div className={metrics.profitLoss >= 0 ? 'text-green-400' : 'text-red-400'}>
-                    {formatCurrency(metrics.profitLoss)}
+                  <div className={getProfitLossColorClass(metrics.profitLoss)}>
+                    {formattedMetrics.profitLoss}
                   </div>
                 </div>
                 <div>
                   <label className="block text-gray-400 mb-1">Return Rate</label>
-                  <div className={metrics.returnRate >= 0 ? 'text-green-400' : 'text-red-400'}>
-                    {formatPercentageValue(metrics.returnRate)}
+                  <div className={getProfitLossColorClass(metrics.returnRate)}>
+                    {formattedMetrics.returnRate}
                   </div>
                 </div>
               </div>

@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { getCurrentUserId } from './authHelpers'
 import type { 
   TargetPortfolioData, 
   CreateTargetPortfolioData, 
@@ -9,16 +10,12 @@ import type { TargetPortfolio, JsonValue } from '../types/database'
 
 class TargetPortfolioService {
   async getTargetPortfolios(): Promise<TargetPortfolioData[]> {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      throw new Error('User not authenticated')
-    }
+    const userId = await getCurrentUserId()
 
     const { data, error } = await supabase
       .from('target_portfolios')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -30,18 +27,14 @@ class TargetPortfolioService {
   }
 
   async createTargetPortfolio(portfolioData: CreateTargetPortfolioData): Promise<TargetPortfolioData> {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      throw new Error('User not authenticated')
-    }
+    const userId = await getCurrentUserId()
 
     const { data, error } = await supabase
       .from('target_portfolios')
       .insert({
         name: portfolioData.name,
         allocations: portfolioData.allocations as unknown as JsonValue,
-        user_id: user.id
+        user_id: userId
       })
       .select()
       .single()
@@ -54,11 +47,7 @@ class TargetPortfolioService {
   }
 
   async updateTargetPortfolio(portfolioData: UpdateTargetPortfolioData): Promise<TargetPortfolioData> {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      throw new Error('User not authenticated')
-    }
+    const userId = await getCurrentUserId()
 
     const updateData: Record<string, JsonValue | string> = {}
     if (portfolioData.name) updateData.name = portfolioData.name
@@ -68,7 +57,7 @@ class TargetPortfolioService {
       .from('target_portfolios')
       .update(updateData)
       .eq('id', portfolioData.id)
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .select()
       .single()
 
@@ -80,17 +69,13 @@ class TargetPortfolioService {
   }
 
   async deleteTargetPortfolio(portfolioId: string): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      throw new Error('User not authenticated')
-    }
+    const userId = await getCurrentUserId()
 
     const { error } = await supabase
       .from('target_portfolios')
       .delete()
       .eq('id', portfolioId)
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
 
     if (error) {
       throw new Error(`Failed to delete target portfolio: ${error.message}`)
@@ -98,17 +83,13 @@ class TargetPortfolioService {
   }
 
   async getTargetPortfolio(portfolioId: string): Promise<TargetPortfolioData | null> {
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      throw new Error('User not authenticated')
-    }
+    const userId = await getCurrentUserId()
 
     const { data, error } = await supabase
       .from('target_portfolios')
       .select('*')
       .eq('id', portfolioId)
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .single()
 
     if (error) {

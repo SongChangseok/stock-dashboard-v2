@@ -145,7 +145,6 @@ export type Updates<T extends keyof Database['public']['Tables']> =
   Database['public']['Tables'][T]['Update']
 
 // Specific table types
-export type Profile = Tables<'profiles'>
 export type Stock = Tables<'stocks'>
 export type TargetPortfolio = Tables<'target_portfolios'>
 

@@ -23,8 +23,12 @@ export interface PortfolioState {
   error: string | null
   fetchStocks: () => Promise<void>
   deleteStock: (stockId: string) => Promise<void>
+  createStock: (stockData: Omit<Stock, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => Promise<void>
+  updateStock: (stockId: string, stockData: Partial<Omit<Stock, 'id' | 'user_id' | 'created_at' | 'updated_at'>>) => Promise<void>
   refreshData: () => void
   updateCalculations: () => void
+  subscribeToRealtime: (userId: string) => () => void
+  loadFromSession: () => void
 }
 
 // Target Portfolio store types
@@ -46,4 +50,69 @@ export interface TargetPortfolioState {
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
   clearError: () => void
+  
+  // Real-time and persistence
+  subscribeToRealtime: (userId: string) => () => void
+  saveSelectedToSession: () => void
+  loadSelectedFromSession: () => void
+}
+
+// Preferences store types
+export interface PreferencesState {
+  // UI preferences
+  viewMode: 'table' | 'cards'
+  currency: string
+  language: string
+  theme: 'light' | 'dark'
+  
+  // Portfolio preferences
+  defaultSortOrder: 'name' | 'value' | 'profit' | 'weight'
+  defaultSortDirection: 'asc' | 'desc'
+  showProfitLoss: boolean
+  showPercentageChange: boolean
+  autoRefreshInterval: number
+  
+  // Chart preferences
+  chartType: 'pie' | 'doughnut' | 'bar'
+  showLegend: boolean
+  showTooltips: boolean
+  animateCharts: boolean
+  
+  // Notification preferences
+  enableNotifications: boolean
+  notifyOnLargeChanges: boolean
+  largeChangeThreshold: number
+  
+  // Rebalancing preferences
+  defaultRebalanceThreshold: number
+  defaultMinimumTradingUnit: number
+  defaultCommission: number
+  
+  // Actions
+  setViewMode: (mode: 'table' | 'cards') => void
+  setCurrency: (currency: string) => void
+  setLanguage: (language: string) => void
+  setTheme: (theme: 'light' | 'dark') => void
+  
+  setSortOrder: (order: 'name' | 'value' | 'profit' | 'weight') => void
+  setSortDirection: (direction: 'asc' | 'desc') => void
+  setShowProfitLoss: (show: boolean) => void
+  setShowPercentageChange: (show: boolean) => void
+  setAutoRefreshInterval: (interval: number) => void
+  
+  setChartType: (type: 'pie' | 'doughnut' | 'bar') => void
+  setShowLegend: (show: boolean) => void
+  setShowTooltips: (show: boolean) => void
+  setAnimateCharts: (animate: boolean) => void
+  
+  setEnableNotifications: (enable: boolean) => void
+  setNotifyOnLargeChanges: (notify: boolean) => void
+  setLargeChangeThreshold: (threshold: number) => void
+  
+  setDefaultRebalanceThreshold: (threshold: number) => void
+  setDefaultMinimumTradingUnit: (unit: number) => void
+  setDefaultCommission: (commission: number) => void
+  
+  updatePreferences: (preferences: Partial<PreferencesState>) => void
+  resetPreferences: () => void
 }
