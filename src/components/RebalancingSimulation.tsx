@@ -1,19 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { formatCurrency } from '../utils'
-import type { RebalancingCalculation, PortfolioSummary, TargetPortfolioData, TargetPortfolioAllocations } from '../types'
-
-interface ChartData {
-  name: string
-  value: number
-  color: string
-}
-
-interface RebalancingSimulationProps {
-  currentPortfolio: PortfolioSummary
-  targetPortfolio: TargetPortfolioData
-  calculations: RebalancingCalculation[]
-}
+import type { RebalancingSimulationProps, RebalancingSimulationChartData, TargetPortfolioAllocations } from '../types'
 
 const COLORS = [
   '#6366F1', '#8B5CF6', '#EC4899', '#EF4444', '#F59E0B', '#10B981',
@@ -63,25 +51,25 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
     }
   }, [currentPortfolio, calculations])
 
-  const currentChartData = currentPortfolio.stocks.map((stock, index) => ({
+  const currentRebalancingSimulationChartData = currentPortfolio.stocks.map((stock, index) => ({
     name: stock.ticker || stock.stock_name,
     value: (stock.totalValue / currentPortfolio.totalValue) * 100,
     color: COLORS[index % COLORS.length]
   }))
 
-  const simulatedChartData = simulatedPortfolio.stocks.map((stock, index) => ({
+  const simulatedRebalancingSimulationChartData = simulatedPortfolio.stocks.map((stock, index) => ({
     name: stock.ticker || stock.stock_name,
     value: (stock.totalValue / simulatedPortfolio.totalValue) * 100,
     color: COLORS[index % COLORS.length]
   }))
 
-  const targetChartData: ChartData[] = (targetPortfolio.allocations as TargetPortfolioAllocations).stocks.map((stock, index) => ({
+  const targetRebalancingSimulationChartData: RebalancingSimulationChartData[] = (targetPortfolio.allocations as TargetPortfolioAllocations).stocks.map((stock, index) => ({
     name: stock.ticker || stock.stock_name,
     value: stock.target_weight,
     color: COLORS[index % COLORS.length]
   }))
 
-  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { payload: ChartData }[] }) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { payload: RebalancingSimulationChartData }[] }) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload
       return (
@@ -132,7 +120,7 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={showAfter ? simulatedChartData : currentChartData}
+                  data={showAfter ? simulatedRebalancingSimulationChartData : currentRebalancingSimulationChartData}
                   cx="50%"
                   cy="50%"
                   outerRadius={window.innerWidth < 768 ? 80 : 100}
@@ -141,7 +129,7 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
                   strokeWidth={2}
                   stroke="rgba(255,255,255,0.1)"
                 >
-                  {(showAfter ? simulatedChartData : currentChartData).map((entry, index) => (
+                  {(showAfter ? simulatedRebalancingSimulationChartData : currentRebalancingSimulationChartData).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -158,7 +146,7 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={targetChartData}
+                  data={targetRebalancingSimulationChartData}
                   cx="50%"
                   cy="50%"
                   outerRadius={window.innerWidth < 768 ? 80 : 100}
@@ -167,7 +155,7 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
                   strokeWidth={2}
                   stroke="rgba(255,255,255,0.1)"
                 >
-                  {targetChartData.map((entry, index) => (
+                  {targetRebalancingSimulationChartData.map((entry, index) => (
                     <Cell key={`target-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -263,7 +251,7 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
       <div className="space-y-3">
         <h4 className="text-base font-medium">Allocation Comparison</h4>
         <div className="grid gap-2">
-          {(showAfter ? simulatedChartData : currentChartData).map((item, index) => (
+          {(showAfter ? simulatedRebalancingSimulationChartData : currentRebalancingSimulationChartData).map((item, index) => (
             <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
               <div className="flex items-center gap-3">
                 <div 
@@ -281,7 +269,7 @@ const RebalancingSimulation: React.FC<RebalancingSimulationProps> = ({
                 </div>
                 <div className="text-right">
                   <div className="text-indigo-400">
-                    {targetChartData.find((t) => t.name === item.name)?.value.toFixed(1) || '0.0'}%
+                    {targetRebalancingSimulationChartData.find((t) => t.name === item.name)?.value.toFixed(1) || '0.0'}%
                   </div>
                   <div className="text-xs text-gray-400">Target</div>
                 </div>

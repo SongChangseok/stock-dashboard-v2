@@ -1,11 +1,6 @@
 import React from 'react'
-import type { RebalancingCalculation } from '../types'
+import type { TradingGuideCardProps } from '../types'
 import { formatCurrency } from '../utils'
-
-interface TradingGuideCardProps {
-  calculation: RebalancingCalculation
-  commission: number
-}
 
 const TradingGuideCard: React.FC<TradingGuideCardProps> = ({
   calculation,

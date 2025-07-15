@@ -6,7 +6,12 @@
 import type { 
   PortfolioSummary, 
   TargetPortfolioData, 
-  RebalancingCalculation
+  RebalancingCalculation,
+  PortfolioStockComparison,
+  PortfolioAnalytics,
+  RiskMetrics,
+  PerformanceMetrics,
+  TradingInsights
 } from '../types'
 import { 
   calculateWeightDifference, 
@@ -15,46 +20,6 @@ import {
   calculateStockWeight
 } from '../utils/calculations'
 import { BUSINESS_RULES } from '../utils/constants'
-
-export interface PortfolioComparison {
-  currentWeight: number
-  targetWeight: number
-  difference: number
-  isSignificant: boolean
-  action: 'buy' | 'sell' | 'hold'
-}
-
-export interface PortfolioAnalytics {
-  totalValue: number
-  stockCount: number
-  diversificationScore: number
-  riskMetrics: RiskMetrics
-  performanceMetrics: PerformanceMetrics
-}
-
-export interface RiskMetrics {
-  concentration: number // Highest single stock weight
-  volatility: number // Portfolio volatility estimate
-  diversificationRatio: number // 1 = perfectly diversified
-}
-
-export interface PerformanceMetrics {
-  totalReturn: number
-  totalReturnPercentage: number
-  topPerformer: string | null
-  worstPerformer: string | null
-  winRate: number // Percentage of profitable positions
-}
-
-export interface TradingInsights {
-  totalTrades: number
-  buyTrades: number
-  sellTrades: number
-  totalValue: number
-  totalCommission: number
-  efficiency: number // Value moved per trade
-  priority: 'high' | 'medium' | 'low'
-}
 
 export class PortfolioAnalyticsService {
   /**
@@ -66,8 +31,8 @@ export class PortfolioAnalyticsService {
   static comparePortfolios(
     currentPortfolio: PortfolioSummary,
     targetPortfolio: TargetPortfolioData
-  ): Map<string, PortfolioComparison> {
-    const comparison = new Map<string, PortfolioComparison>()
+  ): Map<string, PortfolioStockComparison> {
+    const comparison = new Map<string, PortfolioStockComparison>()
     
     // Create stock mapping
     const currentStockMap = new Map(

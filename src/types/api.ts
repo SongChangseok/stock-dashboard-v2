@@ -23,3 +23,9 @@ export interface ApiError {
   code?: string
   details?: unknown
 }
+
+// Validation types
+export interface ValidationResult {
+  isValid: boolean
+  errors: string[]
+}

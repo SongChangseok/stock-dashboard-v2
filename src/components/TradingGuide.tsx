@@ -2,14 +2,7 @@ import React, { useState } from 'react'
 import TradingGuideCard from './TradingGuideCard'
 import RebalancingSimulation from './RebalancingSimulation'
 import { formatCurrency } from '../utils'
-import type { RebalancingCalculation, PortfolioSummary, TargetPortfolioData } from '../types'
-
-interface TradingGuideProps {
-  currentPortfolio: PortfolioSummary
-  targetPortfolio: TargetPortfolioData
-  calculations: RebalancingCalculation[]
-  commission: number
-}
+import type { TradingGuideProps } from '../types'
 
 const TradingGuide: React.FC<TradingGuideProps> = ({
   currentPortfolio,

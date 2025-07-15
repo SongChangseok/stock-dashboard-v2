@@ -6,6 +6,9 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+// Type for JSON data that will be stored in database
+export type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[]
+
 export interface Database {
   public: {
     Tables: {

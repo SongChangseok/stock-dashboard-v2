@@ -5,10 +5,7 @@ import type {
   UpdateTargetPortfolioData,
   TargetPortfolioAllocations 
 } from '../types/targetPortfolio'
-import type { TargetPortfolio } from '../types/database'
-
-// Type for JSON data that will be stored in database
-type JsonValue = string | number | boolean | null | { [key: string]: JsonValue } | JsonValue[]
+import type { TargetPortfolio, JsonValue } from '../types/database'
 
 class TargetPortfolioService {
   async getTargetPortfolios(): Promise<TargetPortfolioData[]> {

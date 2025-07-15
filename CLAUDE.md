@@ -92,6 +92,7 @@ src/
 │   ├── stockService.ts              # Stock data CRUD operations
 │   ├── targetPortfolioService.ts    # Target portfolio database operations
 │   ├── rebalancingService.ts        # Rebalancing calculations and algorithms
+│   ├── portfolioAnalyticsService.ts # Portfolio analytics and insights
 │   └── supabase.ts                  # Database configuration
 ├── stores/
 │   ├── portfolioStore.ts            # Current portfolio state management

@@ -1,5 +1,6 @@
 import { Stock, StockWithValue, PortfolioSummary } from './database'
 import { TargetPortfolioData } from './targetPortfolio'
+import { RebalancingCalculation } from './rebalancing'
 
 // Auth component types
 export interface AuthFormProps {
@@ -95,4 +96,30 @@ export interface NavItem {
   id: string
   label: string
   route?: string
+}
+
+// Trading Guide component types
+export interface TradingGuideCardProps {
+  calculation: RebalancingCalculation
+  commission: number
+}
+
+export interface TradingGuideProps {
+  currentPortfolio: PortfolioSummary
+  targetPortfolio: TargetPortfolioData
+  calculations: RebalancingCalculation[]
+  commission: number
+}
+
+// Rebalancing Simulation component types
+export interface RebalancingSimulationChartData {
+  name: string
+  value: number
+  color: string
+}
+
+export interface RebalancingSimulationProps {
+  currentPortfolio: PortfolioSummary
+  targetPortfolio: TargetPortfolioData
+  calculations: RebalancingCalculation[]
 }

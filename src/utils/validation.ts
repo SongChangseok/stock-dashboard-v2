@@ -4,6 +4,7 @@
  */
 
 import { VALIDATION_RULES, BUSINESS_RULES } from './constants'
+import type { ValidationResult } from '../types/api'
 
 /**
  * Validate if a value is a positive number
@@ -180,13 +181,6 @@ export const validateRebalanceThreshold = (threshold: number): boolean => {
   return validateNumberRange(threshold, 0, 100)
 }
 
-/**
- * Comprehensive form validation result
- */
-export interface ValidationResult {
-  isValid: boolean
-  errors: string[]
-}
 
 /**
  * Validate a complete stock form
