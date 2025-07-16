@@ -209,6 +209,8 @@ export const useTargetPortfolioStore = create<TargetPortfolioState>((set, get) =
     const cachedPortfolio = loadFromSession(SESSION_KEYS.SELECTED_TARGET_PORTFOLIO)
     if (cachedPortfolio) {
       set({ selectedTargetPortfolio: cachedPortfolio })
+    } else {
+      set({ selectedTargetPortfolio: null })
     }
   }
 }))

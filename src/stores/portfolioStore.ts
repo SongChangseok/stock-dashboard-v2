@@ -87,6 +87,7 @@ export const usePortfolioStore = create<PortfolioState>()(
     const optimisticStock = {
       ...stockData,
       id: tempId,
+      user_id: 'temp_user',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     }
@@ -189,6 +190,8 @@ export const usePortfolioStore = create<PortfolioState>()(
     if (cachedStocks) {
       set({ stocks: cachedStocks })
       get().updateCalculations()
+    } else {
+      set({ stocks: [] })
     }
   }
 })))
