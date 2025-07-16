@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { TargetPortfolioList, TargetPortfolioForm } from '../components'
+import { TargetPortfolioList, TargetPortfolioForm, TargetPortfolioListSkeleton } from '../components'
 import { useTargetPortfolioStore } from '../stores'
 import type { TargetPortfolioData } from '../types'
 
@@ -68,12 +68,20 @@ export const TargetPortfolioPage: React.FC = () => {
   // Loading state
   if (isLoading && targetPortfolios.length === 0) {
     return (
-      <div className="flex items-center justify-center" style={{ minHeight: 'calc(100vh - 160px)' }}>
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading target portfolios...</p>
+      <>
+        {/* Page Title - Desktop Only */}
+        <div className="hidden md:block mb-8">
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2">Target Portfolio</h1>
+              <p className="text-gray-400">Set your ideal portfolio allocation and target weights</p>
+            </div>
+          </div>
         </div>
-      </div>
+
+        {/* Target Portfolio Content Skeleton */}
+        <TargetPortfolioListSkeleton count={2} />
+      </>
     )
   }
 

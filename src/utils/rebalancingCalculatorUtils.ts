@@ -3,6 +3,8 @@
  * Separates calculation and transformation logic from presentation
  */
 
+import type { RebalancingCalculation } from '../types'
+
 
 /**
  * Format quantity change display
@@ -31,15 +33,7 @@ export const formatDifference = (difference: number): string => {
  * @param calculations - Rebalancing calculations
  * @returns Filtered calculations
  */
-export const filterDisplayCalculations = (calculations: Array<{
-  currentWeight: number
-  targetWeight: number
-  [key: string]: unknown
-}>): Array<{
-  currentWeight: number
-  targetWeight: number
-  [key: string]: unknown
-}> => {
+export const filterDisplayCalculations = (calculations: RebalancingCalculation[]): RebalancingCalculation[] => {
   return calculations.filter(calc => calc.currentWeight > 0 || calc.targetWeight > 0)
 }
 

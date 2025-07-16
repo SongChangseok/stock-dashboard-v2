@@ -5,7 +5,10 @@ import {
   StockList, 
   PortfolioSummary, 
   FloatingActionButton,
-  PortfolioChart
+  PortfolioChart,
+  StockListSkeleton,
+  PortfolioChartSkeleton,
+  SummaryCardSkeleton
 } from '../components'
 import type { Stock } from '../types/database'
 
@@ -37,12 +40,26 @@ export const DashboardPage: React.FC = () => {
 
   if (showInitialLoading) {
     return (
-      <div className="flex items-center justify-center" style={{ minHeight: 'calc(100vh - 160px)' }}>
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading portfolio...</p>
+      <>
+        {/* Page Title - Desktop Only */}
+        <div className="hidden md:block mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+          <p className="text-gray-400">Manage your portfolio and track real-time performance</p>
         </div>
-      </div>
+
+        {/* Portfolio Summary Skeleton */}
+        <div className="mb-4 md:mb-8">
+          <SummaryCardSkeleton count={3} />
+        </div>
+
+        {/* Portfolio Chart Skeleton */}
+        <div className="mb-4 md:mb-8">
+          <PortfolioChartSkeleton showLegend={true} />
+        </div>
+
+        {/* Stock List Skeleton */}
+        <StockListSkeleton count={3} />
+      </>
     )
   }
 

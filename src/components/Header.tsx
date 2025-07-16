@@ -33,6 +33,8 @@ export const Header: React.FC<HeaderProps> = ({
   const location = useLocation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
+  // Swipe navigation is handled in the Layout component
+
   const handleNavClick = (item: NavItem) => {
     if (item.route) {
       navigate(item.route)

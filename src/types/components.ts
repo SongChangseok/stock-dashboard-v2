@@ -123,3 +123,32 @@ export interface RebalancingSimulationProps {
   targetPortfolio: TargetPortfolioData
   calculations: RebalancingCalculation[]
 }
+
+// Skeleton Loader component types
+export interface SkeletonLoaderProps {
+  variant?: 'text' | 'circular' | 'rectangular' | 'rounded'
+  width?: string | number
+  height?: string | number
+  className?: string
+}
+
+export interface StockListSkeletonProps {
+  count?: number
+}
+
+export interface PortfolioChartSkeletonProps {
+  showLegend?: boolean
+}
+
+export interface TargetPortfolioListSkeletonProps {
+  count?: number
+}
+
+export interface FormSkeletonProps {
+  fields?: number
+  hasSubmitButton?: boolean
+}
+
+export interface SummaryCardSkeletonProps {
+  count?: number
+}

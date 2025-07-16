@@ -6,3 +6,20 @@ export { useResponsive } from './useResponsive'
 export { usePerformanceMonitor } from './usePerformanceMonitor'
 export { useErrorHandler } from './useErrorHandler'
 export { useLoadingState, useAnyLoading } from './useLoadingState'
+export { 
+  useTouchOptimization, 
+  useSwipeNavigation, 
+  useTouchButton, 
+  useTouchList, 
+  useDeviceCapabilities 
+} from './useTouchOptimization'
+export {
+  useKeyboardNavigation,
+  useFocusTrap,
+  useAnnouncer,
+  useAccessibleButton,
+  useAccessibleField,
+  useAccessibleTable,
+  useAccessibilityPreferences,
+  useAccessibility
+} from './useAccessibility'
