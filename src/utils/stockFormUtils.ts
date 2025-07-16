@@ -107,11 +107,3 @@ export const transformStockToFormData = (stock: Stock): StockFormData => {
   }
 }
 
-/**
- * Get profit/loss color class
- * @param value - Profit/loss value
- * @returns Tailwind color class
- */
-export const getProfitLossColorClass = (value: number): string => {
-  return value >= 0 ? 'text-green-400' : 'text-red-400'
-}

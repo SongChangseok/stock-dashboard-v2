@@ -1,4 +1,3 @@
-import React from 'react'
 import { useLoadingState, useAnyLoading } from '../hooks/useLoadingState'
 
 interface LoadingIndicatorProps {
@@ -9,13 +8,13 @@ interface LoadingIndicatorProps {
   className?: string
 }
 
-export const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
+export const LoadingIndicator = ({
   operationId,
   operationIds,
   size = 'md',
   variant = 'spinner',
   className = ''
-}) => {
+}: LoadingIndicatorProps) => {
   const singleState = useLoadingState(operationId || '')
   const anyLoading = useAnyLoading(operationIds || [])
   

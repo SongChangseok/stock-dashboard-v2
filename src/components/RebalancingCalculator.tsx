@@ -3,17 +3,14 @@ import { rebalancingService } from '../services'
 import { formatCurrency, BUSINESS_RULES } from '../utils'
 import { validateRebalanceThreshold, validateCommission, parseNumericInput } from '../utils/validation'
 import { 
-  getActionColorClass, 
-  getQuantityChangeColorClass, 
-  getValueChangeColorClass, 
-  getDifferenceColorClass, 
-  getStatusColorClass, 
+ 
   formatQuantityChange, 
   formatDifference, 
   filterDisplayCalculations, 
   formatRecommendation, 
   getRecommendationClass 
 } from '../utils/rebalancingCalculatorUtils'
+import { getActionColorClass, getQuantityChangeColorClass, getValueChangeColorClass, getDifferenceColorClass, getStatusColorClass } from '../utils'
 import { usePerformanceMonitor } from '../hooks'
 import type { RebalancingOptions, RebalancingCalculatorProps } from '../types'
 

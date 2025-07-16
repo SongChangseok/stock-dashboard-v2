@@ -32,7 +32,7 @@ export const createLoadingState = (initialState: LoadingState = 'idle'): Loading
  * Update loading state
  */
 export const updateLoadingState = (
-  current: LoadingStateManager,
+  _current: LoadingStateManager,
   newState: LoadingState,
   error: string | null = null
 ): LoadingStateManager => {

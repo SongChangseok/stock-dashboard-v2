@@ -1,8 +1,7 @@
-import React from 'react'
 import type { PortfolioSummaryProps } from '../types'
 import { formatCurrency, formatPercentageValue, calculateSimulatedDailyChange, BUSINESS_RULES } from '../utils'
 
-export const PortfolioSummary: React.FC<PortfolioSummaryProps> = ({ summary }) => {
+export const PortfolioSummary = ({ summary }: PortfolioSummaryProps) => {
   const dailyChangeData = calculateSimulatedDailyChange(summary.totalValue, BUSINESS_RULES.DAILY_CHANGE_SIMULATION)
 
   const summaryCards = [

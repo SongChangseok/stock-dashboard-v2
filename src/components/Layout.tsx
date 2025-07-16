@@ -1,9 +1,8 @@
-import React from 'react'
 import { Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks'
 import { Header } from './'
 
-export const Layout: React.FC = () => {
+export const Layout = () => {
   const { user, signOut } = useAuth()
 
   const handleSignOut = async () => {

@@ -47,25 +47,6 @@ export const isWeightValid = (totalWeight: number, tolerance = 0.01): boolean =>
   return Math.abs(totalWeight - 100) <= tolerance
 }
 
-/**
- * Get weight status color class
- * @param totalWeight - Total weight percentage
- * @returns Tailwind color class
- */
-export const getWeightColorClass = (totalWeight: number): string => {
-  if (isWeightValid(totalWeight)) return 'text-green-400'
-  return totalWeight > 100 ? 'text-red-400' : 'text-yellow-400'
-}
-
-/**
- * Get weight bar color class
- * @param totalWeight - Total weight percentage
- * @returns Tailwind color class
- */
-export const getWeightBarColorClass = (totalWeight: number): string => {
-  if (isWeightValid(totalWeight)) return 'bg-green-500'
-  return totalWeight > 100 ? 'bg-red-500' : 'bg-yellow-500'
-}
 
 /**
  * Filter available stocks for selection (excluding already selected)

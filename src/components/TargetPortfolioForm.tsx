@@ -6,13 +6,13 @@ import {
   calculateEqualWeights, 
   calculateTotalWeight, 
   isWeightValid, 
-  getWeightColorClass, 
-  getWeightBarColorClass, 
+ 
   getAvailableStocksForSelection, 
   createNewStockEntry, 
   updateStockWithSelection, 
   transformPortfolioFormData 
 } from '../utils/targetPortfolioFormUtils'
+import { getWeightColorClass, getWeightBarColorClass } from '../utils'
 import type { TargetPortfolioFormProps, TargetPortfolioStock, PortfolioValidationResult, Stock } from '../types'
 
 export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({

@@ -1,10 +1,9 @@
-import React from 'react'
 import type { FloatingActionButtonProps } from '../types'
 
-export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({ 
+export const FloatingActionButton = ({ 
   onClick,
   className = ''
-}) => {
+}: FloatingActionButtonProps) => {
   return (
     <button
       onClick={onClick}

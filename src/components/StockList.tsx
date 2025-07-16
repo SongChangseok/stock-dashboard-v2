@@ -1,14 +1,13 @@
-import React from 'react'
 import type { StockWithValue } from '../types/database'
 import type { StockListProps } from '../types'
 import { formatCurrency, formatPercentageValue } from '../utils'
 
-export const StockList: React.FC<StockListProps> = ({
+export const StockList = ({
   stocks,
   onEdit,
   onDelete,
   onAdd
-}) => {
+}: StockListProps) => {
   const handleDelete = (stock: StockWithValue) => {
     if (window.confirm(`Are you sure you want to delete ${stock.stock_name}?`)) {
       onDelete(stock.id)

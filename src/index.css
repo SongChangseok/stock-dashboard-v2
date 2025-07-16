@@ -81,3 +81,34 @@ body {
   backdrop-filter: blur(2px);
   background-color: rgba(0, 0, 0, 0.3);
 }
+
+/* Glassmorphism Component Classes */
+@layer components {
+  .glass-card {
+    @apply bg-white/5 border border-white/10 rounded-xl backdrop-blur-xl;
+  }
+  
+  .glass-card-sm {
+    @apply glass-card p-3 md:p-4;
+  }
+  
+  .glass-card-md {
+    @apply glass-card p-4 md:p-6;
+  }
+  
+  .glass-card-lg {
+    @apply glass-card p-6 md:p-8;
+  }
+  
+  .btn-primary {
+    @apply px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors min-h-[44px];
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors min-h-[44px];
+  }
+  
+  .btn-danger {
+    @apply px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors min-h-[44px];
+  }
+}

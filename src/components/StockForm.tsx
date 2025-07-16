@@ -9,9 +9,9 @@ import {
   transformFormToCreateData, 
   transformFormToUpdateData, 
   transformStockToFormData, 
-  getProfitLossColorClass,
   type StockFormData 
 } from '../utils/stockFormUtils'
+import { getProfitLossColorClass } from '../utils'
 
 export const StockForm: React.FC<StockFormProps> = ({
   isOpen,
