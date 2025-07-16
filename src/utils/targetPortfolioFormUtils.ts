@@ -37,15 +37,6 @@ export const calculateTotalWeight = (stocks: TargetPortfolioStock[]): number => 
   return stocks.reduce((sum, stock) => sum + stock.target_weight, 0)
 }
 
-/**
- * Check if total weight is valid (equals 100% within tolerance)
- * @param totalWeight - Total weight percentage
- * @param tolerance - Allowed tolerance (default: 0.01)
- * @returns Boolean indicating if weight is valid
- */
-export const isWeightValid = (totalWeight: number, tolerance = 0.01): boolean => {
-  return Math.abs(totalWeight - 100) <= tolerance
-}
 
 
 /**

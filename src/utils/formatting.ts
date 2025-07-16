@@ -84,3 +84,24 @@ export const formatCompactNumber = (value: number, locale = 'en-US'): string => 
 export const formatDecimal = (value: number, decimals = 2): string => {
   return value.toFixed(decimals)
 }
+
+/**
+ * Format quantity change display with sign indicator
+ * @param quantityChange - Quantity change value
+ * @returns Formatted quantity change string
+ */
+export const formatQuantityChange = (quantityChange: number): string => {
+  if (quantityChange === 0) return '0'
+  const sign = quantityChange > 0 ? '+' : ''
+  return `${sign}${quantityChange.toFixed(0)}`
+}
+
+/**
+ * Format difference display with sign indicator
+ * @param difference - Weight difference percentage
+ * @returns Formatted difference string
+ */
+export const formatDifference = (difference: number): string => {
+  const sign = difference > 0 ? '+' : ''
+  return `${sign}${difference.toFixed(1)}%`
+}

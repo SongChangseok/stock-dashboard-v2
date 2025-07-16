@@ -4,6 +4,7 @@
  */
 
 import { formatCurrency, formatPercentageValue } from './formatting'
+import { calculateStockMetrics as calculateStockMetricsFromValues, type StockMetrics } from './calculations'
 import type { Stock } from '../types'
 
 /**
@@ -18,16 +19,6 @@ export interface StockFormData {
 }
 
 /**
- * Stock metrics interface
- */
-export interface StockMetrics {
-  investmentAmount: number
-  currentValue: number
-  profitLoss: number
-  returnRate: number
-}
-
-/**
  * Calculate stock metrics from form data
  * @param formData - Stock form data
  * @returns Calculated metrics
@@ -37,17 +28,7 @@ export const calculateStockMetrics = (formData: StockFormData): StockMetrics => 
   const purchasePrice = parseFloat(formData.purchase_price) || 0
   const currentPrice = parseFloat(formData.current_price) || 0
 
-  const investmentAmount = quantity * purchasePrice
-  const currentValue = quantity * currentPrice
-  const profitLoss = currentValue - investmentAmount
-  const returnRate = investmentAmount > 0 ? (profitLoss / investmentAmount) * 100 : 0
-
-  return {
-    investmentAmount,
-    currentValue,
-    profitLoss,
-    returnRate
-  }
+  return calculateStockMetricsFromValues(quantity, purchasePrice, currentPrice)
 }
 
 /**

@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useTargetPortfolioStore, usePortfolioStore } from '../stores'
 import { errorService } from '../services/errorService'
-import { validateTargetPortfolioForm } from '../utils/validation'
+import { validateTargetPortfolioForm, isWeightValid } from '../utils/validation'
 import { 
   calculateEqualWeights, 
   calculateTotalWeight, 
-  isWeightValid, 
- 
   getAvailableStocksForSelection, 
   createNewStockEntry, 
   updateStockWithSelection, 
   transformPortfolioFormData 
 } from '../utils/targetPortfolioFormUtils'
-import { getWeightColorClass, getWeightBarColorClass } from '../utils'
+import { getWeightTextColor, getWeightBgColor } from '../utils'
 import type { TargetPortfolioFormProps, TargetPortfolioStock, PortfolioValidationResult, Stock } from '../types'
 
 export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
@@ -208,13 +206,13 @@ export const TargetPortfolioForm: React.FC<TargetPortfolioFormProps> = ({
             <div className="bg-white/5 border border-white/10 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Total Weight:</span>
-                <span className={`text-lg font-semibold ${getWeightColorClass(totalWeight)}`}>
+                <span className={`text-lg font-semibold ${getWeightTextColor(totalWeight)}`}>
                   {totalWeight.toFixed(1)}%
                 </span>
               </div>
               <div className="mt-2 w-full bg-gray-700 rounded-full h-2">
                 <div 
-                  className={`h-2 rounded-full transition-all duration-300 ${getWeightBarColorClass(totalWeight)}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${getWeightBgColor(totalWeight)}`}
                   style={{ width: `${Math.min(totalWeight, 100)}%` }}
                 />
               </div>

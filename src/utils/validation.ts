@@ -68,6 +68,16 @@ export const validateTotalPortfolioWeight = (weights: number[], tolerance = 0.01
 }
 
 /**
+ * Check if a single total weight value is valid (equals 100% within tolerance)
+ * @param totalWeight - Total weight percentage
+ * @param tolerance - Allowed tolerance (default: 0.01)
+ * @returns Boolean indicating if weight is valid
+ */
+export const isWeightValid = (totalWeight: number, tolerance = 0.01): boolean => {
+  return Math.abs(totalWeight - BUSINESS_RULES.TOTAL_PORTFOLIO_WEIGHT) <= tolerance
+}
+
+/**
  * Validate string length
  * @param value - String to validate
  * @param minLength - Minimum allowed length

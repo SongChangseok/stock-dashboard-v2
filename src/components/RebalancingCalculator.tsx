@@ -1,16 +1,13 @@
 import React, { useState, useMemo } from 'react'
 import { rebalancingService } from '../services'
-import { formatCurrency, BUSINESS_RULES } from '../utils'
+import { formatCurrency, formatQuantityChange, formatDifference, BUSINESS_RULES } from '../utils'
 import { validateRebalanceThreshold, validateCommission, parseNumericInput } from '../utils/validation'
 import { 
- 
-  formatQuantityChange, 
-  formatDifference, 
   filterDisplayCalculations, 
   formatRecommendation, 
   getRecommendationClass 
 } from '../utils/rebalancingCalculatorUtils'
-import { getActionColorClass, getQuantityChangeColorClass, getValueChangeColorClass, getDifferenceColorClass, getStatusColorClass } from '../utils'
+import { getActionColor, getStatusTextColor, getDifferenceColor, getBalancedStatusColor } from '../utils'
 import { usePerformanceMonitor } from '../hooks'
 import type { RebalancingOptions, RebalancingCalculatorProps } from '../types'
 
@@ -114,7 +111,7 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
         <div className="bg-white/5 rounded-lg p-3">
           <div className="text-xs text-gray-400 mb-1">Status</div>
           <div
-            className={`font-semibold ${getStatusColorClass(rebalancingResult.isBalanced)}`}
+            className={`font-semibold ${getBalancedStatusColor(rebalancingResult.isBalanced)}`}
           >
             {rebalancingResult.isBalanced ? 'Balanced' : 'Needs Rebalancing'}
           </div>
@@ -246,13 +243,13 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
                         {calc.targetWeight.toFixed(1)}%
                       </td>
                       <td
-                        className={`text-right p-2 ${getDifferenceColorClass(calc.difference)}`}
+                        className={`text-right p-2 ${getDifferenceColor(calc.difference)}`}
                       >
                         {formatDifference(calc.difference)}
                       </td>
                       <td className="text-right p-2">
                         <span
-                          className={`px-2 py-1 rounded text-xs ${getActionColorClass(calc.action)}`}
+                          className={`px-2 py-1 rounded text-xs ${getActionColor(calc.action)}`}
                         >
                           {calc.action.toUpperCase()}
                         </span>
@@ -260,7 +257,7 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
                       <td className="text-right p-2">
                         {calc.adjustedQuantityChange !== 0 ? (
                           <span
-                            className={getQuantityChangeColorClass(calc.adjustedQuantityChange)}
+                            className={getStatusTextColor(calc.adjustedQuantityChange)}
                           >
                             {formatQuantityChange(calc.adjustedQuantityChange)}
                           </span>
@@ -271,7 +268,7 @@ const RebalancingCalculator: React.FC<RebalancingCalculatorProps> = React.memo((
                       <td className="text-right p-2">
                         {calc.adjustedValueChange !== 0 ? (
                           <span
-                            className={getValueChangeColorClass(calc.adjustedValueChange)}
+                            className={getStatusTextColor(calc.adjustedValueChange)}
                           >
                             {formatCurrency(calc.adjustedValueChange)}
                           </span>

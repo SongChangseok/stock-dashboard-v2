@@ -232,3 +232,38 @@ export const calculateSimulatedDailyChange = (
     isPositive: changeAmount >= 0
   }
 }
+
+/**
+ * Stock metrics calculation result
+ */
+export interface StockMetrics {
+  investmentAmount: number
+  currentValue: number
+  profitLoss: number
+  returnRate: number
+}
+
+/**
+ * Calculate stock metrics from form input values
+ * @param quantity - Number of shares
+ * @param purchasePrice - Purchase price per share
+ * @param currentPrice - Current price per share
+ * @returns Calculated metrics
+ */
+export const calculateStockMetrics = (
+  quantity: number,
+  purchasePrice: number,
+  currentPrice: number
+): StockMetrics => {
+  const investmentAmount = quantity * purchasePrice
+  const currentValue = quantity * currentPrice
+  const profitLoss = currentValue - investmentAmount
+  const returnRate = investmentAmount > 0 ? (profitLoss / investmentAmount) * 100 : 0
+
+  return {
+    investmentAmount,
+    currentValue,
+    profitLoss,
+    returnRate
+  }
+}

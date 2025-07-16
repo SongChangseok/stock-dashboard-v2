@@ -6,26 +6,6 @@
 import type { RebalancingCalculation } from '../types'
 
 
-/**
- * Format quantity change display
- * @param quantityChange - Quantity change value
- * @returns Formatted quantity change string
- */
-export const formatQuantityChange = (quantityChange: number): string => {
-  if (quantityChange === 0) return '0'
-  const sign = quantityChange > 0 ? '+' : ''
-  return `${sign}${quantityChange.toFixed(0)}`
-}
-
-/**
- * Format difference display
- * @param difference - Weight difference percentage
- * @returns Formatted difference string
- */
-export const formatDifference = (difference: number): string => {
-  const sign = difference > 0 ? '+' : ''
-  return `${sign}${difference.toFixed(1)}%`
-}
 
 
 /**

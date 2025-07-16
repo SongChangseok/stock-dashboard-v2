@@ -11,7 +11,7 @@ import {
   transformStockToFormData, 
   type StockFormData 
 } from '../utils/stockFormUtils'
-import { getProfitLossColorClass } from '../utils'
+import { getStatusTextColor } from '../utils'
 
 export const StockForm: React.FC<StockFormProps> = ({
   isOpen,
@@ -234,13 +234,13 @@ export const StockForm: React.FC<StockFormProps> = ({
                 </div>
                 <div>
                   <label className="block text-gray-400 mb-1">Profit/Loss</label>
-                  <div className={getProfitLossColorClass(metrics.profitLoss)}>
+                  <div className={getStatusTextColor(metrics.profitLoss)}>
                     {formattedMetrics.profitLoss}
                   </div>
                 </div>
                 <div>
                   <label className="block text-gray-400 mb-1">Return Rate</label>
-                  <div className={getProfitLossColorClass(metrics.returnRate)}>
+                  <div className={getStatusTextColor(metrics.returnRate)}>
                     {formattedMetrics.returnRate}
                   </div>
                 </div>

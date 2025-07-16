@@ -120,12 +120,3 @@ export const getStatusTypeColor = (statusType: StatusType): string => {
   }
 }
 
-// Legacy function aliases for backward compatibility
-export const getProfitLossColorClass = (value: number): string => getStatusTextColor(value)
-export const getQuantityChangeColorClass = (quantityChange: number): string => getStatusTextColor(quantityChange)
-export const getValueChangeColorClass = (valueChange: number): string => getStatusTextColor(valueChange)
-export const getWeightColorClass = (totalWeight: number): string => getWeightTextColor(totalWeight)
-export const getWeightBarColorClass = (totalWeight: number): string => getWeightBgColor(totalWeight)
-export const getActionColorClass = (action: string): string => getActionColor(action as ActionType)
-export const getDifferenceColorClass = (difference: number): string => getDifferenceColor(difference)
-export const getStatusColorClass = (isBalanced: boolean): string => getBalancedStatusColor(isBalanced)
