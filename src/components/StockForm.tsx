@@ -3,13 +3,13 @@ import type { StockFormProps, CreateStockData, UpdateStockData } from '../types'
 import { stockService } from '../services/stockService'
 import { errorService } from '../services/errorService'
 import { validateStockForm } from '../utils/validation'
-import { 
-  calculateStockMetrics, 
-  formatStockMetrics, 
-  transformFormToCreateData, 
-  transformFormToUpdateData, 
-  transformStockToFormData, 
-  type StockFormData 
+import {
+  calculateStockMetrics,
+  formatStockMetrics,
+  transformFormToCreateData,
+  transformFormToUpdateData,
+  transformStockToFormData,
+  type StockFormData,
 } from '../utils/stockFormUtils'
 import { getStatusTextColor } from '../utils'
 
@@ -17,14 +17,14 @@ export const StockForm: React.FC<StockFormProps> = ({
   isOpen,
   onClose,
   onSave,
-  editStock
+  editStock,
 }) => {
   const [formData, setFormData] = useState<StockFormData>({
     stock_name: '',
     ticker: '',
     quantity: '',
     purchase_price: '',
-    current_price: ''
+    current_price: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
@@ -38,7 +38,7 @@ export const StockForm: React.FC<StockFormProps> = ({
         ticker: '',
         quantity: '',
         purchase_price: '',
-        current_price: ''
+        current_price: '',
       })
     }
     setErrors({})
@@ -46,9 +46,9 @@ export const StockForm: React.FC<StockFormProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    setFormData((prev) => ({ ...prev, [name]: value }))
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }))
+      setErrors((prev) => ({ ...prev, [name]: '' }))
     }
   }
 
@@ -58,13 +58,19 @@ export const StockForm: React.FC<StockFormProps> = ({
       ticker: formData.ticker,
       quantity: formData.quantity,
       purchase_price: formData.purchase_price,
-      current_price: formData.current_price
+      current_price: formData.current_price,
     })
 
     if (!validationResult.isValid) {
       const newErrors: Record<string, string> = {}
       validationResult.errors.forEach((error, index) => {
-        const fieldMap = ['stock_name', 'ticker', 'quantity', 'purchase_price', 'current_price']
+        const fieldMap = [
+          'stock_name',
+          'ticker',
+          'quantity',
+          'purchase_price',
+          'current_price',
+        ]
         if (index < fieldMap.length) {
           newErrors[fieldMap[index]] = error
         } else {
@@ -81,23 +87,30 @@ export const StockForm: React.FC<StockFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) return
 
     setIsLoading(true)
     try {
       if (editStock) {
-        await stockService.updateStock(transformFormToUpdateData(formData, editStock.id) as UpdateStockData)
+        await stockService.updateStock(
+          transformFormToUpdateData(formData, editStock.id) as UpdateStockData,
+        )
       } else {
-        await stockService.createStock(transformFormToCreateData(formData) as CreateStockData)
+        await stockService.createStock(
+          transformFormToCreateData(formData) as CreateStockData,
+        )
       }
 
       onSave()
       onClose()
     } catch (error) {
-      errorService.handleError(error instanceof Error ? error : new Error('Failed to save stock'), {
-        context: { component: 'StockForm', action: 'submit' }
-      })
+      errorService.handleError(
+        error instanceof Error ? error : new Error('Failed to save stock'),
+        {
+          context: { component: 'StockForm', action: 'submit' },
+        },
+      )
       setErrors({ submit: 'Failed to save stock. Please try again.' })
     } finally {
       setIsLoading(false)
@@ -121,7 +134,12 @@ export const StockForm: React.FC<StockFormProps> = ({
             className="text-gray-400 hover:text-white transition-colors p-1"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path
+                d="M18 6L6 18M6 6l12 12"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
             </svg>
           </button>
         </div>
@@ -197,7 +215,9 @@ export const StockForm: React.FC<StockFormProps> = ({
                   required
                 />
                 {errors.purchase_price && (
-                  <p className="text-red-400 text-sm mt-1">{errors.purchase_price}</p>
+                  <p className="text-red-400 text-sm mt-1">
+                    {errors.purchase_price}
+                  </p>
                 )}
               </div>
             </div>
@@ -218,28 +238,42 @@ export const StockForm: React.FC<StockFormProps> = ({
                 required
               />
               {errors.current_price && (
-                <p className="text-red-400 text-sm mt-1">{errors.current_price}</p>
+                <p className="text-red-400 text-sm mt-1">
+                  {errors.current_price}
+                </p>
               )}
             </div>
 
             <div className="mt-6 pt-4 border-t border-white/10">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <label className="block text-gray-400 mb-1">Investment Amount</label>
-                  <div className="text-gray-300">{formattedMetrics.investmentAmount}</div>
+                  <label className="block text-gray-400 mb-1">
+                    Investment Amount
+                  </label>
+                  <div className="text-gray-300">
+                    {formattedMetrics.investmentAmount}
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-gray-400 mb-1">Current Value</label>
-                  <div className="text-gray-300">{formattedMetrics.currentValue}</div>
+                  <label className="block text-gray-400 mb-1">
+                    Current Value
+                  </label>
+                  <div className="text-gray-300">
+                    {formattedMetrics.currentValue}
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-gray-400 mb-1">Profit/Loss</label>
+                  <label className="block text-gray-400 mb-1">
+                    Profit/Loss
+                  </label>
                   <div className={getStatusTextColor(metrics.profitLoss)}>
                     {formattedMetrics.profitLoss}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-gray-400 mb-1">Return Rate</label>
+                  <label className="block text-gray-400 mb-1">
+                    Return Rate
+                  </label>
                   <div className={getStatusTextColor(metrics.returnRate)}>
                     {formattedMetrics.returnRate}
                   </div>

@@ -152,3 +152,79 @@ export interface FormSkeletonProps {
 export interface SummaryCardSkeletonProps {
   count?: number
 }
+
+// Base Chart component types
+export interface BaseChartProps {
+  data: ChartData[]
+  title?: string
+  height?: number
+  showLegend?: boolean
+  className?: string
+}
+
+// Action Button Group component types
+export interface ActionButtonGroupProps {
+  onEdit: () => void
+  onDelete: () => void
+  onCompare?: () => void
+  isLoading?: boolean
+  deleteText?: string
+  editText?: string
+  compareText?: string
+}
+
+// List Container component types
+export interface ListContainerProps<T = unknown> {
+  title: string
+  items: T[]
+  renderItem: (item: T, index: number) => React.ReactNode
+  emptyMessage?: string
+  className?: string
+}
+
+// Loading Button component types
+export interface LoadingButtonProps {
+  isLoading: boolean
+  onClick?: () => void
+  disabled?: boolean
+  type?: 'button' | 'submit' | 'reset'
+  variant?: 'primary' | 'secondary' | 'danger'
+  size?: 'sm' | 'md' | 'lg'
+  className?: string
+  children: React.ReactNode
+}
+
+// Empty State component types
+export interface EmptyStateProps {
+  title: string
+  description?: string
+  actionLabel?: string
+  onAction?: () => void
+  icon?: React.ReactNode
+  className?: string
+}
+
+// Card component types
+export interface CardProps {
+  title?: string
+  subtitle?: string
+  children: React.ReactNode
+  actions?: React.ReactNode
+  className?: string
+  variant?: 'default' | 'outlined' | 'elevated'
+}
+
+// Form Field component types
+export interface FormFieldProps {
+  label: string
+  name: string
+  type?: 'text' | 'number' | 'email' | 'password' | 'textarea' | 'select'
+  value: string | number
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
+  error?: string
+  placeholder?: string
+  required?: boolean
+  disabled?: boolean
+  options?: Array<{ value: string | number; label: string }>
+  className?: string
+}
