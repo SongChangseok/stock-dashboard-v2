@@ -49,7 +49,7 @@ function App() {
                 <TargetPortfolioPage />
               </ErrorBoundary>
             } />
-            <Route path="analytics" element={
+            <Route path="portfolio-comparison" element={
               <ErrorBoundary>
                 <PortfolioComparisonPage />
               </ErrorBoundary>
