@@ -86,13 +86,6 @@ export const PortfolioComparisonPage: React.FC = () => {
 
   return (
     <div className="space-y-6 md:space-y-8">
-      {/* Header */}
-      <div className="px-4 md:px-0">
-        <h1 className="text-2xl md:text-3xl font-bold mb-2">Portfolio Comparison</h1>
-        <p className="text-gray-400 text-sm md:text-base">
-          Compare your current portfolio allocation with target portfolios
-        </p>
-      </div>
 
       {/* Target Portfolio Selection */}
       <div className="px-4 md:px-0">

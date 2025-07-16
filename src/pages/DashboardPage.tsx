@@ -41,11 +41,6 @@ export const DashboardPage: React.FC = () => {
   if (showInitialLoading) {
     return (
       <>
-        {/* Page Title - Desktop Only */}
-        <div className="hidden md:block mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-          <p className="text-gray-400">Manage your portfolio and track real-time performance</p>
-        </div>
 
         {/* Portfolio Summary Skeleton */}
         <div className="mb-4 md:mb-8">
@@ -82,11 +77,6 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <>
-      {/* Page Title - Desktop Only */}
-      <div className="hidden md:block mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
-        <p className="text-gray-400">Manage your portfolio and track real-time performance</p>
-      </div>
 
       {/* Portfolio Summary */}
       <div className="mb-4 md:mb-8">
