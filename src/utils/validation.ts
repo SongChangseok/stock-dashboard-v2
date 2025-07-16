@@ -4,7 +4,7 @@
  */
 
 import { VALIDATION_RULES, BUSINESS_RULES } from './constants'
-import type { ValidationResult } from '../types/api'
+import type { ValidationResult } from '../types/base'
 
 /**
  * Validate if a value is a positive number

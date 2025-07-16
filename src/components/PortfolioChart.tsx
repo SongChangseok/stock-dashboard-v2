@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
-import type { PortfolioChartProps, ChartData } from '../types'
+import type { PortfolioChartProps } from '../types'
+import type { ChartData } from '../types/base'
 import { formatCurrency } from '../utils'
 import { useResponsive, usePerformanceMonitor } from '../hooks'
 

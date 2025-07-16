@@ -1,6 +1,7 @@
 import React from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
-import { BaseChartProps, ChartData } from '../../types/components'
+import { BaseChartProps } from '../../types/components'
+import { ChartData } from '../../types/base'
 import { 
   CHART_CONFIG, 
   formatTooltipValue, 

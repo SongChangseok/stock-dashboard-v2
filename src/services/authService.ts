@@ -223,7 +223,7 @@ export class AuthService {
   /**
    * Validate password strength
    */
-  validatePassword(password: string): { isValid: boolean; errors: string[] } {
+  validatePassword(password: string): import('../types/base').BaseValidationResult {
     const errors: string[] = []
 
     if (password.length < 8) {

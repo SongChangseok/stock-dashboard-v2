@@ -48,12 +48,8 @@ export interface ComparisonTooltipProps {
   type: 'current' | 'target'
 }
 
-export interface ChartData {
-  name: string
-  value: number
-  percentage: number
-  color: string
-}
+// Re-export from base types for backward compatibility
+export type { ChartData } from './base'
 
 // Stock component types
 export interface StockFormProps {
@@ -112,11 +108,8 @@ export interface TradingGuideProps {
 }
 
 // Rebalancing Simulation component types
-export interface RebalancingSimulationChartData {
-  name: string
-  value: number
-  color: string
-}
+// Use BaseChartData for consistency
+export type { BaseChartData as RebalancingSimulationChartData } from './base'
 
 export interface RebalancingSimulationProps {
   currentPortfolio: PortfolioSummary
@@ -155,7 +148,7 @@ export interface SummaryCardSkeletonProps {
 
 // Base Chart component types
 export interface BaseChartProps {
-  data: ChartData[]
+  data: import('./base').ChartData[]
   title?: string
   height?: number
   showLegend?: boolean

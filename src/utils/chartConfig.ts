@@ -1,4 +1,4 @@
-import { ChartData } from '../types/components'
+import { ChartData } from '../types/base'
 
 // Chart colors for consistent theming
 export const CHART_COLORS = [

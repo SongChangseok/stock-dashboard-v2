@@ -1,4 +1,5 @@
 import { BaseService } from './baseService'
+import { authService } from './authService'
 import type { Stock, CreateStockData, UpdateStockData } from '../types'
 
 class StockService extends BaseService<
@@ -45,7 +46,7 @@ class StockService extends BaseService<
    */
   async getStocksByTicker(ticker: string): Promise<Stock[]> {
     try {
-      const userId = await this.getCurrentUserId()
+      const userId = await authService.getCurrentUserId()
 
       const { data, error } = await this.client
         .from(this.tableName)
@@ -75,7 +76,7 @@ class StockService extends BaseService<
    */
   async searchStocks(query: string): Promise<Stock[]> {
     try {
-      const userId = await this.getCurrentUserId()
+      const userId = await authService.getCurrentUserId()
 
       const { data, error } = await this.client
         .from(this.tableName)
@@ -137,10 +138,7 @@ class StockService extends BaseService<
   /**
    * Validate stock data
    */
-  validateStockData(data: CreateStockData | UpdateStockData): {
-    isValid: boolean
-    errors: string[]
-  } {
+  validateStockData(data: CreateStockData | UpdateStockData): import('../types/base').BaseValidationResult {
     const errors: string[] = []
 
     if (
@@ -180,10 +178,6 @@ class StockService extends BaseService<
     }
   }
 
-  // Access getCurrentUserId from parent class
-  private async getCurrentUserId(): Promise<string> {
-    return (await import('./authHelpers')).getCurrentUserId()
-  }
 }
 
 export const stockService = new StockService()

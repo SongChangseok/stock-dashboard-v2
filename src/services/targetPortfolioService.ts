@@ -1,4 +1,5 @@
 import { BaseService } from './baseService'
+import { authService } from './authService'
 import type {
   TargetPortfolioData,
   CreateTargetPortfolioData,
@@ -52,7 +53,7 @@ class TargetPortfolioService extends BaseService<
    */
   async searchTargetPortfolios(query: string): Promise<TargetPortfolioData[]> {
     try {
-      const userId = await this.getCurrentUserId()
+      const userId = await authService.getCurrentUserId()
 
       const { data, error } = await this.client
         .from(this.tableName)
@@ -124,16 +125,9 @@ class TargetPortfolioService extends BaseService<
     return result
   }
 
-  // Access getCurrentUserId from parent class
-  private async getCurrentUserId(): Promise<string> {
-    return (await import('./authHelpers')).getCurrentUserId()
-  }
 
   // Helper method to validate portfolio allocations
-  validateAllocations(allocations: TargetPortfolioAllocations): {
-    isValid: boolean
-    errors: string[]
-  } {
+  validateAllocations(allocations: TargetPortfolioAllocations): import('../types/base').BaseValidationResult {
     const errors: string[] = []
 
     if (!allocations.stocks || allocations.stocks.length === 0) {

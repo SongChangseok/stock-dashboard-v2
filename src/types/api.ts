@@ -25,7 +25,4 @@ export interface ApiError {
 }
 
 // Validation types
-export interface ValidationResult {
-  isValid: boolean
-  errors: string[]
-}
+export type { ValidationResult } from './base'

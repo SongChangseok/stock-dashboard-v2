@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { formatCurrency } from '../utils'
 import { useResponsive } from '../hooks'
-import type { RebalancingSimulationProps, RebalancingSimulationChartData, TargetPortfolioAllocations } from '../types'
+import type { RebalancingSimulationProps, TargetPortfolioAllocations } from '../types'
+import type { BaseChartData as RebalancingSimulationChartData } from '../types/base'
 
 const COLORS = [
   '#6366F1', '#8B5CF6', '#EC4899', '#EF4444', '#F59E0B', '#10B981',

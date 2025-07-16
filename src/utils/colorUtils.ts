@@ -11,7 +11,8 @@ export type StatusType = 'positive' | 'negative' | 'neutral' | 'warning' | 'succ
 /**
  * Action types for trading actions
  */
-export type ActionType = 'buy' | 'sell' | 'hold'
+import type { ActionType } from '../types/base'
+export type { ActionType } from '../types/base'
 
 /**
  * Get status color class for text
