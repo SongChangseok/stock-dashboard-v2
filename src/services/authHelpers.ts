@@ -1,19 +1,17 @@
 /**
  * Shared authentication helper functions
  * Provides common authentication patterns used across services
+ * @deprecated Use AuthService instead
  */
 
-import { supabase } from './supabase'
+import { authService } from './authService'
 
 /**
  * Get current user ID
  * @returns Current user ID
  * @throws Error if user is not authenticated
+ * @deprecated Use authService.getCurrentUserId() instead
  */
 export const getCurrentUserId = async (): Promise<string> => {
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    throw new Error('User not authenticated')
-  }
-  return user.id
+  return authService.getCurrentUserId()
 }

@@ -1,132 +1,154 @@
-import { supabase } from './supabase'
-import { getCurrentUserId } from './authHelpers'
-import type { 
-  TargetPortfolioData, 
-  CreateTargetPortfolioData, 
+import { BaseService } from './baseService'
+import type {
+  TargetPortfolioData,
+  CreateTargetPortfolioData,
   UpdateTargetPortfolioData,
-  TargetPortfolioAllocations 
+  TargetPortfolioAllocations,
 } from '../types/targetPortfolio'
 import type { TargetPortfolio, JsonValue } from '../types/database'
 
-class TargetPortfolioService {
+class TargetPortfolioService extends BaseService<
+  TargetPortfolioData,
+  CreateTargetPortfolioData,
+  UpdateTargetPortfolioData
+> {
+  constructor() {
+    super({
+      tableName: 'target_portfolios',
+      userIdField: 'user_id',
+      requiredFields: ['name', 'allocations'],
+    })
+  }
+
+  // Convenience methods that maintain backward compatibility
   async getTargetPortfolios(): Promise<TargetPortfolioData[]> {
-    const userId = await getCurrentUserId()
-
-    const { data, error } = await supabase
-      .from('target_portfolios')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      throw new Error(`Failed to fetch target portfolios: ${error.message}`)
-    }
-
-    // Transform database rows to our domain type
-    return (data || []).map(this.transformFromDatabase)
+    return this.getAll()
   }
 
-  async createTargetPortfolio(portfolioData: CreateTargetPortfolioData): Promise<TargetPortfolioData> {
-    const userId = await getCurrentUserId()
-
-    const { data, error } = await supabase
-      .from('target_portfolios')
-      .insert({
-        name: portfolioData.name,
-        allocations: portfolioData.allocations as unknown as JsonValue,
-        user_id: userId
-      })
-      .select()
-      .single()
-
-    if (error) {
-      throw new Error(`Failed to create target portfolio: ${error.message}`)
-    }
-
-    return this.transformFromDatabase(data)
+  async createTargetPortfolio(
+    portfolioData: CreateTargetPortfolioData,
+  ): Promise<TargetPortfolioData> {
+    return this.create(portfolioData)
   }
 
-  async updateTargetPortfolio(portfolioData: UpdateTargetPortfolioData): Promise<TargetPortfolioData> {
-    const userId = await getCurrentUserId()
-
-    const updateData: Record<string, JsonValue | string> = {}
-    if (portfolioData.name) updateData.name = portfolioData.name
-    if (portfolioData.allocations) updateData.allocations = portfolioData.allocations as unknown as JsonValue
-
-    const { data, error } = await supabase
-      .from('target_portfolios')
-      .update(updateData)
-      .eq('id', portfolioData.id)
-      .eq('user_id', userId)
-      .select()
-      .single()
-
-    if (error) {
-      throw new Error(`Failed to update target portfolio: ${error.message}`)
-    }
-
-    return this.transformFromDatabase(data)
+  async updateTargetPortfolio(
+    portfolioData: UpdateTargetPortfolioData,
+  ): Promise<TargetPortfolioData> {
+    return this.update(portfolioData)
   }
 
   async deleteTargetPortfolio(portfolioId: string): Promise<void> {
-    const userId = await getCurrentUserId()
-
-    const { error } = await supabase
-      .from('target_portfolios')
-      .delete()
-      .eq('id', portfolioId)
-      .eq('user_id', userId)
-
-    if (error) {
-      throw new Error(`Failed to delete target portfolio: ${error.message}`)
-    }
+    return this.delete(portfolioId)
   }
 
-  async getTargetPortfolio(portfolioId: string): Promise<TargetPortfolioData | null> {
-    const userId = await getCurrentUserId()
+  async getTargetPortfolio(
+    portfolioId: string,
+  ): Promise<TargetPortfolioData | null> {
+    return this.getById(portfolioId)
+  }
 
-    const { data, error } = await supabase
-      .from('target_portfolios')
-      .select('*')
-      .eq('id', portfolioId)
-      .eq('user_id', userId)
-      .single()
+  /**
+   * Search target portfolios by name
+   */
+  async searchTargetPortfolios(query: string): Promise<TargetPortfolioData[]> {
+    try {
+      const userId = await this.getCurrentUserId()
 
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return null // Not found
+      const { data, error } = await this.client
+        .from(this.tableName)
+        .select('*')
+        .eq('user_id', userId)
+        .ilike('name', `%${query}%`)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        throw this.createError(`Failed to search target portfolios`, error)
       }
-      throw new Error(`Failed to fetch target portfolio: ${error.message}`)
-    }
 
-    return this.transformFromDatabase(data)
+      return this.transformFromDatabase(data || [])
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error
+      }
+      throw this.createError(
+        `Unexpected error searching target portfolios`,
+        error,
+      )
+    }
   }
 
-  private transformFromDatabase(dbRow: TargetPortfolio): TargetPortfolioData {
-    const allocations = dbRow.allocations as unknown as TargetPortfolioAllocations
-    
+  /**
+   * Transform database records to domain objects
+   */
+  protected transformFromDatabase(data: unknown[]): TargetPortfolioData[] {
+    return (data as TargetPortfolio[]).map(this.transformFromDatabaseRow)
+  }
+
+  /**
+   * Transform single database row to domain object
+   */
+  private transformFromDatabaseRow(
+    dbRow: TargetPortfolio,
+  ): TargetPortfolioData {
+    const allocations =
+      dbRow.allocations as unknown as TargetPortfolioAllocations
+
     return {
       id: dbRow.id,
       name: dbRow.name,
       allocations,
       created_at: dbRow.created_at,
       updated_at: dbRow.updated_at,
-      user_id: dbRow.user_id
+      user_id: dbRow.user_id,
     }
   }
 
+  /**
+   * Prepare data for database insertion/update
+   */
+  protected prepareForDatabase(data: unknown): unknown {
+    const portfolio = data as
+      | CreateTargetPortfolioData
+      | UpdateTargetPortfolioData
+
+    const result: Record<string, unknown> = {}
+
+    if ('name' in portfolio) {
+      result.name = portfolio.name
+    }
+
+    if ('allocations' in portfolio) {
+      result.allocations = portfolio.allocations as unknown as JsonValue
+    }
+
+    return result
+  }
+
+  // Access getCurrentUserId from parent class
+  private async getCurrentUserId(): Promise<string> {
+    return (await import('./authHelpers')).getCurrentUserId()
+  }
+
   // Helper method to validate portfolio allocations
-  validateAllocations(allocations: TargetPortfolioAllocations): { isValid: boolean; errors: string[] } {
+  validateAllocations(allocations: TargetPortfolioAllocations): {
+    isValid: boolean
+    errors: string[]
+  } {
     const errors: string[] = []
-    
+
     if (!allocations.stocks || allocations.stocks.length === 0) {
       errors.push('At least one stock allocation is required')
     }
-    
-    const totalWeight = allocations.stocks.reduce((sum, stock) => sum + stock.target_weight, 0)
-    
+
+    const totalWeight = allocations.stocks.reduce(
+      (sum, stock) => sum + stock.target_weight,
+      0,
+    )
+
     if (Math.abs(totalWeight - 100) > 0.01) {
-      errors.push(`Total allocation must equal 100%, current total: ${totalWeight.toFixed(2)}%`)
+      errors.push(
+        `Total allocation must equal 100%, current total: ${totalWeight.toFixed(2)}%`,
+      )
     }
 
     allocations.stocks.forEach((stock, index) => {
@@ -143,7 +165,7 @@ class TargetPortfolioService {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     }
   }
 }
