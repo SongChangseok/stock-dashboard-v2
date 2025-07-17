@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import {
   BrowserRouter as Router,
   Routes,
@@ -6,10 +6,15 @@ import {
   Navigate,
 } from 'react-router-dom'
 import { useAuthStore } from './stores'
-import { AuthPage, DashboardPage, TargetPortfolioPage, PortfolioComparisonPage } from './pages'
-import { ProtectedRoute, Layout, ErrorBoundary } from './components'
+import { ProtectedRoute, Layout, ErrorBoundary, LoadingIndicator } from './components'
 import { setupGlobalErrorHandler } from './services/errorService'
 import './App.css'
+
+// Lazy load pages for code splitting
+const AuthPage = lazy(() => import('./pages/AuthPage').then(module => ({ default: module.AuthPage })))
+const DashboardPage = lazy(() => import('./pages/DashboardPage').then(module => ({ default: module.DashboardPage })))
+const TargetPortfolioPage = lazy(() => import('./pages/TargetPortfolioPage').then(module => ({ default: module.TargetPortfolioPage })))
+const PortfolioComparisonPage = lazy(() => import('./pages/PortfolioComparisonPage').then(module => ({ default: module.PortfolioComparisonPage })))
 
 function App() {
   const initialize = useAuthStore(state => state.initialize)
@@ -25,7 +30,9 @@ function App() {
         <Routes>
           <Route path="/auth" element={
             <ErrorBoundary>
-              <AuthPage />
+              <Suspense fallback={<LoadingIndicator />}>
+                <AuthPage />
+              </Suspense>
             </ErrorBoundary>
           } />
           <Route
@@ -41,17 +48,23 @@ function App() {
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={
               <ErrorBoundary>
-                <DashboardPage />
+                <Suspense fallback={<LoadingIndicator />}>
+                  <DashboardPage />
+                </Suspense>
               </ErrorBoundary>
             } />
             <Route path="target-portfolio" element={
               <ErrorBoundary>
-                <TargetPortfolioPage />
+                <Suspense fallback={<LoadingIndicator />}>
+                  <TargetPortfolioPage />
+                </Suspense>
               </ErrorBoundary>
             } />
             <Route path="portfolio-comparison" element={
               <ErrorBoundary>
-                <PortfolioComparisonPage />
+                <Suspense fallback={<LoadingIndicator />}>
+                  <PortfolioComparisonPage />
+                </Suspense>
               </ErrorBoundary>
             } />
           </Route>
