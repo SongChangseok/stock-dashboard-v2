@@ -10,6 +10,7 @@ export interface TargetPortfolioAllocations {
   description?: string
   stocks: TargetPortfolioStock[]
   total_weight: number // Should equal 100
+  [key: string]: unknown // Index signature for Json compatibility
 }
 
 export interface TargetPortfolioData {

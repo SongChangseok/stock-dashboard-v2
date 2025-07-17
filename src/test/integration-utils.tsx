@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react'
 import { render, RenderOptions } from '@testing-library/react'
 import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
-import { vi } from 'vitest'
+import { vi, expect } from 'vitest'
 import type { User } from '@supabase/supabase-js'
 import type { Stock } from '../types/database'
 import type { TargetPortfolioData } from '../types/targetPortfolio'
@@ -156,7 +156,7 @@ export const setupServiceMocks = () => {
   // Mock loading state
   vi.mock('../utils/loadingState', () => ({
     globalLoadingManager: {
-      executeWithLoading: vi.fn((operation, callback) => callback())
+      executeWithLoading: vi.fn((_operation, callback) => callback())
     },
     LOADING_OPERATIONS: {
       FETCH_STOCKS: 'fetch_stocks',
@@ -194,10 +194,10 @@ export const renderWithRouter = (
     initialIndex?: number
   } & Omit<RenderOptions, 'wrapper'>
 ) => {
-  const { initialEntries, initialIndex, ...renderOptions } = options || {}
+  const { initialEntries: _initialEntries, initialIndex: _initialIndex, ...renderOptions } = options || {}
   
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
-    <IntegrationWrapper initialEntries={initialEntries} initialIndex={initialIndex}>
+    <IntegrationWrapper initialEntries={_initialEntries} initialIndex={_initialIndex}>
       {children}
     </IntegrationWrapper>
   )
@@ -216,7 +216,7 @@ export const renderApp = (
     initialIndex?: number
   } & Omit<RenderOptions, 'wrapper'>
 ) => {
-  const { initialEntries, initialIndex, ...renderOptions } = options || {}
+  const { initialEntries: _initialEntries, initialIndex: _initialIndex, ...renderOptions } = options || {}
   
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <BrowserRouter>

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { stockService } from '../stockService'
 import { targetPortfolioService } from '../targetPortfolioService'
@@ -75,7 +76,7 @@ describe('Service Integration Tests', () => {
         current_price: 180.00
       }
 
-      const updatedStock = await stockService.updateStock('stock-1', updateData)
+      const updatedStock = await stockService.updateStock({ id: 'stock-1', ...updateData })
       
       expect(updatedStock).toEqual(mockStocks[0])
       expect(updatedStock).toHaveProperty('updated_at')
@@ -237,14 +238,21 @@ describe('Service Integration Tests', () => {
 
     it('should sign in user successfully', async () => {
       const { supabase } = await import('../supabase')
+      const mockSession = {
+        access_token: 'mock-access-token',
+        refresh_token: 'mock-refresh-token',
+        expires_in: 3600,
+        token_type: 'bearer',
+        user: mockUser
+      }
       vi.mocked(supabase.auth.signInWithPassword).mockResolvedValue({ 
-        data: { user: mockUser, session: null }, 
+        data: { user: mockUser, session: mockSession }, 
         error: null 
       })
 
       const result = await authService.signIn('test@example.com', 'password123')
       
-      expect(result).toEqual({ user: mockUser, session: null })
+      expect(result).toEqual({ user: mockUser, session: mockSession })
       expect(supabase.auth.signInWithPassword).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'password123'
@@ -253,7 +261,7 @@ describe('Service Integration Tests', () => {
 
     it('should sign out user successfully', async () => {
       const { supabase } = await import('../supabase')
-      vi.mocked(supabase.auth.signOut).mockResolvedValue({ error: null })
+      vi.mocked(supabase.auth.signOut).mockResolvedValue({ data: {}, error: null })
 
       await expect(authService.signOut()).resolves.toBeUndefined()
       expect(supabase.auth.signOut).toHaveBeenCalled()

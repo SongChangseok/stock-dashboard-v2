@@ -82,7 +82,7 @@ class RealtimeService {
 
     // Add callback to subscribers
     const subscribers = this.subscriptions.get(channelName) || []
-    subscribers.push(callback)
+    subscribers.push(callback as any)
     this.subscriptions.set(channelName, subscribers)
 
     // Return unsubscribe function

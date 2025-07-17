@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import type { Stock } from '../../types'
+import type { Stock, RebalancingCalculation } from '../../types'
 import {
   calculateStockValue,
   calculatePortfolioValue,
@@ -144,22 +144,52 @@ describe('calculations', () => {
   })
 
   describe('calculateTradingSummary', () => {
-    const mockCalculations = [
+    const mockCalculations: RebalancingCalculation[] = [
       {
         stock_name: 'AAPL',
+        ticker: 'AAPL',
+        currentQuantity: 10,
+        currentWeight: 50,
+        targetWeight: 60,
+        currentValue: 1000,
+        targetValue: 1200,
+        difference: 200,
         action: 'buy' as const,
+        quantityChange: 5,
+        valueChange: 900,
+        minimumTradingUnit: 1,
         adjustedQuantityChange: 5,
         adjustedValueChange: 900
       },
       {
         stock_name: 'MSFT',
+        ticker: 'MSFT',
+        currentQuantity: 5,
+        currentWeight: 30,
+        targetWeight: 25,
+        currentValue: 800,
+        targetValue: 600,
+        difference: -200,
         action: 'sell' as const,
+        quantityChange: -2,
+        valueChange: -660,
+        minimumTradingUnit: 1,
         adjustedQuantityChange: -2,
         adjustedValueChange: -660
       },
       {
         stock_name: 'GOOGL',
+        ticker: 'GOOGL',
+        currentQuantity: 3,
+        currentWeight: 20,
+        targetWeight: 15,
+        currentValue: 600,
+        targetValue: 600,
+        difference: 0,
         action: 'hold' as const,
+        quantityChange: 0,
+        valueChange: 0,
+        minimumTradingUnit: 1,
         adjustedQuantityChange: 0,
         adjustedValueChange: 0
       }

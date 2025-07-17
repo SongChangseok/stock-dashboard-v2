@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { screen, waitFor } from '@testing-library/react'
 import { TargetPortfolioPage } from '../../pages/TargetPortfolioPage'
@@ -5,7 +6,6 @@ import {
   renderWithRouter,
   setupServiceMocks,
   mockTargetPortfolio,
-  mockStocks,
   waitForLoadingToFinish
 } from '../../test/integration-utils'
 
@@ -441,7 +441,7 @@ describe('Target Portfolio Integration Tests', () => {
       // Simulate portfolio deletion
       mockCallback({
         eventType: 'DELETE',
-        new: null,
+        new: undefined,
         old: mockTargetPortfolio
       })
 

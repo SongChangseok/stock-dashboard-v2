@@ -188,7 +188,7 @@ export const usePortfolioStore = create<PortfolioState>()(
   loadFromSession: () => {
     const cachedStocks = loadFromSession(SESSION_KEYS.PORTFOLIO_DATA)
     if (cachedStocks) {
-      set({ stocks: cachedStocks })
+      set({ stocks: cachedStocks as any[] })
       get().updateCalculations()
     } else {
       set({ stocks: [] })

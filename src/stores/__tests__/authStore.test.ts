@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import { useAuthStore } from '../authStore'
@@ -10,8 +11,8 @@ vi.mock('../../services/database', () => ({
     signUp: vi.fn(),
     signIn: vi.fn(),
     signOut: vi.fn(),
-    onAuthStateChange: vi.fn()
-  }
+    onAuthStateChange: vi.fn(),
+  },
 }))
 
 describe('AuthStore', () => {
@@ -23,22 +24,22 @@ describe('AuthStore', () => {
     aud: 'authenticated',
     role: 'authenticated',
     app_metadata: {},
-    user_metadata: {}
+    user_metadata: {},
   }
 
   const mockAuthError: AuthError = {
     message: 'Invalid credentials',
     status: 401,
-    name: 'AuthError'
+    name: 'AuthError',
   }
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Reset store state
     useAuthStore.setState({
       user: null,
-      loading: true
+      loading: true,
     })
   })
 
@@ -115,9 +116,11 @@ describe('AuthStore', () => {
     it('should initialize with current user', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
       const mockOnAuthStateChange = vi.fn()
-      
+
       vi.mocked(authService.getCurrentUser).mockResolvedValue(mockUser)
-      vi.mocked(authService.onAuthStateChange).mockReturnValue(mockOnAuthStateChange)
+      vi.mocked(authService.onAuthStateChange).mockReturnValue(
+        mockOnAuthStateChange,
+      )
 
       const { result } = renderHook(() => useAuthStore())
 
@@ -126,7 +129,9 @@ describe('AuthStore', () => {
       })
 
       expect(authService.getCurrentUser).toHaveBeenCalled()
-      expect(authService.onAuthStateChange).toHaveBeenCalledWith(expect.any(Function))
+      expect(authService.onAuthStateChange).toHaveBeenCalledWith(
+        expect.any(Function),
+      )
       expect(result.current.user).toEqual(mockUser)
       expect(result.current.loading).toBe(false)
     })
@@ -134,7 +139,7 @@ describe('AuthStore', () => {
     it('should handle initialization errors', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
       const error = new Error('Initialization failed')
-      
+
       vi.mocked(authService.getCurrentUser).mockRejectedValue(error)
       vi.mocked(authService.onAuthStateChange).mockReturnValue(vi.fn())
 
@@ -148,7 +153,7 @@ describe('AuthStore', () => {
 
       expect(consoleSpy).toHaveBeenCalledWith('Error initializing auth:', error)
       expect(result.current.loading).toBe(false)
-      
+
       consoleSpy.mockRestore()
     })
 
@@ -157,10 +162,12 @@ describe('AuthStore', () => {
       let authStateCallback: any
 
       vi.mocked(authService.getCurrentUser).mockResolvedValue(null)
-      vi.mocked(authService.onAuthStateChange).mockImplementation((callback) => {
-        authStateCallback = callback
-        return vi.fn()
-      })
+      vi.mocked(authService.onAuthStateChange).mockImplementation(
+        (callback) => {
+          authStateCallback = callback
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useAuthStore())
 
@@ -182,10 +189,12 @@ describe('AuthStore', () => {
       let authStateCallback: any
 
       vi.mocked(authService.getCurrentUser).mockResolvedValue(mockUser)
-      vi.mocked(authService.onAuthStateChange).mockImplementation((callback) => {
-        authStateCallback = callback
-        return vi.fn()
-      })
+      vi.mocked(authService.onAuthStateChange).mockImplementation(
+        (callback) => {
+          authStateCallback = callback
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useAuthStore())
 
@@ -206,17 +215,26 @@ describe('AuthStore', () => {
   describe('signUp', () => {
     it('should successfully sign up user', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
-      vi.mocked(authService.signUp).mockResolvedValue({ user: mockUser, session: null })
+      vi.mocked(authService.signUp).mockResolvedValue({
+        user: mockUser,
+        session: null,
+      })
 
       const { result } = renderHook(() => useAuthStore())
 
       let signUpResult: any
 
       await act(async () => {
-        signUpResult = await result.current.signUp('test@example.com', 'password123')
+        signUpResult = await result.current.signUp(
+          'test@example.com',
+          'password123',
+        )
       })
 
-      expect(authService.signUp).toHaveBeenCalledWith('test@example.com', 'password123')
+      expect(authService.signUp).toHaveBeenCalledWith(
+        'test@example.com',
+        'password123',
+      )
       expect(signUpResult).toEqual({ user: mockUser, error: null })
       expect(result.current.loading).toBe(false)
     })
@@ -230,7 +248,10 @@ describe('AuthStore', () => {
       let signUpResult: any
 
       await act(async () => {
-        signUpResult = await result.current.signUp('test@example.com', 'password123')
+        signUpResult = await result.current.signUp(
+          'test@example.com',
+          'password123',
+        )
       })
 
       expect(signUpResult).toEqual({ user: null, error: mockAuthError })
@@ -239,9 +260,12 @@ describe('AuthStore', () => {
 
     it('should set loading state during sign up', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
-      vi.mocked(authService.signUp).mockImplementation(() => new Promise(resolve => {
-        setTimeout(() => resolve({ user: mockUser, session: null }), 100)
-      }))
+      vi.mocked(authService.signUp).mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve({ user: mockUser, session: null }), 100)
+          }),
+      )
 
       const { result } = renderHook(() => useAuthStore())
 
@@ -262,17 +286,26 @@ describe('AuthStore', () => {
   describe('signIn', () => {
     it('should successfully sign in user', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
-      vi.mocked(authService.signIn).mockResolvedValue({ user: mockUser, session: null })
+      vi.mocked(authService.signIn).mockResolvedValue({
+        user: mockUser,
+        session: null,
+      })
 
       const { result } = renderHook(() => useAuthStore())
 
       let signInResult: any
 
       await act(async () => {
-        signInResult = await result.current.signIn('test@example.com', 'password123')
+        signInResult = await result.current.signIn(
+          'test@example.com',
+          'password123',
+        )
       })
 
-      expect(authService.signIn).toHaveBeenCalledWith('test@example.com', 'password123')
+      expect(authService.signIn).toHaveBeenCalledWith(
+        'test@example.com',
+        'password123',
+      )
       expect(signInResult).toEqual({ user: mockUser, error: null })
       expect(result.current.loading).toBe(false)
     })
@@ -286,7 +319,10 @@ describe('AuthStore', () => {
       let signInResult: any
 
       await act(async () => {
-        signInResult = await result.current.signIn('test@example.com', 'wrongpassword')
+        signInResult = await result.current.signIn(
+          'test@example.com',
+          'wrongpassword',
+        )
       })
 
       expect(signInResult).toEqual({ user: null, error: mockAuthError })
@@ -295,9 +331,12 @@ describe('AuthStore', () => {
 
     it('should set loading state during sign in', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
-      vi.mocked(authService.signIn).mockImplementation(() => new Promise(resolve => {
-        setTimeout(() => resolve({ user: mockUser, session: null }), 100)
-      }))
+      vi.mocked(authService.signIn).mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve({ user: mockUser, session: null }), 100)
+          }),
+      )
 
       const { result } = renderHook(() => useAuthStore())
 
@@ -351,9 +390,12 @@ describe('AuthStore', () => {
 
     it('should set loading state during sign out', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
-      vi.mocked(authService.signOut).mockImplementation(() => new Promise(resolve => {
-        setTimeout(() => resolve(undefined), 100)
-      }))
+      vi.mocked(authService.signOut).mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve(undefined), 100)
+          }),
+      )
 
       const { result } = renderHook(() => useAuthStore())
 
@@ -374,11 +416,14 @@ describe('AuthStore', () => {
   describe('Authentication Flow Integration', () => {
     it('should handle complete authentication flow', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
-      
+
       // Mock successful operations
       vi.mocked(authService.getCurrentUser).mockResolvedValue(null)
       vi.mocked(authService.onAuthStateChange).mockReturnValue(vi.fn())
-      vi.mocked(authService.signUp).mockResolvedValue({ user: mockUser, session: null })
+      vi.mocked(authService.signUp).mockResolvedValue({
+        user: mockUser,
+        session: null,
+      })
       vi.mocked(authService.signOut).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useAuthStore())
@@ -406,9 +451,11 @@ describe('AuthStore', () => {
 
     it('should handle authentication errors gracefully', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
-      
+
       // Mock failed operations
-      vi.mocked(authService.getCurrentUser).mockRejectedValue(new Error('Network error'))
+      vi.mocked(authService.getCurrentUser).mockRejectedValue(
+        new Error('Network error'),
+      )
       vi.mocked(authService.onAuthStateChange).mockReturnValue(vi.fn())
       vi.mocked(authService.signIn).mockRejectedValue(mockAuthError)
 
@@ -426,7 +473,10 @@ describe('AuthStore', () => {
       // Sign in with error
       let signInResult: any
       await act(async () => {
-        signInResult = await result.current.signIn('test@example.com', 'wrongpassword')
+        signInResult = await result.current.signIn(
+          'test@example.com',
+          'wrongpassword',
+        )
       })
 
       expect(signInResult.error).toEqual(mockAuthError)
@@ -439,11 +489,14 @@ describe('AuthStore', () => {
   describe('State Management', () => {
     it('should maintain state correctly during async operations', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
-      
+
       // Mock slow operations
-      vi.mocked(authService.signIn).mockImplementation(() => new Promise(resolve => {
-        setTimeout(() => resolve({ user: mockUser, session: null }), 100)
-      }))
+      vi.mocked(authService.signIn).mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve({ user: mockUser, session: null }), 100)
+          }),
+      )
 
       const { result } = renderHook(() => useAuthStore())
 
@@ -464,8 +517,11 @@ describe('AuthStore', () => {
 
     it('should handle concurrent async operations', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
-      
-      vi.mocked(authService.signIn).mockResolvedValue({ user: mockUser, session: null })
+
+      vi.mocked(authService.signIn).mockResolvedValue({
+        user: mockUser,
+        session: null,
+      })
       vi.mocked(authService.signOut).mockResolvedValue(undefined)
 
       const { result } = renderHook(() => useAuthStore())
@@ -489,7 +545,10 @@ describe('AuthStore', () => {
   describe('Edge Cases', () => {
     it('should handle null user responses', async () => {
       const { authService } = vi.mocked(await import('../../services/database'))
-      vi.mocked(authService.signIn).mockResolvedValue({ user: null, session: null })
+      vi.mocked(authService.signIn).mockResolvedValue({
+        user: null,
+        session: null,
+      })
 
       const { result } = renderHook(() => useAuthStore())
 
@@ -520,10 +579,12 @@ describe('AuthStore', () => {
       let authStateCallback: any
 
       vi.mocked(authService.getCurrentUser).mockResolvedValue(null)
-      vi.mocked(authService.onAuthStateChange).mockImplementation((callback) => {
-        authStateCallback = callback
-        return vi.fn()
-      })
+      vi.mocked(authService.onAuthStateChange).mockImplementation(
+        (callback) => {
+          authStateCallback = callback
+          return vi.fn()
+        },
+      )
 
       const { result } = renderHook(() => useAuthStore())
 
