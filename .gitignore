@@ -25,6 +25,9 @@ supabase/logs
 # Generated types
 src/types/database.generated.ts
 
+# Test coverage
+coverage
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
