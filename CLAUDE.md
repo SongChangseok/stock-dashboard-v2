@@ -9,8 +9,13 @@ Global stock portfolio dashboard built with React 18, TypeScript, and Vite.
 - `npm run dev` - Start development server
 - `npm run build` - Production build
 - `npm run lint` - ESLint check
+- `npm run lint:fix` - Fix ESLint issues automatically
 - `npm run format` - Format with Prettier
+- `npm run format:check` - Check formatting without changes
 - `npm run preview` - Preview production build
+- `npm run test` - Run unit tests with Vitest
+- `npm run test:watch` - Run tests in watch mode
+- `npm run test:coverage` - Run tests with coverage report
 - `npm run supabase:start` - Start Supabase locally
 - `npm run supabase:stop` - Stop Supabase locally
 - `npm run supabase:reset` - Reset Supabase database
@@ -65,6 +70,8 @@ Use these for all CSS styling work:
 - Zustand for state management
 - Supabase with real-time database integration
 - Recharts for data visualization and portfolio comparison charts
+- Vitest + Testing Library for unit testing and component testing
+- ESLint + Prettier for code quality and formatting
 
 ## Project Structure
 ```
@@ -73,15 +80,34 @@ src/
 │   ├── Layout.tsx                   # Global layout with Header
 │   ├── Header.tsx                   # Unified responsive header
 │   ├── StockList.tsx                # Responsive table/card layout
+│   ├── StockForm.tsx                # Stock entry/edit form component
 │   ├── PortfolioChart.tsx           # Pie chart visualization with Recharts
 │   ├── PortfolioComparison.tsx      # Dual chart comparison component
+│   ├── PortfolioSummary.tsx         # Portfolio statistics and summary
 │   ├── RebalancingCalculator.tsx    # Advanced rebalancing calculations and settings
 │   ├── TradingGuide.tsx             # Trading guide with cards and simulation
 │   ├── TradingGuideCard.tsx         # Individual stock trading guide cards
 │   ├── RebalancingSimulation.tsx    # Before/after rebalancing simulation
 │   ├── TargetPortfolioForm.tsx      # Modal form for portfolio CRUD
 │   ├── TargetPortfolioList.tsx      # Grid/list view with action buttons
-│   └── ...
+│   ├── AuthForm.tsx                 # Authentication form component
+│   ├── ErrorBoundary.tsx            # Error boundary for error handling
+│   ├── FloatingActionButton.tsx     # FAB for mobile actions
+│   ├── LoadingIndicator.tsx         # Loading state indicator
+│   ├── ProtectedRoute.tsx           # Route protection wrapper
+│   ├── SkeletonLoader.tsx           # Skeleton loading states
+│   ├── SwipeIndicator.tsx           # Mobile swipe interaction indicator
+│   ├── ui/                          # Reusable UI components
+│   │   ├── ActionButtonGroup.tsx    # Button group component
+│   │   ├── BaseChart.tsx            # Base chart wrapper
+│   │   ├── Card.tsx                 # Card component
+│   │   ├── EmptyState.tsx           # Empty state component
+│   │   ├── FormField.tsx            # Form field wrapper
+│   │   ├── ListContainer.tsx        # List container component
+│   │   ├── LoadingButton.tsx        # Button with loading state
+│   │   ├── Modal.tsx                # Modal dialog component
+│   │   └── index.ts                 # UI component exports
+│   └── index.ts                     # Component exports
 ├── pages/
 │   ├── AuthPage.tsx                 # Login/signup authentication
 │   ├── DashboardPage.tsx            # Portfolio overview with quick actions
@@ -92,8 +118,15 @@ src/
 │   ├── stockService.ts              # Stock data CRUD operations
 │   ├── targetPortfolioService.ts    # Target portfolio database operations
 │   ├── rebalancingService.ts        # Rebalancing calculations and algorithms
-│   ├── portfolioAnalyticsService.ts # Portfolio analytics and insights
-│   └── supabase.ts                  # Database configuration
+│   ├── authService.ts               # Authentication service
+│   ├── authHelpers.ts               # Authentication helper functions
+│   ├── baseService.ts               # Base service class with common functionality
+│   ├── database.ts                  # Database connection and configuration
+│   ├── errorService.ts              # Error handling service
+│   ├── realtimeService.ts           # Real-time database subscriptions
+│   ├── supabase.ts                  # Supabase client configuration
+│   ├── __tests__/                   # Service unit tests
+│   └── index.ts                     # Service exports
 ├── stores/
 │   ├── portfolioStore.ts            # Current portfolio state management
 │   ├── targetPortfolioStore.ts      # Target portfolio state management
@@ -102,6 +135,14 @@ src/
 ├── hooks/
 │   ├── useAuth.ts                   # Authentication hook
 │   ├── usePortfolio.ts              # Portfolio data hook
+│   ├── useAccessibility.ts          # Accessibility features hook
+│   ├── useErrorHandler.ts           # Error handling hook
+│   ├── useFormValidation.ts         # Form validation hook
+│   ├── useLoadingState.ts           # Loading state management hook
+│   ├── usePerformanceMonitor.ts     # Performance monitoring hook
+│   ├── useResponsive.ts             # Responsive design hook
+│   ├── useTouchOptimization.ts      # Touch interaction optimization hook
+│   ├── useWindowSize.ts             # Window size tracking hook
 │   └── index.ts                     # Hook exports
 ├── types/
 │   ├── components.ts                # Component prop types
@@ -110,16 +151,63 @@ src/
 │   ├── rebalancing.ts               # Rebalancing calculation types
 │   ├── analytics.ts                 # Portfolio analytics types
 │   ├── api.ts                       # API service types
-│   └── database.ts                  # Database schema types
+│   ├── base.ts                      # Base types and interfaces
+│   ├── database.ts                  # Database schema types
+│   └── index.ts                     # Type exports
 ├── utils/
 │   ├── formatting.ts                # Formatting utilities (currency, percentage, etc.)
 │   ├── calculations.ts              # Portfolio calculation utilities
 │   ├── validation.ts                # Input validation utilities
-│   └── constants.ts                 # Business rules and UI constants
+│   ├── constants.ts                 # Business rules and UI constants
+│   ├── accessibility.ts             # Accessibility helper functions
+│   ├── chartConfig.ts               # Chart configuration utilities
+│   ├── colorUtils.ts                # Color manipulation utilities
+│   ├── loadingState.ts              # Loading state management utilities
+│   ├── rebalancingCalculatorUtils.ts # Rebalancing calculator specific utilities
+│   ├── sessionStorage.ts            # Session storage utilities
+│   ├── stockFormUtils.ts            # Stock form helper utilities
+│   ├── targetPortfolioFormUtils.ts  # Target portfolio form utilities
+│   ├── touchOptimization.ts         # Touch interaction optimization
+│   ├── __tests__/                   # Utility unit tests
+│   │   ├── calculations.test.ts     # Portfolio calculation tests
+│   │   ├── constants.test.ts        # Constants validation tests
+│   │   ├── formatting.test.ts       # Formatting function tests
+│   │   └── validation.test.ts       # Validation function tests
+│   └── index.ts                     # Utility exports
+├── test/                            # Testing configuration and utilities
+│   ├── setup.ts                     # Test environment setup
+│   └── test-utils.tsx               # Testing utilities and custom renderers
 └── styles/
     ├── mobile.css                   # Mobile-specific optimizations
     └── index.css                    # Global styles and Tailwind imports
 ```
+
+## Testing Infrastructure
+
+**Testing Framework**:
+- Vitest for unit testing and component testing
+- Testing Library (React) for component interaction testing
+- Jest DOM for custom matchers and assertions
+- JSDOM for browser environment simulation
+- Coverage reporting with @vitest/coverage-v8
+
+**Testing Commands**:
+- `npm run test` - Run all tests once
+- `npm run test:watch` - Run tests in watch mode during development
+- `npm run test:coverage` - Generate coverage reports
+
+**Testing Structure**:
+- Unit tests co-located with source files in `__tests__/` directories
+- Test utilities and setup in `src/test/` directory
+- Custom render functions with provider wrappers
+- Mocking strategies for Supabase and external dependencies
+
+**Testing Best Practices**:
+- Test behavior, not implementation details
+- Use semantic queries (getByRole, getByLabelText)
+- Mock external dependencies and API calls
+- Test accessibility and responsive behavior
+- Maintain high test coverage for critical business logic
 
 ## Claude Guidelines
 - Keep responses ≤4 lines unless detail requested
@@ -128,7 +216,7 @@ src/
 - Use TodoWrite for multi-step tasks
 - Read files before editing
 - Follow existing code patterns and conventions
-- Run lint before marking tasks complete
+- Run lint and tests before marking tasks complete
 - Never commit unless explicitly requested
 - **All text content must be in English for global targeting**
 
@@ -330,6 +418,12 @@ stocks (
 - Rebalancing calculation utilities with trading insights
 - Validation utilities for input handling
 - Business rules constants for configuration management
+- Unit testing infrastructure with Vitest and Testing Library (Phase 4.1)
+- Component testing implementation with test utilities (Phase 4.2)
+- Enhanced UI component library with accessibility features
+- Performance monitoring and optimization hooks
+- Advanced error handling and loading state management
+- Touch optimization and responsive design enhancements
 
 ## GitHub Issue Handling
 - When referencing GitHub issues, always check issue content for specific requirements
