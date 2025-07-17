@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { TargetPortfolioList, TargetPortfolioForm, TargetPortfolioListSkeleton } from '../components'
+import { TargetPortfolioList, TargetPortfolioForm, LazySkeletonLoader, AdaptiveSkeletonLoader } from '../components'
 import { useTargetPortfolioStore } from '../stores'
 import type { TargetPortfolioData } from '../types'
 
@@ -68,9 +68,8 @@ export const TargetPortfolioPage: React.FC = () => {
   if (isLoading && targetPortfolios.length === 0) {
     return (
       <>
-
         {/* Target Portfolio Content Skeleton */}
-        <TargetPortfolioListSkeleton count={2} />
+        <LazySkeletonLoader type="target-portfolio-list" count={2} />
       </>
     )
   }
@@ -106,16 +105,22 @@ export const TargetPortfolioPage: React.FC = () => {
 
   return (
     <>
-
       {/* Target Portfolio Content */}
       <div className="space-y-4 md:space-y-8">
-        <TargetPortfolioList
-          portfolios={targetPortfolios}
-          onEdit={handleEditPortfolio}
-          onDelete={handleDeletePortfolio}
-          onAdd={handleAddPortfolio}
-          onDuplicate={handleDuplicatePortfolio}
-        />
+        <AdaptiveSkeletonLoader
+          type="target-portfolio-list"
+          count={2}
+          isLoading={isLoading}
+          showProgressively={true}
+        >
+          <TargetPortfolioList
+            portfolios={targetPortfolios}
+            onEdit={handleEditPortfolio}
+            onDelete={handleDeletePortfolio}
+            onAdd={handleAddPortfolio}
+            onDuplicate={handleDuplicatePortfolio}
+          />
+        </AdaptiveSkeletonLoader>
       </div>
 
       {/* Target Portfolio Form Modal */}

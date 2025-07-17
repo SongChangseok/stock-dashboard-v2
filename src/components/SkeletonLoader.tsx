@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { memo } from 'react'
+import { usePerformanceMonitor } from '../hooks/usePerformanceMonitor'
 
 interface SkeletonLoaderProps {
   variant?: 'text' | 'circular' | 'rectangular' | 'rounded'
@@ -7,12 +8,14 @@ interface SkeletonLoaderProps {
   className?: string
 }
 
-export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
+export const SkeletonLoader: React.FC<SkeletonLoaderProps> = memo(({
   variant = 'rectangular',
   width,
   height,
   className = ''
 }) => {
+  usePerformanceMonitor('SkeletonLoader')
+  
   const baseClasses = 'skeleton-shimmer bg-white/10'
   
   const variantClasses = {
@@ -33,13 +36,15 @@ export const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
       style={style}
     />
   )
-}
+})
 
 interface StockListSkeletonProps {
   count?: number
 }
 
-export const StockListSkeleton: React.FC<StockListSkeletonProps> = ({ count = 3 }) => {
+export const StockListSkeleton: React.FC<StockListSkeletonProps> = memo(({ count = 3 }) => {
+  usePerformanceMonitor('StockListSkeleton')
+  
   return (
     <div className="bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl overflow-hidden">
       <div className="p-4 md:p-6 border-b border-white/10 flex justify-between items-center">
@@ -118,13 +123,15 @@ export const StockListSkeleton: React.FC<StockListSkeletonProps> = ({ count = 3 
       </div>
     </div>
   )
-}
+})
 
 interface PortfolioChartSkeletonProps {
   showLegend?: boolean
 }
 
-export const PortfolioChartSkeleton: React.FC<PortfolioChartSkeletonProps> = ({ showLegend = true }) => {
+export const PortfolioChartSkeleton: React.FC<PortfolioChartSkeletonProps> = memo(({ showLegend = true }) => {
+  usePerformanceMonitor('PortfolioChartSkeleton')
+  
   return (
     <div className="bg-white/5 border border-white/10 rounded-xl md:rounded-2xl p-4 md:p-6 backdrop-blur-xl mx-4 md:mx-0">
       <SkeletonLoader variant="text" width="180px" height="24px" className="mb-4 md:mb-6" />
@@ -158,13 +165,15 @@ export const PortfolioChartSkeleton: React.FC<PortfolioChartSkeletonProps> = ({ 
       </div>
     </div>
   )
-}
+})
 
 interface TargetPortfolioListSkeletonProps {
   count?: number
 }
 
-export const TargetPortfolioListSkeleton: React.FC<TargetPortfolioListSkeletonProps> = ({ count = 2 }) => {
+export const TargetPortfolioListSkeleton: React.FC<TargetPortfolioListSkeletonProps> = memo(({ count = 2 }) => {
+  usePerformanceMonitor('TargetPortfolioListSkeleton')
+  
   return (
     <div className="bg-white/5 border border-white/10 rounded-2xl backdrop-blur-xl overflow-hidden">
       <div className="p-4 md:p-6 border-b border-white/10 flex justify-between items-center">
@@ -244,14 +253,16 @@ export const TargetPortfolioListSkeleton: React.FC<TargetPortfolioListSkeletonPr
       </div>
     </div>
   )
-}
+})
 
 interface FormSkeletonProps {
   fields?: number
   hasSubmitButton?: boolean
 }
 
-export const FormSkeleton: React.FC<FormSkeletonProps> = ({ fields = 4, hasSubmitButton = true }) => {
+export const FormSkeleton: React.FC<FormSkeletonProps> = memo(({ fields = 4, hasSubmitButton = true }) => {
+  usePerformanceMonitor('FormSkeleton')
+  
   return (
     <div className="space-y-4 md:space-y-6">
       {Array.from({ length: fields }).map((_, i) => (
@@ -269,13 +280,15 @@ export const FormSkeleton: React.FC<FormSkeletonProps> = ({ fields = 4, hasSubmi
       )}
     </div>
   )
-}
+})
 
 interface SummaryCardSkeletonProps {
   count?: number
 }
 
-export const SummaryCardSkeleton: React.FC<SummaryCardSkeletonProps> = ({ count = 3 }) => {
+export const SummaryCardSkeleton: React.FC<SummaryCardSkeletonProps> = memo(({ count = 3 }) => {
+  usePerformanceMonitor('SummaryCardSkeleton')
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
       {Array.from({ length: count }).map((_, i) => (
@@ -289,4 +302,4 @@ export const SummaryCardSkeleton: React.FC<SummaryCardSkeletonProps> = ({ count 
       ))}
     </div>
   )
-}
+})

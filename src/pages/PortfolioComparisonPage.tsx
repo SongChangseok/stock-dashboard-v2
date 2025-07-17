@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { PortfolioComparison, RebalancingCalculator, TradingGuide } from '../components'
+import { PortfolioComparison, RebalancingCalculator, TradingGuide, LoadingIndicator, IntersectionLazyLoader } from '../components'
 import { usePortfolioStore, useTargetPortfolioStore } from '../stores'
 import { rebalancingService } from '../services'
 import { BUSINESS_RULES } from '../utils'
@@ -48,8 +48,8 @@ export const PortfolioComparisonPage: React.FC = () => {
     return (
       <div className="flex items-center justify-center" style={{ minHeight: 'calc(100vh - 160px)' }}>
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading target portfolios...</p>
+          <LoadingIndicator size="lg" variant="spinner" color="white" />
+          <p className="text-gray-400 mt-4">Loading target portfolios...</p>
         </div>
       </div>
     )
@@ -133,32 +133,50 @@ export const PortfolioComparisonPage: React.FC = () => {
       </div>
 
       {/* Portfolio Comparison Component */}
-      <PortfolioComparison 
-        currentPortfolio={portfolioSummary}
-        targetPortfolio={selectedTargetPortfolio}
-      />
+      <IntersectionLazyLoader
+        threshold={0.1}
+        rootMargin="100px"
+        fallback={<LoadingIndicator size="lg" variant="spinner" color="white" className="flex justify-center py-8" />}
+      >
+        <PortfolioComparison 
+          currentPortfolio={portfolioSummary}
+          targetPortfolio={selectedTargetPortfolio}
+        />
+      </IntersectionLazyLoader>
 
       {/* Rebalancing Calculator */}
       {selectedTargetPortfolio && portfolioSummary.stocks.length > 0 && (
         <div className="px-4 md:px-0">
-          <RebalancingCalculator 
-            currentPortfolio={portfolioSummary}
-            targetPortfolio={selectedTargetPortfolio}
-            options={rebalancingOptions}
-            onOptionsChange={setRebalancingOptions}
-          />
+          <IntersectionLazyLoader
+            threshold={0.1}
+            rootMargin="100px"
+            fallback={<LoadingIndicator size="lg" variant="spinner" color="white" className="flex justify-center py-8" />}
+          >
+            <RebalancingCalculator 
+              currentPortfolio={portfolioSummary}
+              targetPortfolio={selectedTargetPortfolio}
+              options={rebalancingOptions}
+              onOptionsChange={setRebalancingOptions}
+            />
+          </IntersectionLazyLoader>
         </div>
       )}
 
       {/* Trading Guide */}
       {selectedTargetPortfolio && portfolioSummary.stocks.length > 0 && rebalancingResult && (
         <div className="px-4 md:px-0">
-          <TradingGuide 
-            currentPortfolio={portfolioSummary}
-            targetPortfolio={selectedTargetPortfolio}
-            calculations={rebalancingResult.calculations}
-            commission={rebalancingOptions.commission}
-          />
+          <IntersectionLazyLoader
+            threshold={0.1}
+            rootMargin="100px"
+            fallback={<LoadingIndicator size="lg" variant="spinner" color="white" className="flex justify-center py-8" />}
+          >
+            <TradingGuide 
+              currentPortfolio={portfolioSummary}
+              targetPortfolio={selectedTargetPortfolio}
+              calculations={rebalancingResult.calculations}
+              commission={rebalancingOptions.commission}
+            />
+          </IntersectionLazyLoader>
         </div>
       )}
 

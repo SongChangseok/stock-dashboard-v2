@@ -1,5 +1,8 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css');
 
+/* Import optimized skeleton styles */
+@import './styles/skeleton.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -49,58 +52,10 @@ body {
   text-align: center;
 }
 
-/* Loading animations */
-@keyframes loading-bar {
-  0% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-@keyframes loading-pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-/* Smooth transitions for loading states */
-.loading-transition {
-  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-}
-
 /* Loading overlay styles */
 .loading-overlay {
   backdrop-filter: blur(2px);
   background-color: rgba(0, 0, 0, 0.3);
-}
-
-/* Skeleton loader animations */
-@keyframes shimmer {
-  0% {
-    background-position: -468px 0;
-  }
-  100% {
-    background-position: 468px 0;
-  }
-}
-
-.skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.05) 25%,
-    rgba(255, 255, 255, 0.15) 50%,
-    rgba(255, 255, 255, 0.05) 75%
-  );
-  background-size: 468px 100%;
-  animation: shimmer 1.5s infinite ease-in-out;
 }
 
 /* Glassmorphism Component Classes */

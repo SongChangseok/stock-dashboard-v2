@@ -6,7 +6,7 @@ import {
   Navigate,
 } from 'react-router-dom'
 import { useAuthStore } from './stores'
-import { ProtectedRoute, Layout, ErrorBoundary, LoadingIndicator } from './components'
+import { ProtectedRoute, Layout, ErrorBoundary, PageLoadingWrapper } from './components'
 import { setupGlobalErrorHandler } from './services/errorService'
 import './App.css'
 
@@ -17,7 +17,10 @@ const TargetPortfolioPage = lazy(() => import('./pages/TargetPortfolioPage').the
 const PortfolioComparisonPage = lazy(() => import('./pages/PortfolioComparisonPage').then(module => ({ default: module.PortfolioComparisonPage })))
 
 function App() {
-  const initialize = useAuthStore(state => state.initialize)
+  const { initialize, loading } = useAuthStore(state => ({ 
+    initialize: state.initialize,
+    loading: state.loading
+  }))
 
   useEffect(() => {
     initialize()
@@ -26,50 +29,56 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <Router>
-        <Routes>
-          <Route path="/auth" element={
-            <ErrorBoundary>
-              <Suspense fallback={<LoadingIndicator />}>
-                <AuthPage />
-              </Suspense>
-            </ErrorBoundary>
-          } />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
+      <PageLoadingWrapper
+        isLoading={loading}
+        loadingMessage="Initializing application..."
+        useTransition={true}
+      >
+        <Router>
+          <Routes>
+            <Route path="/auth" element={
+              <ErrorBoundary>
+                <Suspense fallback={<PageLoadingWrapper isLoading={true} loadingMessage="Loading login page..."><div /></PageLoadingWrapper>}>
+                  <AuthPage />
+                </Suspense>
+              </ErrorBoundary>
+            } />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <ErrorBoundary>
+                    <Layout />
+                  </ErrorBoundary>
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={
                 <ErrorBoundary>
-                  <Layout />
+                  <Suspense fallback={<PageLoadingWrapper isLoading={true} loadingMessage="Loading dashboard..."><div /></PageLoadingWrapper>}>
+                    <DashboardPage />
+                  </Suspense>
                 </ErrorBoundary>
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={
-              <ErrorBoundary>
-                <Suspense fallback={<LoadingIndicator />}>
-                  <DashboardPage />
-                </Suspense>
-              </ErrorBoundary>
-            } />
-            <Route path="target-portfolio" element={
-              <ErrorBoundary>
-                <Suspense fallback={<LoadingIndicator />}>
-                  <TargetPortfolioPage />
-                </Suspense>
-              </ErrorBoundary>
-            } />
-            <Route path="portfolio-comparison" element={
-              <ErrorBoundary>
-                <Suspense fallback={<LoadingIndicator />}>
-                  <PortfolioComparisonPage />
-                </Suspense>
-              </ErrorBoundary>
-            } />
-          </Route>
-        </Routes>
-      </Router>
+              } />
+              <Route path="target-portfolio" element={
+                <ErrorBoundary>
+                  <Suspense fallback={<PageLoadingWrapper isLoading={true} loadingMessage="Loading target portfolios..."><div /></PageLoadingWrapper>}>
+                    <TargetPortfolioPage />
+                  </Suspense>
+                </ErrorBoundary>
+              } />
+              <Route path="portfolio-comparison" element={
+                <ErrorBoundary>
+                  <Suspense fallback={<PageLoadingWrapper isLoading={true} loadingMessage="Loading portfolio analysis..."><div /></PageLoadingWrapper>}>
+                    <PortfolioComparisonPage />
+                  </Suspense>
+                </ErrorBoundary>
+              } />
+            </Route>
+          </Routes>
+        </Router>
+      </PageLoadingWrapper>
     </ErrorBoundary>
   )
 }

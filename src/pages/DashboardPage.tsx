@@ -6,9 +6,8 @@ import {
   PortfolioSummary, 
   FloatingActionButton,
   PortfolioChart,
-  StockListSkeleton,
-  PortfolioChartSkeleton,
-  SummaryCardSkeleton
+  LazySkeletonLoader,
+  AdaptiveSkeletonLoader
 } from '../components'
 import type { Stock } from '../types/database'
 
@@ -41,19 +40,18 @@ export const DashboardPage: React.FC = () => {
   if (showInitialLoading) {
     return (
       <>
-
         {/* Portfolio Summary Skeleton */}
         <div className="mb-4 md:mb-8">
-          <SummaryCardSkeleton count={3} />
+          <LazySkeletonLoader type="summary-card" count={3} />
         </div>
 
         {/* Portfolio Chart Skeleton */}
         <div className="mb-4 md:mb-8">
-          <PortfolioChartSkeleton showLegend={true} />
+          <LazySkeletonLoader type="portfolio-chart" showLegend={true} />
         </div>
 
         {/* Stock List Skeleton */}
-        <StockListSkeleton count={3} />
+        <LazySkeletonLoader type="stock-list" count={3} />
       </>
     )
   }
@@ -77,24 +75,43 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <>
-
       {/* Portfolio Summary */}
       <div className="mb-4 md:mb-8">
-        <PortfolioSummary summary={portfolioSummary} />
+        <AdaptiveSkeletonLoader
+          type="summary-card"
+          count={3}
+          isLoading={isLoading}
+          showProgressively={true}
+        >
+          <PortfolioSummary summary={portfolioSummary} />
+        </AdaptiveSkeletonLoader>
       </div>
 
       {/* Portfolio Chart */}
       <div className="mb-4 md:mb-8">
-        <PortfolioChart summary={portfolioSummary} />
+        <AdaptiveSkeletonLoader
+          type="portfolio-chart"
+          isLoading={isLoading}
+          showProgressively={true}
+        >
+          <PortfolioChart summary={portfolioSummary} />
+        </AdaptiveSkeletonLoader>
       </div>
 
       {/* Stock List */}
-      <StockList
-        stocks={stocksWithValue}
-        onEdit={handleEditStock}
-        onDelete={deleteStock}
-        onAdd={handleAddStock}
-      />
+      <AdaptiveSkeletonLoader
+        type="stock-list"
+        count={3}
+        isLoading={isLoading}
+        showProgressively={true}
+      >
+        <StockList
+          stocks={stocksWithValue}
+          onEdit={handleEditStock}
+          onDelete={deleteStock}
+          onAdd={handleAddStock}
+        />
+      </AdaptiveSkeletonLoader>
 
       {/* Floating Action Button - Hidden on mobile */}
       <div className="hidden md:block">
