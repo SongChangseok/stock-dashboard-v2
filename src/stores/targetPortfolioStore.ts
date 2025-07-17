@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { CreateTargetPortfolioData, UpdateTargetPortfolioData } from '../types/targetPortfolio'
+import type { CreateTargetPortfolioData, UpdateTargetPortfolioData, TargetPortfolioData, TargetPortfolioAllocations } from '../types/targetPortfolio'
 import type { TargetPortfolioState } from '../types/store'
 import { targetPortfolioService } from '../services'
 import { realtimeService } from '../services/realtimeService'
@@ -161,20 +161,28 @@ export const useTargetPortfolioStore = create<TargetPortfolioState>((set, get) =
       switch (eventType) {
         case 'INSERT':
           if (newPortfolio) {
+            const transformedPortfolio = {
+              ...newPortfolio,
+              allocations: newPortfolio.allocations as unknown as TargetPortfolioAllocations
+            } as TargetPortfolioData
             set(state => ({
-              targetPortfolios: [newPortfolio, ...state.targetPortfolios]
+              targetPortfolios: [transformedPortfolio, ...state.targetPortfolios]
             }))
           }
           break
           
         case 'UPDATE':
           if (newPortfolio) {
+            const transformedPortfolio = {
+              ...newPortfolio,
+              allocations: newPortfolio.allocations as unknown as TargetPortfolioAllocations
+            } as TargetPortfolioData
             set(state => ({
               targetPortfolios: state.targetPortfolios.map(portfolio => 
-                portfolio.id === newPortfolio.id ? newPortfolio : portfolio
+                portfolio.id === transformedPortfolio.id ? transformedPortfolio : portfolio
               ),
-              selectedTargetPortfolio: state.selectedTargetPortfolio?.id === newPortfolio.id 
-                ? newPortfolio 
+              selectedTargetPortfolio: state.selectedTargetPortfolio?.id === transformedPortfolio.id 
+                ? transformedPortfolio 
                 : state.selectedTargetPortfolio
             }))
           }
@@ -206,7 +214,7 @@ export const useTargetPortfolioStore = create<TargetPortfolioState>((set, get) =
 
   // Load selected portfolio from session storage
   loadSelectedFromSession: () => {
-    const cachedPortfolio = loadFromSession(SESSION_KEYS.SELECTED_TARGET_PORTFOLIO)
+    const cachedPortfolio = loadFromSession(SESSION_KEYS.SELECTED_TARGET_PORTFOLIO) as TargetPortfolioData | null
     if (cachedPortfolio) {
       set({ selectedTargetPortfolio: cachedPortfolio })
     } else {

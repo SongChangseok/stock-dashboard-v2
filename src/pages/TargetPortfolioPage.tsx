@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { TargetPortfolioList, TargetPortfolioForm, TargetPortfolioListSkeleton } from '../components'
 import { useTargetPortfolioStore } from '../stores'
 import type { TargetPortfolioData } from '../types'
