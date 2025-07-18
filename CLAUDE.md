@@ -6,30 +6,41 @@ Global stock portfolio dashboard built with React 18, TypeScript, and Vite.
 
 ## Development Commands
 
+**Core Development**:
 - `npm run dev` - Start development server
-- `npm run build` - Production build
+- `npm run build` - Production build (TypeScript compile + Vite build)
+- `npm run preview` - Preview production build
 - `npm run lint` - ESLint check
 - `npm run lint:fix` - Fix ESLint issues automatically
 - `npm run format` - Format with Prettier
 - `npm run format:check` - Check formatting without changes
-- `npm run preview` - Preview production build
+
+**Testing Commands**:
 - `npm run test` - Run unit tests with Vitest
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:coverage` - Run tests with coverage report
+- `npm run test:coverage:detailed` - Run detailed coverage analysis with thresholds
+- `npm run test:quality-gates` - Run comprehensive quality gate checks
+- `npm run test:all` - Run all tests (unit + e2e)
+
+**End-to-End Testing**:
 - `npm run test:e2e` - Run end-to-end tests with Playwright
+- `npm run test:e2e:ui` - Run e2e tests with UI mode
+- `npm run test:e2e:debug` - Run e2e tests in debug mode
+- `npm run test:e2e:headed` - Run e2e tests in headed mode
 - `npm run test:cross-browser` - Run cross-browser tests (Chrome, Firefox, Safari)
 - `npm run test:mobile` - Run mobile device tests
 - `npm run test:responsive` - Run responsive design tests
 - `npm run test:features` - Run feature detection tests
+- `npm run test:compatibility` - Run cross-browser compatibility tests
 - `npm run test:user-journey` - Run complete user journey tests
 - `npm run test:error-scenarios` - Run error scenario tests
 - `npm run test:performance` - Run performance scenario tests
 - `npm run test:accessibility` - Run accessibility scenario tests
 - `npm run test:scenarios` - Run all user scenario tests
 - `npm run test:quality` - Run quality metrics validation tests
-- `npm run test:coverage:detailed` - Run detailed coverage analysis with thresholds
-- `npm run test:quality-gates` - Run comprehensive quality gate checks
-- `npm run test:all` - Run all tests (unit + e2e)
+
+**Supabase Commands**:
 - `npm run supabase:start` - Start Supabase locally
 - `npm run supabase:stop` - Stop Supabase locally
 - `npm run supabase:reset` - Reset Supabase database
@@ -79,21 +90,45 @@ Use these for all CSS styling work:
 - Touch-friendly interface with 44px minimum touch targets
 
 ## Tech Stack
-- React 18, TypeScript, Vite
-- Tailwind CSS 3.x with dark mode + mobile-first responsive classes
-- Zustand for state management
-- Supabase with real-time database integration
-- Recharts for data visualization and portfolio comparison charts
-- Vitest + Testing Library for unit testing and component testing
-- ESLint + Prettier for code quality and formatting
+
+**Core Framework**:
+- React 18.3.1 with TypeScript 5.5.3
+- Vite 5.4.1 for build tooling and development server
+- React Router DOM 7.6.3 for client-side routing
+
+**Styling & UI**:
+- Tailwind CSS 3.4.10 with dark mode + mobile-first responsive classes
+- PostCSS 8.4.45 for CSS processing
+- Custom CSS modules for mobile optimizations and skeleton loading
+
+**State Management & Backend**:
+- Zustand 5.0.6 for lightweight state management
+- Supabase 2.50.4 with real-time database integration
+- TypeScript-first database schema with generated types
+
+**Data Visualization**:
+- Recharts 3.1.0 for interactive charts and portfolio comparisons
+- Custom chart configurations with responsive design
+
+**Testing Infrastructure**:
+- Vitest 3.2.4 for unit testing with coverage reporting
+- Testing Library (React 16.3.0) for component testing
+- Playwright 1.54.1 for end-to-end and cross-browser testing
+- Jest DOM 6.6.3 for custom DOM matchers
+- Axe-core 4.10.3 for accessibility testing
+
+**Development Tools**:
+- ESLint 9.9.0 with TypeScript ESLint 8.0.1
+- Prettier 3.3.3 for code formatting
+- JSDOM 26.1.0 for browser environment simulation
 
 ## Project Structure
 ```
 src/
-├── components/
-│   ├── Layout.tsx                   # Global layout with Header
-│   ├── Header.tsx                   # Unified responsive header
-│   ├── StockList.tsx                # Responsive table/card layout
+├── components/                      # React components
+│   ├── Layout.tsx                   # Global layout with Header and routing
+│   ├── Header.tsx                   # Unified responsive header with navigation
+│   ├── StockList.tsx                # Responsive table/card layout for stocks
 │   ├── StockForm.tsx                # Stock entry/edit form component
 │   ├── PortfolioChart.tsx           # Pie chart visualization with Recharts
 │   ├── PortfolioComparison.tsx      # Dual chart comparison component
@@ -107,28 +142,38 @@ src/
 │   ├── AuthForm.tsx                 # Authentication form component
 │   ├── ErrorBoundary.tsx            # Error boundary for error handling
 │   ├── FloatingActionButton.tsx     # FAB for mobile actions
-│   ├── LoadingIndicator.tsx         # Loading state indicator
+│   ├── LoadingIndicator.tsx         # Basic loading state indicator
+│   ├── AnimatedLoadingScreen.tsx    # Full-screen animated loading component
 │   ├── ProtectedRoute.tsx           # Route protection wrapper
-│   ├── SkeletonLoader.tsx           # Skeleton loading states
+│   ├── SkeletonLoader.tsx           # Basic skeleton loading states
+│   ├── LazySkeletonLoader.tsx       # Lazy-loaded skeleton with performance optimization
 │   ├── SwipeIndicator.tsx           # Mobile swipe interaction indicator
-│   ├── ui/                          # Reusable UI components
+│   ├── ui/                          # Reusable UI components library
 │   │   ├── ActionButtonGroup.tsx    # Button group component
-│   │   ├── BaseChart.tsx            # Base chart wrapper
-│   │   ├── Card.tsx                 # Card component
-│   │   ├── EmptyState.tsx           # Empty state component
-│   │   ├── FormField.tsx            # Form field wrapper
-│   │   ├── ListContainer.tsx        # List container component
-│   │   ├── LoadingButton.tsx        # Button with loading state
-│   │   ├── Modal.tsx                # Modal dialog component
+│   │   ├── BaseChart.tsx            # Base chart wrapper with common functionality
+│   │   ├── Card.tsx                 # Card component with glassmorphism
+│   │   ├── EmptyState.tsx           # Empty state component with illustrations
+│   │   ├── FormField.tsx            # Form field wrapper with validation
+│   │   ├── ListContainer.tsx        # List container component with responsive grid
+│   │   ├── LoadingButton.tsx        # Button with loading state and spinner
+│   │   ├── Modal.tsx                # Modal dialog component with backdrop
 │   │   └── index.ts                 # UI component exports
+│   ├── auth/                        # Authentication-related components
+│   ├── layout/                      # Layout-specific components
+│   ├── __tests__/                   # Component unit and integration tests
+│   │   ├── AccessibilityCompliance.test.tsx # Accessibility compliance tests
+│   │   ├── DashboardIntegration.test.tsx     # Dashboard integration tests
+│   │   ├── PortfolioChart.test.tsx           # Portfolio chart component tests
+│   │   ├── StockList.test.tsx                # Stock list component tests
+│   │   └── TargetPortfolioIntegration.test.tsx # Target portfolio integration tests
 │   └── index.ts                     # Component exports
-├── pages/
-│   ├── AuthPage.tsx                 # Login/signup authentication
+├── pages/                           # Page-level components
+│   ├── AuthPage.tsx                 # Login/signup authentication page
 │   ├── DashboardPage.tsx            # Portfolio overview with quick actions
-│   ├── TargetPortfolioPage.tsx      # Target portfolio management
+│   ├── TargetPortfolioPage.tsx      # Target portfolio management page
 │   ├── PortfolioComparisonPage.tsx  # Analytics, comparison, and rebalancing view
 │   └── index.ts                     # Page exports
-├── services/
+├── services/                        # Business logic and API services
 │   ├── stockService.ts              # Stock data CRUD operations
 │   ├── targetPortfolioService.ts    # Target portfolio database operations
 │   ├── rebalancingService.ts        # Rebalancing calculations and algorithms
@@ -140,13 +185,22 @@ src/
 │   ├── realtimeService.ts           # Real-time database subscriptions
 │   ├── supabase.ts                  # Supabase client configuration
 │   ├── __tests__/                   # Service unit tests
+│   │   ├── ServiceIntegration.test.ts        # Service integration tests
+│   │   ├── authService.test.ts               # Authentication service tests
+│   │   ├── rebalancingService.test.ts        # Rebalancing service tests
+│   │   ├── stockService.test.ts              # Stock service tests
+│   │   └── targetPortfolioService.test.ts    # Target portfolio service tests
 │   └── index.ts                     # Service exports
-├── stores/
+├── stores/                          # Zustand state management
 │   ├── portfolioStore.ts            # Current portfolio state management
 │   ├── targetPortfolioStore.ts      # Target portfolio state management
 │   ├── authStore.ts                 # Authentication state
+│   ├── __tests__/                   # Store unit tests
+│   │   ├── authStore.test.ts                 # Authentication store tests
+│   │   ├── portfolioStore.test.ts            # Portfolio store tests
+│   │   └── targetPortfolioStore.test.ts      # Target portfolio store tests
 │   └── index.ts                     # Store exports
-├── hooks/
+├── hooks/                           # Custom React hooks
 │   ├── useAuth.ts                   # Authentication hook
 │   ├── usePortfolio.ts              # Portfolio data hook
 │   ├── useAccessibility.ts          # Accessibility features hook
@@ -158,7 +212,9 @@ src/
 │   ├── useTouchOptimization.ts      # Touch interaction optimization hook
 │   ├── useWindowSize.ts             # Window size tracking hook
 │   └── index.ts                     # Hook exports
-├── types/
+├── contexts/                        # React context providers
+│   └── auth/                        # Authentication context
+├── types/                           # TypeScript type definitions
 │   ├── components.ts                # Component prop types
 │   ├── store.ts                     # State management types
 │   ├── targetPortfolio.ts           # Target portfolio specific types
@@ -168,15 +224,19 @@ src/
 │   ├── base.ts                      # Base types and interfaces
 │   ├── database.ts                  # Database schema types
 │   └── index.ts                     # Type exports
-├── utils/
+├── utils/                           # Utility functions and helpers
 │   ├── formatting.ts                # Formatting utilities (currency, percentage, etc.)
 │   ├── calculations.ts              # Portfolio calculation utilities
 │   ├── validation.ts                # Input validation utilities
 │   ├── constants.ts                 # Business rules and UI constants
 │   ├── accessibility.ts             # Accessibility helper functions
+│   ├── accessibilityTester.ts       # Accessibility testing utilities
 │   ├── chartConfig.ts               # Chart configuration utilities
 │   ├── colorUtils.ts                # Color manipulation utilities
+│   ├── errorMonitor.ts              # Error monitoring and reporting
 │   ├── loadingState.ts              # Loading state management utilities
+│   ├── performanceMonitor.ts        # Performance monitoring utilities
+│   ├── qualityMetrics.ts            # Quality metrics collection
 │   ├── rebalancingCalculatorUtils.ts # Rebalancing calculator specific utilities
 │   ├── sessionStorage.ts            # Session storage utilities
 │   ├── stockFormUtils.ts            # Stock form helper utilities
@@ -190,9 +250,15 @@ src/
 │   └── index.ts                     # Utility exports
 ├── test/                            # Testing configuration and utilities
 │   ├── setup.ts                     # Test environment setup
-│   └── test-utils.tsx               # Testing utilities and custom renderers
-└── styles/
+│   ├── test-utils.tsx               # Testing utilities and custom renderers
+│   ├── accessibility-utils.tsx      # Accessibility testing utilities
+│   ├── integration-utils.tsx        # Integration testing utilities
+│   └── __tests__/                   # Test utility tests
+│       ├── EndToEndWorkflows.test.tsx        # End-to-end workflow tests
+│       └── SimpleIntegration.test.tsx        # Simple integration tests
+└── styles/                          # CSS and styling
     ├── mobile.css                   # Mobile-specific optimizations
+    ├── skeleton.css                 # Skeleton loader styles
     └── index.css                    # Global styles and Tailwind imports
 ```
 
@@ -434,10 +500,15 @@ stocks (
 - Business rules constants for configuration management
 - Unit testing infrastructure with Vitest and Testing Library (Phase 4.1)
 - Component testing implementation with test utilities (Phase 4.2)
+- Integration testing with advanced testing scenarios (Phase 4.3)
 - Enhanced UI component library with accessibility features
-- Performance monitoring and optimization hooks
+- Performance monitoring and optimization hooks with lazy loading (Phase 4.5)
 - Advanced error handling and loading state management
 - Touch optimization and responsive design enhancements
+- Accessibility testing support with axe-core integration (Phase 4.6)
+- Cross-browser testing setup with Playwright for Chrome, Firefox, Safari (Phase 4.7)
+- User scenario testing with complete user journey coverage (Phase 4.8)
+- Quality metrics and reporting with comprehensive quality gates (Phase 4.9)
 
 ## GitHub Issue Handling
 - When referencing GitHub issues, always check issue content for specific requirements
