@@ -16,6 +16,12 @@ Global stock portfolio dashboard built with React 18, TypeScript, and Vite.
 - `npm run test` - Run unit tests with Vitest
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:coverage` - Run tests with coverage report
+- `npm run test:e2e` - Run end-to-end tests with Playwright
+- `npm run test:cross-browser` - Run cross-browser tests (Chrome, Firefox, Safari)
+- `npm run test:mobile` - Run mobile device tests
+- `npm run test:responsive` - Run responsive design tests
+- `npm run test:features` - Run feature detection tests
+- `npm run test:all` - Run all tests (unit + e2e)
 - `npm run supabase:start` - Start Supabase locally
 - `npm run supabase:stop` - Stop Supabase locally
 - `npm run supabase:reset` - Reset Supabase database
