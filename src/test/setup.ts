@@ -10,15 +10,14 @@ expect.extend(toHaveNoViolations)
 
 // Mock ResizeObserver for Recharts
 global.ResizeObserver = class ResizeObserver {
-  constructor(callback: ResizeObserverCallback) {}
+  constructor(_callback: ResizeObserverCallback) {}
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 
 // Mock getComputedStyle for JSDOM
-const originalGetComputedStyle = window.getComputedStyle
-window.getComputedStyle = (element: Element, pseudoElt?: string | null) => {
+window.getComputedStyle = (_element: Element, _pseudoElt?: string | null) => {
   // Return a mock style object
   return {
     color: 'rgb(255, 255, 255)',

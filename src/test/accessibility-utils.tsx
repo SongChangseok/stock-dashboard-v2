@@ -2,6 +2,7 @@ import React from 'react'
 import { render, RenderResult } from '@testing-library/react'
 import { axe, toHaveNoViolations } from 'jest-axe'
 import { MemoryRouter } from 'react-router-dom'
+import { expect } from 'vitest'
 
 // Extend Jest matchers
 expect.extend(toHaveNoViolations)
