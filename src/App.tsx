@@ -15,6 +15,7 @@ const AuthPage = lazy(() => import('./pages/AuthPage').then(module => ({ default
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(module => ({ default: module.DashboardPage })))
 const TargetPortfolioPage = lazy(() => import('./pages/TargetPortfolioPage').then(module => ({ default: module.TargetPortfolioPage })))
 const PortfolioComparisonPage = lazy(() => import('./pages/PortfolioComparisonPage').then(module => ({ default: module.PortfolioComparisonPage })))
+const PortfolioHistoryPage = lazy(() => import('./pages/PortfolioHistoryPage').then(module => ({ default: module.PortfolioHistoryPage })))
 
 function App() {
   const { initialize, loading } = useAuthStore(state => ({ 
@@ -72,6 +73,13 @@ function App() {
                 <ErrorBoundary>
                   <Suspense fallback={<PageLoadingWrapper isLoading={true} loadingMessage="Loading portfolio analysis..."><div /></PageLoadingWrapper>}>
                     <PortfolioComparisonPage />
+                  </Suspense>
+                </ErrorBoundary>
+              } />
+              <Route path="history" element={
+                <ErrorBoundary>
+                  <Suspense fallback={<PageLoadingWrapper isLoading={true} loadingMessage="Loading portfolio history..."><div /></PageLoadingWrapper>}>
+                    <PortfolioHistoryPage />
                   </Suspense>
                 </ErrorBoundary>
               } />

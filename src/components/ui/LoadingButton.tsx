@@ -71,4 +71,5 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
   )
 }
 
+export { LoadingButton }
 export default LoadingButton

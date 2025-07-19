@@ -7,6 +7,7 @@ const navItems = [
   { route: '/dashboard' },
   { route: '/target-portfolio' },
   { route: '/analytics' },
+  { route: '/history' },
   { route: '/settings' }
 ]
 
