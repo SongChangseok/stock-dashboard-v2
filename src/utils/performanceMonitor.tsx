@@ -2,6 +2,8 @@
  * Performance monitoring utilities for quality metrics
  */
 
+import React from 'react'
+
 export interface PerformanceMetric {
   name: string
   value: number

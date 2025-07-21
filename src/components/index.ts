@@ -17,14 +17,8 @@ export { default as TradingGuideCard } from './TradingGuideCard'
 export { default as RebalancingSimulation } from './RebalancingSimulation'
 export { ErrorBoundary } from './ErrorBoundary'
 export { LoadingIndicator } from './LoadingIndicator'
-export { 
-  SkeletonLoader,
-  StockListSkeleton,
-  PortfolioChartSkeleton,
-  TargetPortfolioListSkeleton,
-  FormSkeleton,
-  SummaryCardSkeleton
-} from './SkeletonLoader'
+// SkeletonLoader components are dynamically imported by LazySkeletonLoader
+// Remove static export to enable proper code splitting
 export {
   LazySkeletonLoader,
   IntersectionLazyLoader,

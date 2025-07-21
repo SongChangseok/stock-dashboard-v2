@@ -2,9 +2,9 @@
  * Comprehensive quality metrics and reporting system
  */
 
-import { performanceMonitor, PerformanceReport } from './performanceMonitor'
+import { performanceMonitor, PerformanceReport } from './performanceMonitor.tsx'
 import { accessibilityTester, AccessibilityReport } from './accessibilityTester'
-import { errorMonitor, ErrorMetrics } from './errorMonitor'
+import { errorMonitor, ErrorMetrics } from './errorMonitor.tsx'
 
 export interface CoverageReport {
   statements: {
@@ -224,28 +224,28 @@ class QualityMetrics {
     coverage: CoverageReport,
     performance: PerformanceReport,
     accessibility: Partial<AccessibilityReport>,
-    errors: ErrorMetrics
+    _errors: ErrorMetrics
   ) {
     return {
       loadTime: {
         target: this.targets.loadTime,
         actual: performance.summary.averageLoadTime,
-        status: performance.summary.averageLoadTime <= this.targets.loadTime ? 'pass' : 'fail'
+        status: (performance.summary.averageLoadTime <= this.targets.loadTime ? 'pass' : 'fail') as 'pass' | 'fail'
       },
       interactionTime: {
         target: this.targets.interactionTime,
         actual: performance.summary.averageInteractionTime,
-        status: performance.summary.averageInteractionTime <= this.targets.interactionTime ? 'pass' : 'fail'
+        status: (performance.summary.averageInteractionTime <= this.targets.interactionTime ? 'pass' : 'fail') as 'pass' | 'fail'
       },
       testCoverage: {
         target: this.targets.testCoverage,
         actual: coverage.statements.percentage,
-        status: coverage.statements.percentage >= this.targets.testCoverage ? 'pass' : 'fail'
+        status: (coverage.statements.percentage >= this.targets.testCoverage ? 'pass' : 'fail') as 'pass' | 'fail'
       },
       accessibility: {
         target: this.targets.accessibilityLevel,
         actual: accessibility.summary?.wcagLevel || 'Failed',
-        status: accessibility.summary?.wcagLevel === this.targets.accessibilityLevel ? 'pass' : 'fail'
+        status: (accessibility.summary?.wcagLevel === this.targets.accessibilityLevel ? 'pass' : 'fail') as 'pass' | 'fail'
       }
     }
   }

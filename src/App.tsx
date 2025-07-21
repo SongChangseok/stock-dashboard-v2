@@ -15,13 +15,11 @@ const AuthPage = lazy(() => import('./pages/AuthPage').then(module => ({ default
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(module => ({ default: module.DashboardPage })))
 const TargetPortfolioPage = lazy(() => import('./pages/TargetPortfolioPage').then(module => ({ default: module.TargetPortfolioPage })))
 const PortfolioComparisonPage = lazy(() => import('./pages/PortfolioComparisonPage').then(module => ({ default: module.PortfolioComparisonPage })))
-const PortfolioHistoryPage = lazy(() => import('./pages/PortfolioHistoryPage').then(module => ({ default: module.PortfolioHistoryPage })))
+const PortfolioHistoryPage = lazy(() => import('./pages/PortfolioHistoryPage'))
 
 function App() {
-  const { initialize, loading } = useAuthStore(state => ({ 
-    initialize: state.initialize,
-    loading: state.loading
-  }))
+  const initialize = useAuthStore(state => state.initialize)
+  const loading = useAuthStore(state => state.loading)
 
   useEffect(() => {
     initialize()

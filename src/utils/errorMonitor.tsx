@@ -2,6 +2,8 @@
  * Error monitoring and boundary testing utilities
  */
 
+import React from 'react'
+
 export interface ErrorReport {
   id: string
   timestamp: number
@@ -417,7 +419,7 @@ export class ErrorBoundaryWithMonitoring extends React.Component<
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     const errorId = errorMonitor.recordBoundaryError(
       error,
-      errorInfo,
+      { componentStack: errorInfo.componentStack || '' },
       this.constructor.name,
       this.props
     )

@@ -38,7 +38,7 @@ export interface PortfolioHistoryData {
   totalDataPoints: number
 }
 
-export interface PerformanceMetrics {
+export interface HistoricalPerformanceMetrics {
   totalReturn: number
   totalReturnPercentage: number
   averageDailyReturn: number
@@ -133,7 +133,7 @@ export interface PortfolioHistoryState {
   isLoading: boolean
   error: string | null
   filters: PortfolioHistoryFilters
-  performanceMetrics: PerformanceMetrics | null
+  performanceMetrics: HistoricalPerformanceMetrics | null
   stockPerformanceMetrics: StockPerformanceMetrics[]
 }
 

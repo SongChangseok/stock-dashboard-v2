@@ -35,20 +35,6 @@ export interface AccessibilityReport {
 }
 
 class AccessibilityTester {
-  private rules = {
-    // WCAG 2.1 AA rules
-    'color-contrast': { level: 'AA', impact: 'serious' },
-    'keyboard': { level: 'AA', impact: 'serious' },
-    'focus-order-semantics': { level: 'AA', impact: 'serious' },
-    'aria-labels': { level: 'AA', impact: 'serious' },
-    'heading-order': { level: 'AA', impact: 'moderate' },
-    'landmark-roles': { level: 'AA', impact: 'moderate' },
-    'link-purpose': { level: 'AA', impact: 'serious' },
-    'form-labels': { level: 'AA', impact: 'serious' },
-    'error-identification': { level: 'AA', impact: 'serious' },
-    'resize-content': { level: 'AA', impact: 'serious' },
-    'contrast-enhanced': { level: 'AAA', impact: 'moderate' }
-  }
 
   /**
    * Test accessibility of a DOM element
@@ -86,7 +72,7 @@ class AccessibilityTester {
     // Count passes (elements that don't have violations)
     passes = this.countAccessibleElements(element) - violations.length
 
-    const summary = this.calculateSummary(violations, passes)
+    const summary = this.calculateSummary(violations)
 
     return {
       timestamp: Date.now(),
@@ -225,10 +211,8 @@ class AccessibilityTester {
     const elementsWithAria = element.querySelectorAll('[aria-label], [aria-labelledby], [aria-describedby], [role]')
 
     elementsWithAria.forEach((el, index) => {
-      const role = el.getAttribute('role')
       const ariaLabel = el.getAttribute('aria-label')
       const ariaLabelledby = el.getAttribute('aria-labelledby')
-      const ariaDescribedby = el.getAttribute('aria-describedby')
 
       // Check for empty aria-label
       if (ariaLabel !== null && !ariaLabel.trim()) {
@@ -281,7 +265,6 @@ class AccessibilityTester {
     interactiveElements.forEach((el, index) => {
       const tabindex = el.getAttribute('tabindex')
       const href = el.getAttribute('href')
-      const disabled = el.hasAttribute('disabled')
 
       // Check for positive tabindex (anti-pattern)
       if (tabindex && parseInt(tabindex) > 0) {
@@ -342,7 +325,7 @@ class AccessibilityTester {
   /**
    * Calculate summary statistics
    */
-  private calculateSummary(violations: AccessibilityViolation[], passes: number) {
+  private calculateSummary(violations: AccessibilityViolation[]) {
     const criticalViolations = violations.filter(v => v.impact === 'critical').length
     const seriousViolations = violations.filter(v => v.impact === 'serious').length
     const moderateViolations = violations.filter(v => v.impact === 'moderate').length
